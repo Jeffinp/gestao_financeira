@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="./public/images/icons/favicon-96x96.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MeuCofre</title>
+  <title>MeuCofre - Gestão Financeira Pessoal</title>
   <link rel="apple-touch-icon" sizes="57x57" href="./public/images/icons/apple-icon-57x57.png">
   <link rel="apple-touch-icon" sizes="60x60" href="./public/images/icons/apple-icon-60x60.png">
   <link rel="apple-touch-icon" sizes="72x72" href="./public/images/icons/apple-icon-72x72.png">
@@ -20,9 +20,24 @@
   <link rel="icon" type="image/png" sizes="96x96" href="./public/images/icons/favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="./public/images/icons/favicon-16x16.png">
   <link rel="manifest" href="./public/images/icons/manifest.json">
-  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileColor" content="#2563EB">
   <meta name="msapplication-TileImage" content="./public/images/icons/ms-icon-144x144.png">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#2563EB">
+
+  <!-- Script para evitar flash de tela branca no modo escuro -->
+  <script>
+    (function () {
+      // Verificar preferência salva
+      const savedTheme = localStorage.getItem('theme');
+
+      if (savedTheme === 'dark' ||
+        (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
 </head>
 
 <body>

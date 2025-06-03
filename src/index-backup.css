@@ -1,0 +1,537 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Base colors from the palette */
+    --background: 210 20% 98%;
+    /* #F9FAFB - Fundo base claro */
+    --foreground: 222 84% 5%;
+    /* #111827 - Texto principal escuro */
+    --card: 0 0% 100%;
+    /* #FFFFFF - Cards/UI claro */
+    --card-foreground: 222 84% 5%;
+    /* #111827 - Texto principal escuro */
+    --popover: 0 0% 100%;
+    /* #FFFFFF - Cards/UI claro */
+    --popover-foreground: 222 84% 5%;
+    /* #111827 - Texto principal escuro */
+    --primary: 217 91% 60%;
+    /* #2563EB - Primária azul */
+    --primary-foreground: 210 40% 98%;
+    /* Branco para uso sobre cor primária */
+    --secondary: 160 84% 39%;
+    /* #10B981 - Secundária verde esmeralda */
+    --secondary-foreground: 210 40% 98%;
+    /* Branco para uso sobre cor secundária */
+    --muted: 210 40% 96%;
+    /* Fundo suave para conteúdo menos importante */
+    --muted-foreground: 220 9% 46%;
+    /* #6B7280 - Texto secundário */
+    --accent: 210 40% 96%;
+    /* Fundo para elementos destacados */
+    --accent-foreground: 222 47% 11%;
+    /* Texto sobre elementos destacados */
+    --destructive: 0 84% 60%;
+    /* #EF4444 - Vermelho para alertas/gastos */
+    --destructive-foreground: 210 40% 98%;
+    /* Branco para uso sobre vermelho */
+    --border: 214 32% 91%;
+    /* Borda sutil */
+    --input: 214 32% 91%;
+    /* Borda para inputs */
+    --ring: 221 83% 53%;
+    /* Cor do anel de foco */
+    --radius: 0.75rem;
+    /* Raio de borda padrão aumentado */
+
+    /* Cores da loja - Light Mode */
+    --shop-primary: 217 91% 60%;
+    /* #2563EB - Azul */
+    --shop-secondary: 160 84% 39%;
+    /* #10B981 - Verde esmeralda */
+    --shop-accent: 0 84% 60%;
+    /* #EF4444 - Vermelho suave */
+    --shop-highlight: 35 100% 60%;
+    /* Tom âmbar para destaque */
+    --shop-success: 142 70% 45%;
+    /* Verde para indicadores positivos */
+    --shop-warning: 35 100% 50%;
+    /* Laranja para alertas */
+    --shop-error: 0 80% 50%;
+    /* Vermelho para erros */
+    --shop-info: 200 80% 50%;
+    /* Azul claro para informações */
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    /* #111827 - Fundo base escuro */
+    --foreground: 210 20% 98%;
+    /* #F9FAFB - Texto principal claro */
+    --card: 215 28% 17%;
+    /* #1F2937 - Cards/UI escuro */
+    --card-foreground: 210 20% 98%;
+    /* #F9FAFB - Texto principal claro */
+    --popover: 215 28% 17%;
+    /* #1F2937 - Cards/UI escuro */
+    --popover-foreground: 210 20% 98%;
+    /* #F9FAFB - Texto principal claro */
+    --primary: 213 94% 68%;
+    /* #3B82F6 - Azul claro */
+    --primary-foreground: 222 47% 11%;
+    /* Texto escuro sobre primária */
+    --secondary: 152 76% 53%;
+    /* #34D399 - Verde neon suave */
+    --secondary-foreground: 210 20% 98%;
+    /* Texto claro sobre secundária */
+    --muted: 217 33% 18%;
+    /* Fundo escuro para conteúdo menos importante */
+    --muted-foreground: 215 20% 65%;
+    /* #9CA3AF - Texto secundário claro */
+    --accent: 217 33% 18%;
+    /* Fundo escuro para elementos destacados */
+    --accent-foreground: 210 20% 98%;
+    /* Texto claro sobre elementos destacados */
+    --destructive: 0 63% 31%;
+    /* Vermelho escuro para alertas/gastos */
+    --destructive-foreground: 210 20% 98%;
+    /* Texto claro sobre vermelho */
+    --border: 217 33% 18%;
+    /* Borda sutil no modo escuro */
+    --input: 217 33% 18%;
+    /* Borda para inputs no modo escuro */
+    --ring: 224 76% 48%;
+    /* Cor do anel de foco no modo escuro */
+
+    /* Cores da loja - Dark Mode */
+    --shop-primary: 213 94% 68%;
+    /* #3B82F6 - Azul claro */
+    --shop-secondary: 152 76% 53%;
+    /* #34D399 - Verde neon suave */
+    --shop-accent: 0 91% 71%;
+    /* #F87171 - Vermelho claro */
+    --shop-highlight: 35 90% 65%;
+    /* Tom âmbar mais claro para destaque */
+    --shop-success: 142 60% 55%;
+    /* Verde para indicadores positivos */
+    --shop-warning: 35 90% 60%;
+    /* Laranja para alertas */
+    --shop-error: 0 70% 60%;
+    /* Vermelho para erros */
+    --shop-info: 200 70% 60%;
+    /* Azul claro para informações */
+  }
+}
+
+@layer base {
+
+  /* Base styles */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply antialiased font-sans bg-background text-foreground;
+  }
+
+  /* Headings */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold leading-tight tracking-tight;
+  }
+
+  /* Personalized scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary/50 rounded-full hover:bg-primary/70 transition-colors;
+  }
+
+  /* Cards e UI elements */
+  .card {
+    @apply bg-card border border-border/40 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-6;
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300 hover:translate-y-[-4px] hover:shadow-lg;
+  }
+
+  /* Buttons */
+  button,
+  .btn {
+    @apply transition-all duration-200;
+  }
+
+  /* Shadow variants */
+  .shadow-card {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 6px rgba(0, 0, 0, 0.02), 0 8px 12px rgba(0, 0, 0, 0.01);
+  }
+
+  .shadow-card-hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08), 0 6px 12px rgba(0, 0, 0, 0.03), 0 12px 24px rgba(0, 0, 0, 0.02);
+  }
+
+  /* Útil para esconder scrollbars em menus mobile */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Container com padding responsivo */
+  .container {
+    @apply px-4 lg:px-8 max-w-7xl mx-auto;
+  }
+
+  /* Estilos de formulário */
+  input,
+  select,
+  textarea {
+    @apply rounded-lg border border-input bg-card p-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  /* Tamanhos de fonte fluidos */
+  .text-fluid-3xl {
+    @apply text-2xl sm:text-3xl md:text-4xl;
+  }
+
+  .text-fluid-2xl {
+    @apply text-xl sm:text-2xl md:text-3xl;
+  }
+
+  .text-fluid-xl {
+    @apply text-lg sm:text-xl md:text-2xl;
+  }
+
+  /* Espaçamento de texto */
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Animações e transições globais */
+@layer utilities {
+  .transition-standard {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+
+  .transition-fast {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+
+  .transition-slow {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 500ms;
+  }
+
+  .hover-scale {
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.03);
+  }
+
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
+
+/* Fontes responsivas com clamp */
+@layer utilities {
+  .text-fluid-xs {
+    font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  }
+
+  .text-fluid-sm {
+    font-size: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+  }
+
+  .text-fluid-base {
+    font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  }
+
+  .text-fluid-lg {
+    font-size: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+  }
+
+  .text-fluid-xl {
+    font-size: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  }
+
+  .text-fluid-2xl {
+    font-size: clamp(1.5rem, 1.3rem + 1vw, 1.875rem);
+  }
+
+  .text-fluid-3xl {
+    font-size: clamp(1.875rem, 1.65rem + 1.125vw, 2.25rem);
+  }
+
+  .text-fluid-4xl {
+    font-size: clamp(2.25rem, 2rem + 1.25vw, 3rem);
+  }
+
+  .text-fluid-5xl {
+    font-size: clamp(3rem, 2.5rem + 2.5vw, 4rem);
+  }
+}
+
+/* Estilos específicos para loja */
+@layer components {
+  .btn-shop-primary {
+    @apply bg-shop-primary text-white font-medium py-2 px-4 rounded-md shadow-button hover:shadow-button-hover transition-all duration-300 hover:scale-105 active:scale-95;
+  }
+
+  .btn-shop-secondary {
+    @apply bg-shop-secondary text-white font-medium py-2 px-4 rounded-md shadow-button hover:shadow-button-hover transition-all duration-300 hover:scale-105 active:scale-95;
+  }
+
+  .btn-shop-accent {
+    @apply bg-shop-accent text-white font-medium py-2 px-4 rounded-md shadow-button hover:shadow-button-hover transition-all duration-300 hover:scale-105 active:scale-95;
+  }
+
+  .btn-shop-outline {
+    @apply border border-shop-primary text-shop-primary font-medium py-2 px-4 rounded-md transition-all duration-300 hover:bg-shop-primary hover:text-white hover:scale-105 active:scale-95;
+  }
+
+  .card-product {
+    @apply bg-card rounded-lg overflow-hidden shadow-card transition-all duration-300 hover:shadow-card-hover;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply bg-shop-primary bg-opacity-10 text-shop-primary;
+  }
+
+  .badge-secondary {
+    @apply bg-shop-secondary bg-opacity-10 text-shop-secondary;
+  }
+
+  .badge-accent {
+    @apply bg-shop-accent bg-opacity-10 text-shop-accent;
+  }
+
+  .badge-success {
+    @apply bg-shop-success bg-opacity-10 text-shop-success;
+  }
+
+  .badge-error {
+    @apply bg-shop-error bg-opacity-10 text-shop-error;
+  }
+}
+
+/* Add global styles */
+.container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Modern card styles */
+.card {
+  background-color: hsl(var(--card));
+  border: 1px solid hsla(var(--border), 0.4);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.02);
+}
+
+/* Hover lift effect */
+.hover-lift {
+  transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05), 0 20px 25px rgba(0, 0, 0, 0.03);
+}
+
+/* Fluid typography */
+.text-fluid-3xl {
+  font-size: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .text-fluid-3xl {
+    font-size: 1.875rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .text-fluid-3xl {
+    font-size: 2.25rem;
+  }
+}
+
+.text-fluid-2xl {
+  font-size: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .text-fluid-2xl {
+    font-size: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .text-fluid-2xl {
+    font-size: 1.875rem;
+  }
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+::-webkit-scrollbar-track {
+  background-color: hsl(var(--muted));
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: hsla(var(--primary), 0.5);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: hsla(var(--primary), 0.7);
+}
+
+/* Hide scrollbars for mobile menus */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom button styles */
+.btn-primary {
+  background-color: hsl(var(--shop-primary));
+  color: white;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:active {
+  transform: scale(0.95);
+}
+
+.btn-secondary {
+  background-color: hsl(var(--shop-secondary));
+  color: white;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-secondary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary:active {
+  transform: scale(0.95);
+}
+
+/* Badge styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.badge-primary {
+  background-color: hsla(var(--shop-primary), 0.1);
+  color: hsl(var(--shop-primary));
+}
+
+.badge-secondary {
+  background-color: hsla(var(--shop-secondary), 0.1);
+  color: hsl(var(--shop-secondary));
+}
+
+.badge-accent {
+  background-color: hsla(var(--shop-accent), 0.1);
+  color: hsl(var(--shop-accent));
+}
+
+/* Page spacing */
+.page-container {
+  padding-top: 5rem;
+  padding-bottom: 3rem;
+}

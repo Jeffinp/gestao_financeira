@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { CalendarIcon, PlusIcon, CheckCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { CalendarIcon, BellIcon, PlusIcon, CheckCircleIcon, TrashIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { BellIcon as BellIconSolid } from '@heroicons/react/24/solid';
 import { useFinancasStore } from '../store/financasStore';
 import type { Lembrete } from '../types';
@@ -104,290 +104,323 @@ export default function Agenda() {
     return acc;
   }, {} as Record<string, Lembrete[]>);
 
-  // Ordenar meses cronologicamente
-  const mesesOrdenados = Object.keys(lembretesPorMes).sort((a, b) => {
-    const [mesA, anoA] = a.split(' de ');
-    const [mesB, anoB] = b.split(' de ');
-
-    const dataA = new Date(`${mesA} 1, ${anoA}`);
-    const dataB = new Date(`${mesB} 1, ${anoB}`);
-
-    return dataA.getTime() - dataB.getTime();
-  });
+  // Verificar se há lembretes para hoje
+  const hoje = new Date().toISOString().split('T')[0];
+  const lembretesHoje = lembretes.filter(l => l.data === hoje);
 
   return (
-    <div className="page-container">
+    <div className="container pt-24 pb-10">
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
+        className="flex flex-col md:flex-row md:items-center justify-between mb-8"
       >
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
-          <div>
-            <h1 className="text-fluid-3xl font-bold mb-2">Agenda Financeira</h1>
-            <p className="text-muted-foreground">Gerencie seus compromissos financeiros</p>
-          </div>
-
-          <div
-            id="success-feedback"
-            className="fixed top-20 right-4 bg-secondary/90 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 transition-opacity duration-300 opacity-0 z-50"
-          >
-            <CheckCircleIcon className="h-5 w-5" />
-            <span>Lembrete adicionado com sucesso!</span>
-          </div>
+        <div>
+          <h1 className="text-fluid-3xl font-bold text-balance">Agenda & Lembretes</h1>
+          <p className="text-muted-foreground mt-1">Organize seus compromissos financeiros</p>
         </div>
+
+        <button
+          className="mt-3 md:mt-0 flex items-center gap-2 text-sm hover:text-shop-primary transition-colors"
+          onClick={() => window.location.reload()}
+        >
+          <ArrowPathIcon className="h-4 w-4" />
+          <span>Atualizar lembretes</span>
+        </button>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Formulário */}
+      {lembretesHoje.length > 0 && (
         <motion.div
           {...fadeInUp}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="lg:col-span-1"
+          className="mb-8 bg-shop-primary bg-opacity-10 border border-shop-primary border-opacity-20 rounded-xl p-4"
         >
-          <div className="card sticky top-24">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <PlusIcon className="h-5 w-5 text-primary" />
-              Novo Lembrete
-            </h2>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="titulo" className="block text-sm font-medium text-foreground mb-1">
-                  Título*
-                </label>
-                <input
-                  type="text"
-                  id="titulo"
-                  name="titulo"
-                  value={formData.titulo}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-input bg-card p-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
-                  placeholder="Ex: Pagamento de Aluguel"
-                  required
-                />
-              </div>
-
-              <div>
-                <label htmlFor="descricao" className="block text-sm font-medium text-foreground mb-1">
-                  Descrição
-                </label>
-                <textarea
-                  id="descricao"
-                  name="descricao"
-                  value={formData.descricao}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-input bg-card p-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
-                  placeholder="Detalhes adicionais..."
-                  rows={3}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="data" className="block text-sm font-medium text-foreground mb-1">
-                    Data*
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-                    </div>
-                    <input
-                      type="date"
-                      id="data"
-                      name="data"
-                      value={formData.data}
-                      onChange={handleChange}
-                      className="w-full rounded-lg border border-input bg-card p-2.5 pl-10 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="valor" className="block text-sm font-medium text-foreground mb-1">
-                    Valor (R$)
-                  </label>
-                  <input
-                    type="number"
-                    id="valor"
-                    name="valor"
-                    value={formData.valor || ''}
-                    onChange={handleChange}
-                    className="w-full rounded-lg border border-input bg-card p-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
-                    placeholder="0,00"
-                    step="0.01"
-                    min="0"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="tipo" className="block text-sm font-medium text-foreground mb-1">
-                  Tipo
-                </label>
-                <select
-                  id="tipo"
-                  name="tipo"
-                  value={formData.tipo || ''}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-input bg-card p-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200"
-                >
-                  <option value="">Selecione...</option>
-                  <option value="ganho">Receita</option>
-                  <option value="gasto">Despesa</option>
-                </select>
-              </div>
-
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="notificar"
-                  name="notificar"
-                  checked={formData.notificar}
-                  onChange={handleChange}
-                  className="w-4 h-4 text-primary bg-card border-input rounded focus:ring-primary transition-all duration-200"
-                />
-                <label htmlFor="notificar" className="ml-2 text-sm font-medium text-foreground">
-                  Receber notificação
-                </label>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-medium py-2.5 px-4 rounded-lg shadow-sm hover:bg-primary/90 transition-all duration-200"
-              >
-                <PlusIcon className="h-5 w-5" />
-                Adicionar Lembrete
-              </button>
-            </form>
+          <div className="flex items-center gap-3">
+            <div className="bg-shop-primary bg-opacity-20 rounded-full p-2">
+              <BellIconSolid className="h-6 w-6 text-shop-primary" />
+            </div>
+            <div>
+              <h2 className="font-medium text-shop-primary">Lembretes para hoje</h2>
+              <p className="text-sm">Você tem {lembretesHoje.length} {lembretesHoje.length === 1 ? 'lembrete' : 'lembretes'} agendado{lembretesHoje.length === 1 ? '' : 's'} para hoje</p>
+            </div>
           </div>
         </motion.div>
+      )}
 
-        {/* Lista de Lembretes */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <motion.div
           {...fadeInUp}
           transition={{ duration: 0.5, delay: 0.2 }}
+          className="lg:col-span-1"
+        >
+          <div className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden">
+            <div className="p-6 border-b border-border/50 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <PlusIcon className="h-5 w-5 text-shop-primary" />
+                <h2 className="text-lg font-medium">Novo Lembrete</h2>
+              </div>
+            </div>
+
+            <div className="p-6">
+              <form onSubmit={handleSubmit}>
+                <div className="space-y-4">
+                  <div id="success-feedback" className="bg-shop-success bg-opacity-10 text-shop-success text-sm p-3 rounded-md flex items-center gap-2 transition-opacity duration-300 opacity-0">
+                    <CheckCircleIcon className="h-5 w-5" />
+                    <span>Lembrete adicionado com sucesso!</span>
+                  </div>
+
+                  <div>
+                    <label htmlFor="titulo" className="block text-sm font-medium mb-1">
+                      Título <span className="text-shop-error">*</span>
+                    </label>
+                    <input
+                      id="titulo"
+                      name="titulo"
+                      type="text"
+                      required
+                      value={formData.titulo}
+                      onChange={handleChange}
+                      className="w-full rounded-md border border-input bg-background px-3 py-2 focus:border-shop-primary focus:ring-2 focus:ring-shop-primary/20 outline-none transition-all"
+                      placeholder="Título do lembrete"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="descricao" className="block text-sm font-medium mb-1">
+                      Descrição
+                    </label>
+                    <textarea
+                      id="descricao"
+                      name="descricao"
+                      rows={3}
+                      value={formData.descricao}
+                      onChange={handleChange}
+                      className="w-full rounded-md border border-input bg-background px-3 py-2 focus:border-shop-primary focus:ring-2 focus:ring-shop-primary/20 outline-none transition-all"
+                      placeholder="Detalhes do lembrete..."
+                    ></textarea>
+                  </div>
+
+                  <div>
+                    <label htmlFor="data" className="block text-sm font-medium mb-1">
+                      Data <span className="text-shop-error">*</span>
+                    </label>
+                    <div className="relative">
+                      <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        id="data"
+                        name="data"
+                        type="date"
+                        required
+                        value={formData.data}
+                        onChange={handleChange}
+                        className="w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 focus:border-shop-primary focus:ring-2 focus:ring-shop-primary/20 outline-none transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="valor" className="block text-sm font-medium mb-1">
+                        Valor (opcional)
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <input
+                          id="valor"
+                          name="valor"
+                          type="number"
+                          step="0.01"
+                          value={formData.valor === undefined ? '' : formData.valor}
+                          onChange={handleChange}
+                          className="w-full rounded-md border border-input bg-background pl-9 pr-3 py-2 focus:border-shop-primary focus:ring-2 focus:ring-shop-primary/20 outline-none transition-all"
+                          placeholder="0,00"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label htmlFor="tipo" className="block text-sm font-medium mb-1">
+                        Tipo
+                      </label>
+                      <select
+                        id="tipo"
+                        name="tipo"
+                        value={formData.tipo || ''}
+                        onChange={handleChange}
+                        className="w-full rounded-md border border-input bg-background px-3 py-2 focus:border-shop-primary focus:ring-2 focus:ring-shop-primary/20 outline-none transition-all"
+                        disabled={formData.valor === undefined}
+                      >
+                        <option value="">Selecione</option>
+                        <option value="ganho">Ganho</option>
+                        <option value="gasto">Gasto</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center bg-secondary/30 p-3 rounded-md">
+                    <input
+                      id="notificar"
+                      name="notificar"
+                      type="checkbox"
+                      checked={formData.notificar}
+                      onChange={handleChange}
+                      className="h-4 w-4 rounded border-input text-shop-primary focus:ring-shop-primary"
+                    />
+                    <label htmlFor="notificar" className="ml-2 block text-sm">
+                      Receber notificação na data
+                    </label>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full btn-shop-primary flex items-center justify-center gap-2"
+                  >
+                    <PlusIcon className="h-5 w-5" />
+                    <span>Adicionar Lembrete</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          {...fadeInUp}
+          transition={{ duration: 0.5, delay: 0.3 }}
           className="lg:col-span-2"
         >
-          {isLoading ? (
-            Array(3).fill(0).map((_, i) => (
-              <div key={i} className="mb-6">
-                <div className="animate-pulse h-5 bg-muted rounded w-40 mb-4"></div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {Array(4).fill(0).map((_, j) => (
-                    <div key={j} className="animate-pulse">
-                      <div className="h-32 bg-muted rounded-lg"></div>
+          <div className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden">
+            <div className="p-6 border-b border-border/50 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CalendarIcon className="h-5 w-5 text-shop-primary" />
+                <h2 className="text-lg font-medium">Lembretes Agendados</h2>
+              </div>
+              <span className="text-sm bg-secondary/50 px-3 py-1 rounded-full">
+                {lembretes.length} {lembretes.length === 1 ? 'lembrete' : 'lembretes'}
+              </span>
+            </div>
+
+            <div className="p-4 max-h-[600px] overflow-y-auto">
+              {isLoading ? (
+                <div className="space-y-4 p-2">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="bg-secondary/30 rounded-lg p-4 animate-pulse">
+                      <div className="flex gap-3">
+                        <div className="w-5 h-5 bg-gray-300 rounded-full"></div>
+                        <div className="space-y-2 flex-1">
+                          <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+                          <div className="h-3 bg-gray-300 rounded w-1/4"></div>
+                          <div className="h-3 bg-gray-300 rounded w-1/2"></div>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
-              </div>
-            ))
-          ) : lembretes.length === 0 ? (
-            <div className="card flex flex-col items-center justify-center py-16">
-              <CalendarIcon className="h-16 w-16 text-muted-foreground/40 mb-4" />
-              <h3 className="text-xl font-medium mb-2">Nenhum lembrete</h3>
-              <p className="text-muted-foreground text-center max-w-sm">
-                Você ainda não tem lembretes cadastrados. Utilize o formulário ao lado para adicionar seu primeiro lembrete.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-8">
-              {mesesOrdenados.map(mes => {
-                const lembretesMes = lembretesPorMes[mes];
+              ) : Object.keys(lembretesPorMes).length > 0 ? (
+                <div className="space-y-8">
+                  {Object.entries(lembretesPorMes).map(([mes, lembretesMes], mesIndex) => (
+                    <motion.div
+                      key={mes}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.1 * mesIndex }}
+                    >
+                      <h3 className="text-md font-medium mb-4 capitalize border-b pb-2 flex items-center gap-2">
+                        <CalendarIcon className="h-4 w-4 text-shop-primary" />
+                        {mes}
+                      </h3>
 
-                return (
-                  <div key={mes} className="mb-8">
-                    <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 capitalize">
-                      <CalendarIcon className="h-5 w-5 text-primary" />
-                      {mes}
-                    </h2>
+                      <div className="space-y-3">
+                        {lembretesMes
+                          .sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime())
+                          .map((lembrete, index) => {
+                            const dataLembrete = new Date(lembrete.data);
+                            const dataAtual = new Date();
+                            const isHoje = dataLembrete.toDateString() === dataAtual.toDateString();
+                            const isPassado = dataLembrete < dataAtual && !isHoje;
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {lembretesMes.map(lembrete => {
-                        const data = new Date(lembrete.data);
-                        const hoje = new Date();
-                        const ehHoje = data.toDateString() === hoje.toDateString();
-                        const ehFuturo = data > hoje;
-
-                        return (
-                          <div
-                            key={lembrete.id}
-                            className={`card border hover-lift ${ehHoje
-                                ? 'border-primary/40 bg-primary/5'
-                                : ehFuturo
-                                  ? 'border-border/40'
-                                  : 'border-border/40 bg-muted/30'
-                              }`}
-                          >
-                            <div className="flex justify-between items-start">
-                              <div className="flex items-center gap-2 mb-3">
-                                <div className={`text-xs font-medium py-1 px-2 rounded-full ${ehHoje
-                                    ? 'bg-primary/20 text-primary'
-                                    : ehFuturo
-                                      ? 'bg-secondary/20 text-secondary'
-                                      : 'bg-muted-foreground/20 text-muted-foreground'
-                                  }`}>
-                                  {data.toLocaleDateString('pt-BR')}
-                                </div>
-
-                                {lembrete.notificar && (
-                                  <div className="text-primary">
-                                    <BellIconSolid className="h-4 w-4" />
-                                  </div>
-                                )}
-                              </div>
-
-                              <button
-                                onClick={() => handleDelete(lembrete.id)}
-                                className="text-muted-foreground hover:text-destructive transition-colors p-1"
-                                aria-label="Remover lembrete"
+                            return (
+                              <motion.div
+                                key={lembrete.id}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, delay: 0.05 * index }}
+                                className={`p-4 rounded-lg hover:shadow-md transition-all ${isHoje
+                                    ? 'bg-shop-primary bg-opacity-5 border border-shop-primary border-opacity-20'
+                                    : isPassado
+                                      ? 'bg-gray-100 border border-gray-200'
+                                      : 'bg-secondary/30'
+                                  }`}
                               >
-                                <TrashIcon className="h-4 w-4" />
-                              </button>
-                            </div>
+                                <div className="flex justify-between">
+                                  <div className="flex gap-3">
+                                    <div className="mt-1">
+                                      <CalendarIcon className={`h-5 w-5 ${isHoje ? 'text-shop-primary' : isPassado ? 'text-gray-400' : 'text-muted-foreground'
+                                        }`} />
+                                    </div>
+                                    <div>
+                                      <div className="flex items-center gap-2">
+                                        <h4 className={`font-medium ${isHoje ? 'text-shop-primary' : ''}`}>
+                                          {lembrete.titulo}
+                                        </h4>
+                                        {lembrete.notificar && (
+                                          <BellIconSolid className="h-4 w-4 text-shop-accent" />
+                                        )}
+                                        {isHoje && (
+                                          <span className="text-xs bg-shop-primary text-white px-2 py-0.5 rounded-full">
+                                            Hoje
+                                          </span>
+                                        )}
+                                      </div>
+                                      <p className="text-sm text-muted-foreground">
+                                        {dataLembrete.toLocaleDateString('pt-BR')}
+                                      </p>
 
-                            <h3 className="text-lg font-medium mb-1">{lembrete.titulo}</h3>
+                                      {lembrete.descricao && (
+                                        <p className="text-sm mt-2 text-pretty">{lembrete.descricao}</p>
+                                      )}
 
-                            {lembrete.descricao && (
-                              <p className="text-sm text-muted-foreground mb-2">{lembrete.descricao}</p>
-                            )}
+                                      {lembrete.valor !== undefined && lembrete.tipo && (
+                                        <div className="mt-2 inline-block px-3 py-1 rounded-full text-sm font-medium bg-opacity-10 bg-secondary">
+                                          <span className={lembrete.tipo === 'ganho' ? 'text-green-500' : 'text-red-500'}>
+                                            {lembrete.tipo === 'ganho' ? '+' : '-'} R$ {lembrete.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                          </span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
 
-                            <div className="flex justify-between items-center mt-2 pt-2 border-t border-border/40">
-                              {lembrete.tipo && lembrete.valor ? (
-                                <div className={`text-sm font-medium ${lembrete.tipo === 'ganho' ? 'text-secondary' : 'text-destructive'
-                                  }`}>
-                                  {lembrete.tipo === 'ganho' ? 'Receita:' : 'Despesa:'} R$ {lembrete.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                  <button
+                                    onClick={() => handleDelete(lembrete.id)}
+                                    className="text-gray-400 hover:text-shop-error transition-colors p-1"
+                                    aria-label="Remover lembrete"
+                                  >
+                                    <TrashIcon className="h-5 w-5" />
+                                  </button>
                                 </div>
-                              ) : (
-                                <div></div>
-                              )}
-
-                              <div className={`text-xs ${ehHoje
-                                  ? 'text-primary font-medium'
-                                  : ehFuturo
-                                    ? 'text-secondary'
-                                    : 'text-muted-foreground'
-                                }`}>
-                                {ehHoje
-                                  ? 'Hoje'
-                                  : ehFuturo
-                                    ? `Em ${Math.ceil((data.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24))} dias`
-                                    : `Há ${Math.ceil((hoje.getTime() - data.getTime()) / (1000 * 60 * 60 * 24))} dias`
-                                }
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+                              </motion.div>
+                            );
+                          })}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                    <CalendarIcon className="h-8 w-8 text-gray-400" />
                   </div>
-                );
-              })}
+                  <h3 className="text-lg font-medium mb-1">Sem lembretes</h3>
+                  <p className="text-muted-foreground max-w-md">
+                    Você ainda não tem lembretes agendados. Use o formulário ao lado para adicionar seu primeiro lembrete.
+                  </p>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </motion.div>
       </div>
     </div>
   );
-}
+} 

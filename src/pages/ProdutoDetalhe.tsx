@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useParams, Link } from 'react-router-dom';
-import { 
-  ShoppingBagIcon, 
-  ArrowLeftIcon, 
-  HeartIcon, 
-  CheckIcon, 
-  TruckIcon, 
+import { Link } from 'react-router-dom';
+import {
+  ShoppingBagIcon,
+  ArrowLeftIcon,
+  HeartIcon,
+  CheckIcon,
+  TruckIcon,
   ShieldCheckIcon,
   StarIcon
 } from '@heroicons/react/24/outline';
-import { HeartIcon as HeartIconSolid, StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
+import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 
 // Simulação de dados do produto
 const PRODUTO = {
@@ -57,54 +57,63 @@ const PRODUTO = {
   ],
 };
 
+// Adicionar tipos explícitos
+interface Tamanho {
+  id: number;
+  tamanho: string;
+  disponivel: boolean;
+}
+
+interface ImagemZoomProps {
+  src: string;
+}
+
 // Componente de Zoom
-const ImagemZoom = ({ src }) => {
+const ImagemZoom: React.FC<ImagemZoomProps> = ({ src }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [showZoom, setShowZoom] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
 
-  const handleMouseMove = (e) => {
-    const { left, top, width, height } = e.target.getBoundingClientRect();
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
     const x = ((e.clientX - left) / width) * 100;
     const y = ((e.clientY - top) / height) * 100;
-    
+
     setCursorPosition({ x, y });
     setPosition({ x, y });
   };
 
   return (
-    <div 
+    <div
       className="relative overflow-hidden bg-gray-100 rounded-lg h-[500px] w-full"
       onMouseEnter={() => setShowZoom(true)}
       onMouseLeave={() => setShowZoom(false)}
       onMouseMove={handleMouseMove}
     >
-      <img 
-        src={src} 
-        alt="Produto" 
+      <img
+        src={src}
+        alt="Produto"
         className="w-full h-full object-cover"
       />
-      
+
       {showZoom && (
         <div className="absolute inset-0 pointer-events-none">
-          <div 
-            className="absolute inset-0 bg-black bg-opacity-10"
-          >
-            <div 
+          <div className="absolute inset-0 bg-black bg-opacity-10">
+            <div
               className="absolute w-20 h-20 border-2 border-white rounded-md transform -translate-x-1/2 -translate-y-1/2"
-              style={{ 
-                left: `${cursorPosition.x}%`, 
+              style={{
+                left: `${cursorPosition.x}%`,
                 top: `${cursorPosition.y}%`,
                 boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.4)'
               }}
             ></div>
           </div>
-          
+
           <div className="absolute top-2 right-2 bg-white p-4 rounded-lg shadow-lg w-48 h-48 overflow-hidden">
-            <div 
+            <div
               className="absolute w-[400%] h-[400%]"
-              style={{ 
-                backgroundImage: `url(${src})`, 
+              style={{
+                backgroundImage: `url(${src})`,
                 backgroundPosition: `${position.x}% ${position.y}%`,
                 backgroundSize: '400%',
                 backgroundRepeat: 'no-repeat',
@@ -119,11 +128,18 @@ const ImagemZoom = ({ src }) => {
   );
 };
 
+interface ContadorProps {
+  quantidade: number;
+  onIncrement: () => void;
+  onDecrement: () => void;
+  max: number;
+}
+
 // Componente de Contador
-const Contador = ({ quantidade, onIncrement, onDecrement, max }) => {
+const Contador: React.FC<ContadorProps> = ({ quantidade, onIncrement, onDecrement, max }) => {
   return (
     <div className="flex items-center border border-gray-200 rounded-md">
-      <button 
+      <button
         onClick={onDecrement}
         disabled={quantidade <= 1}
         className="px-3 py-1 border-r border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-50"
@@ -131,7 +147,7 @@ const Contador = ({ quantidade, onIncrement, onDecrement, max }) => {
         -
       </button>
       <div className="px-3 py-1 min-w-[40px] text-center">{quantidade}</div>
-      <button 
+      <button
         onClick={onIncrement}
         disabled={quantidade >= max}
         className="px-3 py-1 border-l border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-50"
@@ -144,37 +160,36 @@ const Contador = ({ quantidade, onIncrement, onDecrement, max }) => {
 
 // Componente principal
 export default function ProdutoDetalhe() {
-  const { id } = useParams();
   const [produto] = useState(PRODUTO); // Em uma app real, você buscaria o produto pelo ID
   const [imagemSelecionada, setImagemSelecionada] = useState(0);
   const [corSelecionada, setCorSelecionada] = useState(produto.cores[0]);
-  const [tamanhoSelecionado, setTamanhoSelecionado] = useState(null);
+  const [tamanhoSelecionado, setTamanhoSelecionado] = useState<Tamanho | null>(null);
   const [quantidade, setQuantidade] = useState(1);
   const [isFavorito, setIsFavorito] = useState(false);
   const [mostrarMais, setMostrarMais] = useState(false);
-  
+
   const incrementarQuantidade = () => {
     if (quantidade < produto.estoque) {
       setQuantidade(quantidade + 1);
     }
   };
-  
+
   const decrementarQuantidade = () => {
     if (quantidade > 1) {
       setQuantidade(quantidade - 1);
     }
   };
-  
+
   const toggleFavorito = () => {
     setIsFavorito(!isFavorito);
   };
-  
+
   const adicionarAoCarrinho = () => {
     if (!tamanhoSelecionado) {
       alert('Por favor, selecione um tamanho');
       return;
     }
-    
+
     console.log('Adicionado ao carrinho:', {
       produto: produto.id,
       nome: produto.nome,
@@ -183,10 +198,10 @@ export default function ProdutoDetalhe() {
       quantidade,
       preco: produto.promocao ? produto.precoPromocional : produto.preco
     });
-    
+
     // Aqui você enviaria para seu gerenciador de estado
   };
-  
+
   return (
     <div className="pt-20 pb-10">
       <div className="container">
@@ -200,20 +215,20 @@ export default function ProdutoDetalhe() {
           <span className="mx-2">/</span>
           <span className="text-gray-900">Calça Jeans</span>
         </nav>
-        
+
         {/* Botão Voltar */}
-        <Link 
-          to="/loja" 
+        <Link
+          to="/loja"
           className="inline-flex items-center mb-6 text-shop-primary hover:underline"
         >
           <ArrowLeftIcon className="w-4 h-4 mr-1" />
           <span>Voltar para a loja</span>
         </Link>
-        
+
         {/* Produto */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Galeria */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
@@ -221,31 +236,30 @@ export default function ProdutoDetalhe() {
           >
             {/* Imagem principal com zoom */}
             <ImagemZoom src={produto.imagens[imagemSelecionada]} />
-            
+
             {/* Miniaturas */}
             <div className="grid grid-cols-4 gap-4">
               {produto.imagens.map((imagem, index) => (
                 <button
                   key={index}
                   onClick={() => setImagemSelecionada(index)}
-                  className={`border rounded-md overflow-hidden h-24 transition-all ${
-                    imagemSelecionada === index 
-                      ? 'border-shop-primary ring-2 ring-shop-primary ring-opacity-30' 
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
+                  className={`border rounded-md overflow-hidden h-24 transition-all ${imagemSelecionada === index
+                    ? 'border-shop-primary ring-2 ring-shop-primary ring-opacity-30'
+                    : 'border-gray-200 hover:border-gray-300'
+                    }`}
                 >
-                  <img 
-                    src={imagem} 
-                    alt={`Miniatura ${index + 1}`} 
+                  <img
+                    src={imagem}
+                    alt={`Miniatura ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
                 </button>
               ))}
             </div>
           </motion.div>
-          
+
           {/* Informações do produto */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -256,14 +270,14 @@ export default function ProdutoDetalhe() {
               <h1 className="text-fluid-3xl font-bold text-balance">
                 {produto.nome}
               </h1>
-              
+
               {/* Avaliação */}
               <div className="flex items-center mt-2">
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
-                    <StarIcon 
-                      key={i} 
-                      className={`w-5 h-5 ${i < Math.floor(produto.avaliacao) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} 
+                    <StarIcon
+                      key={i}
+                      className={`w-5 h-5 ${i < Math.floor(produto.avaliacao) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
                     />
                   ))}
                 </div>
@@ -271,7 +285,7 @@ export default function ProdutoDetalhe() {
                   {produto.avaliacao} ({produto.totalAvaliacoes} avaliações)
                 </span>
               </div>
-              
+
               {/* Preço */}
               <div className="mt-4">
                 {produto.promocao ? (
@@ -293,39 +307,38 @@ export default function ProdutoDetalhe() {
                 )}
               </div>
             </div>
-            
+
             {/* Descrição */}
             <div>
               <p className="text-gray-600 text-pretty">
-                {mostrarMais 
-                  ? produto.descricao 
+                {mostrarMais
+                  ? produto.descricao
                   : `${produto.descricao.substring(0, 100)}...`}
               </p>
-              <button 
+              <button
                 onClick={() => setMostrarMais(!mostrarMais)}
                 className="text-shop-primary font-medium hover:underline mt-1"
               >
                 {mostrarMais ? 'Mostrar menos' : 'Ler mais'}
               </button>
             </div>
-            
+
             <hr className="border-gray-200" />
-            
+
             {/* Seletor de cores */}
             <div>
               <h3 className="font-medium mb-2">Cor: <span className="text-gray-600">{corSelecionada.nome}</span></h3>
               <div className="flex items-center gap-3">
                 {produto.cores.map((cor) => (
-                  <button 
+                  <button
                     key={cor.id}
                     onClick={() => setCorSelecionada(cor)}
-                    className={`w-10 h-10 rounded-full relative transition-all ${
-                      corSelecionada.id === cor.id 
-                        ? 'ring-2 ring-offset-2 ring-shop-primary scale-110' 
-                        : 'hover:scale-105'
-                    }`}
+                    className={`w-10 h-10 rounded-full relative transition-all ${corSelecionada.id === cor.id
+                      ? 'ring-2 ring-offset-2 ring-shop-primary scale-110'
+                      : 'hover:scale-105'
+                      }`}
                   >
-                    <span 
+                    <span
                       className="absolute inset-0 rounded-full"
                       style={{ backgroundColor: cor.codigo }}
                     ></span>
@@ -338,7 +351,7 @@ export default function ProdutoDetalhe() {
                 ))}
               </div>
             </div>
-            
+
             {/* Seletor de tamanhos */}
             <div>
               <div className="flex items-baseline justify-between mb-2">
@@ -351,56 +364,54 @@ export default function ProdutoDetalhe() {
               </div>
               <div className="flex flex-wrap gap-2">
                 {produto.tamanhos.map((tamanho) => (
-                  <button 
+                  <button
                     key={tamanho.id}
                     onClick={() => tamanho.disponivel && setTamanhoSelecionado(tamanho)}
                     disabled={!tamanho.disponivel}
-                    className={`w-12 h-12 rounded-md border transition-all ${
-                      tamanhoSelecionado?.id === tamanho.id 
-                        ? 'border-shop-primary bg-shop-primary text-white font-medium'
-                        : tamanho.disponivel
-                          ? 'border-gray-200 hover:border-shop-primary'
-                          : 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
-                    }`}
+                    className={`w-12 h-12 rounded-md border transition-all ${tamanhoSelecionado?.id === tamanho.id
+                      ? 'border-shop-primary bg-shop-primary text-white font-medium'
+                      : tamanho.disponivel
+                        ? 'border-gray-200 hover:border-shop-primary'
+                        : 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
+                      }`}
                   >
                     {tamanho.tamanho}
                   </button>
                 ))}
               </div>
             </div>
-            
+
             {/* Estoque */}
             <div className="flex items-center text-sm">
-              <span className={`inline-block w-3 h-3 rounded-full mr-2 ${
-                produto.estoque > 10 
-                  ? 'bg-green-500' 
-                  : produto.estoque > 0 
-                    ? 'bg-yellow-500' 
-                    : 'bg-red-500'
-              }`}></span>
+              <span className={`inline-block w-3 h-3 rounded-full mr-2 ${produto.estoque > 10
+                ? 'bg-green-500'
+                : produto.estoque > 0
+                  ? 'bg-yellow-500'
+                  : 'bg-red-500'
+                }`}></span>
               <span>
-                {produto.estoque > 10 
-                  ? 'Em estoque' 
-                  : produto.estoque > 0 
-                    ? `Apenas ${produto.estoque} em estoque` 
+                {produto.estoque > 10
+                  ? 'Em estoque'
+                  : produto.estoque > 0
+                    ? `Apenas ${produto.estoque} em estoque`
                     : 'Fora de estoque'}
               </span>
             </div>
-            
+
             {/* Quantidade e botões */}
             <div className="flex flex-col space-y-4">
               <div className="flex items-center gap-4">
                 <h3 className="font-medium">Quantidade:</h3>
-                <Contador 
-                  quantidade={quantidade} 
-                  onIncrement={incrementarQuantidade} 
-                  onDecrement={decrementarQuantidade} 
+                <Contador
+                  quantidade={quantidade}
+                  onIncrement={incrementarQuantidade}
+                  onDecrement={decrementarQuantidade}
                   max={produto.estoque}
                 />
               </div>
-              
+
               <div className="flex items-center gap-4">
-                <motion.button 
+                <motion.button
                   onClick={adicionarAoCarrinho}
                   disabled={!produto.disponivel}
                   className="flex-1 btn-shop-primary"
@@ -409,8 +420,8 @@ export default function ProdutoDetalhe() {
                   <ShoppingBagIcon className="w-5 h-5 mr-2" />
                   Adicionar ao carrinho
                 </motion.button>
-                
-                <motion.button 
+
+                <motion.button
                   onClick={toggleFavorito}
                   className="p-3 rounded-md border border-gray-200 hover:border-shop-accent transition-colors"
                   whileTap={{ scale: 0.95 }}
@@ -424,7 +435,7 @@ export default function ProdutoDetalhe() {
                 </motion.button>
               </div>
             </div>
-            
+
             {/* Informações adicionais */}
             <div className="bg-gray-50 rounded-lg p-4 space-y-3">
               <div className="flex items-center gap-3">
@@ -434,7 +445,7 @@ export default function ProdutoDetalhe() {
                   <p className="text-sm text-gray-600">Prazo de {produto.prazoEntrega}</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-3">
                 <ShieldCheckIcon className="w-5 h-5 text-shop-primary" />
                 <div>
@@ -445,7 +456,7 @@ export default function ProdutoDetalhe() {
             </div>
           </motion.div>
         </div>
-        
+
         {/* Detalhes e avaliações */}
         <div className="mt-16">
           <div className="border-b border-gray-200 mb-8">
@@ -458,16 +469,16 @@ export default function ProdutoDetalhe() {
               </button>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
               <h2 className="text-2xl font-bold mb-4">Especificações</h2>
-              
+
               <div className="space-y-4">
                 <p className="text-gray-600 text-pretty">
                   {produto.descricao}
                 </p>
-                
+
                 <ul className="space-y-2">
                   {produto.detalhes.map((detalhe, index) => (
                     <li key={index} className="flex items-start">
@@ -478,10 +489,10 @@ export default function ProdutoDetalhe() {
                 </ul>
               </div>
             </div>
-            
+
             <div>
               <h2 className="text-2xl font-bold mb-4">Avaliações Recentes</h2>
-              
+
               <div className="space-y-6">
                 {produto.avaliacoes.map((avaliacao) => (
                   <div key={avaliacao.id} className="border-b border-gray-100 pb-4 last:border-b-0">
@@ -491,16 +502,16 @@ export default function ProdutoDetalhe() {
                     </div>
                     <div className="flex my-1">
                       {[...Array(5)].map((_, i) => (
-                        <StarIcon 
-                          key={i} 
-                          className={`w-4 h-4 ${i < avaliacao.nota ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} 
+                        <StarIcon
+                          key={i}
+                          className={`w-4 h-4 ${i < avaliacao.nota ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
                         />
                       ))}
                     </div>
                     <p className="text-gray-600 text-sm">{avaliacao.comentario}</p>
                   </div>
                 ))}
-                
+
                 <button className="w-full py-2 border border-shop-primary text-shop-primary rounded-md hover:bg-shop-primary hover:text-white transition-colors">
                   Ver todas as avaliações
                 </button>
@@ -508,11 +519,11 @@ export default function ProdutoDetalhe() {
             </div>
           </div>
         </div>
-        
+
         {/* Produtos relacionados */}
         <div className="mt-16">
           <h2 className="text-2xl font-bold mb-6">Você também pode gostar</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Aqui seriam exibidos os produtos relacionados */}
             {/* Placeholder para exemplo */}
@@ -524,4 +535,4 @@ export default function ProdutoDetalhe() {
       </div>
     </div>
   );
-} 
+}

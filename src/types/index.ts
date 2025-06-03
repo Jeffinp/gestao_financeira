@@ -7,7 +7,7 @@ export interface Transacao {
   descricao: string;
   recorrente: boolean;
   tipo: 'ganho' | 'gasto';
-  periodo?: 'semanal' | 'quinzenal' | 'mensal' | 'anual';
+  periodo?: string; // Adicionando a propriedade opcional 'periodo'
 }
 
 // Tipos para categorias

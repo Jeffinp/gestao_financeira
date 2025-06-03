@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-    content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+    content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx,css}"],
     darkMode: 'class',
     theme: {
         container: {
@@ -16,39 +16,68 @@ export default {
             },
         },
         extend: {
+            container: {
+                padding: {
+                    DEFAULT: "1rem",
+                    sm: "2rem",
+                    lg: "2rem",
+                },
+            },
             colors: {
-                border: "hsl(var(--border))",
-                input: "hsl(var(--input))",
-                ring: "hsl(var(--ring))",
-                background: "hsl(var(--background))",
-                foreground: "hsl(var(--foreground))",
+                border: {
+                    DEFAULT: "hsl(var(--border))",
+                    dark: "hsl(var(--border-dark))",
+                },
+                input: {
+                    DEFAULT: "hsl(var(--input))",
+                    dark: "hsl(var(--input-dark))",
+                },
+                ring: {
+                    DEFAULT: "hsl(var(--ring))",
+                    dark: "hsl(var(--ring-dark))",
+                },
+                background: {
+                    DEFAULT: "hsl(var(--background))",
+                    dark: "hsl(var(--background-dark))",
+                },
+                foreground: {
+                    DEFAULT: "hsl(var(--foreground))",
+                    dark: "hsl(var(--foreground-dark))",
+                },
                 primary: {
                     DEFAULT: "hsl(var(--primary))",
                     foreground: "hsl(var(--primary-foreground))",
+                    dark: "hsl(var(--primary-dark))",
                 },
                 secondary: {
                     DEFAULT: "hsl(var(--secondary))",
                     foreground: "hsl(var(--secondary-foreground))",
+                    dark: "hsl(var(--secondary-dark))",
                 },
                 destructive: {
                     DEFAULT: "hsl(var(--destructive))",
                     foreground: "hsl(var(--destructive-foreground))",
+                    dark: "hsl(var(--destructive-dark))",
                 },
                 muted: {
                     DEFAULT: "hsl(var(--muted))",
                     foreground: "hsl(var(--muted-foreground))",
+                    dark: "hsl(var(--muted-dark))",
                 },
                 accent: {
                     DEFAULT: "hsl(var(--accent))",
                     foreground: "hsl(var(--accent-foreground))",
+                    dark: "hsl(var(--accent-dark))",
                 },
                 popover: {
                     DEFAULT: "hsl(var(--popover))",
                     foreground: "hsl(var(--popover-foreground))",
+                    dark: "hsl(var(--popover-dark))",
                 },
                 card: {
                     DEFAULT: "hsl(var(--card))",
                     foreground: "hsl(var(--card-foreground))",
+                    dark: "hsl(var(--card-dark))",
                 },
                 // Cores da loja
                 shop: {
@@ -147,4 +176,4 @@ export default {
     plugins: [
         require('@tailwindcss/container-queries'),
     ],
-} 
+}

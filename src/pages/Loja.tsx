@@ -76,8 +76,30 @@ const PRODUTOS = [
   },
 ];
 
+// Adicionar tipos para os produtos e carrinho
+interface Produto {
+  id: number;
+  nome: string;
+  preco: number;
+  categorias: string[];
+  descricao: string;
+  avaliacao: number;
+  imagem: string;
+  disponivel: boolean;
+  promocao: boolean;
+  precoPromocional?: number;
+}
+
+interface ItemCarrinho extends Produto {
+  quantidade: number;
+}
+
 // Componente de Produto
-const ProdutoCard = ({ produto, onAddToCart, onToggleFavorite }) => {
+const ProdutoCard: React.FC<{
+  produto: Produto;
+  onAddToCart: (produto: Produto) => void;
+  onToggleFavorite: (id: number) => void;
+}> = ({ produto, onAddToCart, onToggleFavorite }) => {
   const { ref, inView } = useInView({
     threshold: 0.2,
     triggerOnce: true,
@@ -107,7 +129,7 @@ const ProdutoCard = ({ produto, onAddToCart, onToggleFavorite }) => {
             </span>
           </div>
         )}
-        
+
         {/* Badge de disponibilidade */}
         {!produto.disponivel && (
           <div className="absolute top-2 right-2 z-10">
@@ -116,7 +138,7 @@ const ProdutoCard = ({ produto, onAddToCart, onToggleFavorite }) => {
             </span>
           </div>
         )}
-        
+
         {/* Imagem com efeito de zoom */}
         <div className="overflow-hidden h-64 bg-gray-100">
           <img
@@ -126,9 +148,9 @@ const ProdutoCard = ({ produto, onAddToCart, onToggleFavorite }) => {
             loading="lazy"
           />
         </div>
-        
+
         {/* Botão de favorito */}
-        <button 
+        <button
           onClick={handleFavoriteClick}
           className="absolute top-2 right-2 p-2 rounded-full bg-white bg-opacity-80 shadow-sm hover:bg-opacity-100 transition-all"
           aria-label={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
@@ -140,17 +162,17 @@ const ProdutoCard = ({ produto, onAddToCart, onToggleFavorite }) => {
           )}
         </button>
       </div>
-      
+
       {/* Informações do produto */}
       <div className="p-4">
         <h3 className="text-lg font-semibold text-pretty">{produto.nome}</h3>
-        
+
         {/* Preço com formatação condicional para promoção */}
         <div className="mt-1 flex items-baseline gap-2">
           {produto.promocao ? (
             <>
               <span className="text-shop-accent font-bold text-fluid-lg">
-                {produto.precoPromocional.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                {produto.precoPromocional?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </span>
               <span className="text-gray-400 line-through text-sm">
                 {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
@@ -162,19 +184,19 @@ const ProdutoCard = ({ produto, onAddToCart, onToggleFavorite }) => {
             </span>
           )}
         </div>
-        
+
         {/* Avaliação */}
         <div className="mt-2 flex items-center">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
-              <svg 
-                key={i} 
-                className={`w-4 h-4 ${i < Math.floor(produto.avaliacao) 
-                  ? 'text-yellow-400' 
-                  : i < produto.avaliacao 
-                    ? 'text-yellow-400' 
+              <svg
+                key={i}
+                className={`w-4 h-4 ${i < Math.floor(produto.avaliacao)
+                  ? 'text-yellow-400'
+                  : i < produto.avaliacao
+                    ? 'text-yellow-400'
                     : 'text-gray-300'}`}
-                fill="currentColor" 
+                fill="currentColor"
                 viewBox="0 0 20 20"
               >
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -183,14 +205,14 @@ const ProdutoCard = ({ produto, onAddToCart, onToggleFavorite }) => {
           </div>
           <span className="ml-1 text-gray-500 text-sm">({produto.avaliacao})</span>
         </div>
-        
+
         {/* Botão de adicionar ao carrinho */}
         <div className="mt-4">
           <button
             onClick={() => onAddToCart(produto)}
             disabled={!produto.disponivel}
-            className={`w-full flex items-center justify-center gap-2 ${produto.disponivel 
-              ? 'btn-shop-primary' 
+            className={`w-full flex items-center justify-center gap-2 ${produto.disponivel
+              ? 'btn-shop-primary'
               : 'bg-gray-300 text-gray-500 cursor-not-allowed py-2 px-4 rounded-md'}`}
           >
             <ShoppingBagIcon className="w-5 h-5" />
@@ -203,24 +225,27 @@ const ProdutoCard = ({ produto, onAddToCart, onToggleFavorite }) => {
 };
 
 // Componente de Filtro
-const Filtro = ({ categorias, categoriaSelecionada, onCategoriaChange }) => {
+const Filtro: React.FC<{
+  categorias: string[];
+  categoriaSelecionada: string | null;
+  onCategoriaChange: (categoria: string | null) => void;
+}> = ({ categorias, categoriaSelecionada, onCategoriaChange }) => {
   return (
     <div className="bg-white rounded-lg shadow-card p-4 sticky top-20">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold">Filtros</h2>
         <AdjustmentsHorizontalIcon className="w-6 h-6 text-shop-primary" />
       </div>
-      
+
       <div className="mb-6">
         <h3 className="font-medium mb-2">Categorias</h3>
         <div className="space-y-2">
           <button
             onClick={() => onCategoriaChange(null)}
-            className={`w-full text-left py-2 px-3 rounded-md transition-colors ${
-              categoriaSelecionada === null 
-                ? 'bg-shop-primary text-white' 
-                : 'hover:bg-gray-100'
-            }`}
+            className={`w-full text-left py-2 px-3 rounded-md transition-colors ${categoriaSelecionada === null
+              ? 'bg-shop-primary text-white'
+              : 'hover:bg-gray-100'
+              }`}
           >
             Todas
           </button>
@@ -228,18 +253,17 @@ const Filtro = ({ categorias, categoriaSelecionada, onCategoriaChange }) => {
             <button
               key={categoria}
               onClick={() => onCategoriaChange(categoria)}
-              className={`w-full text-left py-2 px-3 rounded-md transition-colors ${
-                categoriaSelecionada === categoria 
-                  ? 'bg-shop-primary text-white' 
-                  : 'hover:bg-gray-100'
-              }`}
+              className={`w-full text-left py-2 px-3 rounded-md transition-colors ${categoriaSelecionada === categoria
+                ? 'bg-shop-primary text-white'
+                : 'hover:bg-gray-100'
+                }`}
             >
               {categoria.charAt(0).toUpperCase() + categoria.slice(1)}
             </button>
           ))}
         </div>
       </div>
-      
+
       <div className="mb-6">
         <h3 className="font-medium mb-2">Preço</h3>
         <div className="space-y-2">
@@ -252,7 +276,7 @@ const Filtro = ({ categorias, categoriaSelecionada, onCategoriaChange }) => {
           </div>
         </div>
       </div>
-      
+
       <div>
         <h3 className="font-medium mb-2">Disponibilidade</h3>
         <div className="space-y-2">
@@ -271,14 +295,16 @@ const Filtro = ({ categorias, categoriaSelecionada, onCategoriaChange }) => {
 };
 
 // Componente de Busca
-const Busca = ({ onSearch }) => {
+const Busca: React.FC<{
+  onSearch: (termo: string) => void;
+}> = ({ onSearch }) => {
   const [termo, setTermo] = useState('');
-  
-  const handleSubmit = (e) => {
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch(termo);
   };
-  
+
   return (
     <div className="mb-6">
       <form onSubmit={handleSubmit} className="relative">
@@ -296,11 +322,19 @@ const Busca = ({ onSearch }) => {
 };
 
 // Componente de CarrinhoRapido
-const CarrinhoRapido = ({ carrinho, visivel, onClose, onRemover }) => {
-  const total = carrinho.reduce((acc, item) => acc + (item.promocao ? item.precoPromocional : item.preco) * item.quantidade, 0);
-  
+const CarrinhoRapido: React.FC<{
+  carrinho: ItemCarrinho[];
+  visivel: boolean;
+  onClose: () => void;
+  onRemover: (id: number) => void;
+}> = ({ carrinho, visivel, onClose, onRemover }) => {
+  const total = carrinho.reduce(
+    (acc, item) => acc + ((item.promocao && item.precoPromocional ? item.precoPromocional : item.preco) * item.quantidade),
+    0
+  );
+
   return (
-    <motion.div 
+    <motion.div
       className={`fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-2xl z-50 flex flex-col ${visivel ? 'block' : 'hidden'}`}
       initial={{ x: "100%" }}
       animate={{ x: visivel ? 0 : "100%" }}
@@ -311,7 +345,7 @@ const CarrinhoRapido = ({ carrinho, visivel, onClose, onRemover }) => {
           <ShoppingBagIcon className="w-6 h-6" />
           Seu Carrinho
         </h2>
-        <button 
+        <button
           onClick={onClose}
           className="p-2 rounded-full hover:bg-gray-100 transition-colors"
         >
@@ -320,13 +354,13 @@ const CarrinhoRapido = ({ carrinho, visivel, onClose, onRemover }) => {
           </svg>
         </button>
       </div>
-      
+
       <div className="flex-1 overflow-y-auto p-4">
         {carrinho.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <ShoppingBagIcon className="w-16 h-16 text-gray-300 mb-4" />
             <p className="text-gray-500">Seu carrinho está vazio</p>
-            <button 
+            <button
               onClick={onClose}
               className="mt-4 btn-shop-primary"
             >
@@ -337,9 +371,9 @@ const CarrinhoRapido = ({ carrinho, visivel, onClose, onRemover }) => {
           <div className="space-y-4">
             {carrinho.map((item) => (
               <div key={item.id} className="flex items-center gap-4 p-2 border-b">
-                <img 
-                  src={item.imagem} 
-                  alt={item.nome} 
+                <img
+                  src={item.imagem}
+                  alt={item.nome}
                   className="w-16 h-16 object-cover rounded-md"
                 />
                 <div className="flex-1">
@@ -347,13 +381,13 @@ const CarrinhoRapido = ({ carrinho, visivel, onClose, onRemover }) => {
                   <div className="flex items-center justify-between mt-1">
                     <div>
                       <span className="text-shop-primary font-medium">
-                        {(item.promocao ? item.precoPromocional : item.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                        {(item.promocao && item.precoPromocional ? item.precoPromocional : item.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                       </span>
                       <span className="text-gray-500 text-sm ml-2">
                         x {item.quantidade}
                       </span>
                     </div>
-                    <button 
+                    <button
                       onClick={() => onRemover(item.id)}
                       className="text-gray-400 hover:text-shop-error transition-colors"
                     >
@@ -368,7 +402,7 @@ const CarrinhoRapido = ({ carrinho, visivel, onClose, onRemover }) => {
           </div>
         )}
       </div>
-      
+
       {carrinho.length > 0 && (
         <div className="p-4 border-t">
           <div className="flex items-center justify-between mb-4">
@@ -380,7 +414,7 @@ const CarrinhoRapido = ({ carrinho, visivel, onClose, onRemover }) => {
           <button className="w-full btn-shop-primary mb-2">
             Finalizar Compra
           </button>
-          <button 
+          <button
             onClick={onClose}
             className="w-full btn-shop-outline"
           >
@@ -394,73 +428,73 @@ const CarrinhoRapido = ({ carrinho, visivel, onClose, onRemover }) => {
 
 // Componente principal da loja
 export default function Loja() {
-  const [produtos, setProdutos] = useState(PRODUTOS);
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
+  const [produtos, setProdutos] = useState<Produto[]>(PRODUTOS);
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState<string | null>(null);
   const [termoBusca, setTermoBusca] = useState('');
   const [carrinhoVisivel, setCarrinhoVisivel] = useState(false);
-  const [carrinho, setCarrinho] = useState([]);
+  const [carrinho, setCarrinho] = useState<ItemCarrinho[]>([]);
   const [contagemCarrinho, setContagemCarrinho] = useState(0);
-  
+
   // Extrair categorias únicas
   const categorias = [...new Set(PRODUTOS.flatMap(p => p.categorias))];
-  
+
   // Filtrar produtos
   useEffect(() => {
     let produtosFiltrados = [...PRODUTOS];
-    
+
     // Filtrar por categoria
     if (categoriaSelecionada) {
       produtosFiltrados = produtosFiltrados.filter(p => p.categorias.includes(categoriaSelecionada));
     }
-    
+
     // Filtrar por termo de busca
     if (termoBusca) {
       const termo = termoBusca.toLowerCase();
-      produtosFiltrados = produtosFiltrados.filter(p => 
-        p.nome.toLowerCase().includes(termo) || 
+      produtosFiltrados = produtosFiltrados.filter(p =>
+        p.nome.toLowerCase().includes(termo) ||
         p.descricao.toLowerCase().includes(termo) ||
         p.categorias.some(c => c.toLowerCase().includes(termo))
       );
     }
-    
+
     setProdutos(produtosFiltrados);
   }, [categoriaSelecionada, termoBusca]);
-  
+
   // Atualizar contagem do carrinho
   useEffect(() => {
     const total = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
     setContagemCarrinho(total);
   }, [carrinho]);
-  
+
   // Adicionar ao carrinho
-  const adicionarAoCarrinho = (produto) => {
+  const adicionarAoCarrinho = (produto: Produto) => {
     setCarrinho(prev => {
       const existe = prev.find(item => item.id === produto.id);
-      
+
       if (existe) {
-        return prev.map(item => 
-          item.id === produto.id 
-            ? { ...item, quantidade: item.quantidade + 1 } 
+        return prev.map(item =>
+          item.id === produto.id
+            ? { ...item, quantidade: item.quantidade + 1 }
             : item
         );
       } else {
         return [...prev, { ...produto, quantidade: 1 }];
       }
     });
-    
+
     // Feedback visual
     setCarrinhoVisivel(true);
   };
-  
+
   // Remover do carrinho
-  const removerDoCarrinho = (id) => {
+  const removerDoCarrinho = (id: number) => {
     setCarrinho(prev => {
       const item = prev.find(i => i.id === id);
-      
-      if (item.quantidade > 1) {
-        return prev.map(i => 
-          i.id === id 
-            ? { ...i, quantidade: i.quantidade - 1 } 
+
+      if (item && item.quantidade > 1) {
+        return prev.map(i =>
+          i.id === id
+            ? { ...i, quantidade: i.quantidade - 1 }
             : i
         );
       } else {
@@ -468,31 +502,30 @@ export default function Loja() {
       }
     });
   };
-  
+
   // Toggle favorito
-  const toggleFavorito = (id) => {
-    // Implementação real dependeria de estado global ou banco de dados
+  const toggleFavorito = (id: number) => {
     console.log(`Toggle favorito para produto ${id}`);
   };
-  
+
   return (
     <div className="pt-20 pb-10">
       {/* Sobreposição escura quando o carrinho está visível */}
       {carrinhoVisivel && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40"
           onClick={() => setCarrinhoVisivel(false)}
         />
       )}
-      
+
       {/* Carrinho rápido */}
-      <CarrinhoRapido 
-        carrinho={carrinho} 
-        visivel={carrinhoVisivel} 
-        onClose={() => setCarrinhoVisivel(false)} 
-        onRemover={removerDoCarrinho} 
+      <CarrinhoRapido
+        carrinho={carrinho}
+        visivel={carrinhoVisivel}
+        onClose={() => setCarrinhoVisivel(false)}
+        onRemover={removerDoCarrinho}
       />
-      
+
       <div className="container">
         {/* Cabeçalho da loja */}
         <div className="mb-8">
@@ -501,14 +534,14 @@ export default function Loja() {
             Encontre os melhores produtos com os melhores preços.
           </p>
         </div>
-        
+
         {/* Barra superior */}
         <div className="flex justify-between items-center mb-6">
           <div>
             <span className="text-gray-500">Mostrando {produtos.length} produtos</span>
           </div>
-          
-          <button 
+
+          <button
             onClick={() => setCarrinhoVisivel(true)}
             className="flex items-center gap-2 p-2 rounded-md bg-shop-primary text-white relative"
           >
@@ -521,21 +554,21 @@ export default function Loja() {
             )}
           </button>
         </div>
-        
+
         {/* Busca */}
         <Busca onSearch={setTermoBusca} />
-        
+
         {/* Layout principal */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Coluna de filtros */}
           <div className="lg:col-span-1">
-            <Filtro 
-              categorias={categorias} 
-              categoriaSelecionada={categoriaSelecionada} 
-              onCategoriaChange={setCategoriaSelecionada} 
+            <Filtro
+              categorias={categorias}
+              categoriaSelecionada={categoriaSelecionada}
+              onCategoriaChange={setCategoriaSelecionada}
             />
           </div>
-          
+
           {/* Grid de produtos */}
           <div className="lg:col-span-3">
             {produtos.length === 0 ? (
@@ -545,7 +578,7 @@ export default function Loja() {
                 <p className="text-gray-500 mb-4">
                   Tente ajustar seus filtros ou buscar por outro termo.
                 </p>
-                <button 
+                <button
                   onClick={() => {
                     setCategoriaSelecionada(null);
                     setTermoBusca('');
@@ -558,10 +591,10 @@ export default function Loja() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {produtos.map((produto) => (
-                  <ProdutoCard 
-                    key={produto.id} 
-                    produto={produto} 
-                    onAddToCart={adicionarAoCarrinho} 
+                  <ProdutoCard
+                    key={produto.id}
+                    produto={produto}
+                    onAddToCart={adicionarAoCarrinho}
                     onToggleFavorite={toggleFavorito}
                   />
                 ))}
@@ -572,4 +605,4 @@ export default function Loja() {
       </div>
     </div>
   );
-} 
+}
