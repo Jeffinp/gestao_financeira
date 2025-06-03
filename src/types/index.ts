@@ -7,6 +7,7 @@ export interface Transacao {
   descricao: string;
   recorrente: boolean;
   tipo: 'ganho' | 'gasto';
+  periodo?: 'semanal' | 'quinzenal' | 'mensal' | 'anual';
 }
 
 // Tipos para categorias
@@ -49,4 +50,4 @@ export interface DadosRelatorio {
   gastosPorCategoria: Record<string, number>;
   ganhosPorCategoria: Record<string, number>;
   transacoes: Transacao[];
-} 
+}

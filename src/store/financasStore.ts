@@ -8,17 +8,17 @@ interface FinancasState {
   transacoes: Transacao[];
   categorias: Categoria[];
   lembretes: Lembrete[];
-  
+
   // Ações para transações
   adicionarTransacao: (transacao: Omit<Transacao, 'id'>) => void;
   removerTransacao: (id: number) => void;
   editarTransacao: (id: number, transacao: Partial<Omit<Transacao, 'id'>>) => void;
-  
+
   // Ações para categorias
   adicionarCategoria: (categoria: Omit<Categoria, 'id'>) => void;
   removerCategoria: (id: number) => void;
   editarCategoria: (id: number, categoria: Partial<Omit<Categoria, 'id'>>) => void;
-  
+
   // Ações para lembretes
   adicionarLembrete: (lembrete: Omit<Lembrete, 'id'>) => void;
   removerLembrete: (id: number) => void;
@@ -77,126 +77,126 @@ export const useFinancasStore = create<FinancasState>((set) => ({
   transacoes: transacoesIniciais,
   categorias: categoriasIniciais,
   lembretes: lembretesIniciais,
-  
+
   // Ações para transações
   adicionarTransacao: (transacao) => set((state) => {
     const novaTransacao: Transacao = {
-      id: Math.max(0, ...state.transacoes.map(t => t.id)) + 1,
+      id: Math.max(0, ...state.transacoes.map((t: Transacao) => t.id)) + 1,
       ...transacao
     };
-    
+
     // Atualiza o saldo
-    const novoSaldo = transacao.tipo === 'ganho' 
-      ? state.saldo + transacao.valor 
+    const novoSaldo = transacao.tipo === 'ganho'
+      ? state.saldo + transacao.valor
       : state.saldo - transacao.valor;
-    
-    return { 
+
+    return {
       transacoes: [novaTransacao, ...state.transacoes],
       saldo: novoSaldo
     };
   }),
-  
-  removerTransacao: (id) => set((state) => {
-    const transacao = state.transacoes.find(t => t.id === id);
+
+  removerTransacao: (id: number) => set((state) => {
+    const transacao = state.transacoes.find((t: Transacao) => t.id === id);
     if (!transacao) return state;
-    
+
     // Atualiza o saldo ao remover
-    const novoSaldo = transacao.tipo === 'ganho' 
-      ? state.saldo - transacao.valor 
+    const novoSaldo = transacao.tipo === 'ganho'
+      ? state.saldo - transacao.valor
       : state.saldo + transacao.valor;
-    
-    return { 
-      transacoes: state.transacoes.filter(t => t.id !== id),
+
+    return {
+      transacoes: state.transacoes.filter((t: Transacao) => t.id !== id),
       saldo: novoSaldo
     };
   }),
-  
-  editarTransacao: (id, dadosAtualizados) => set((state) => {
-    const transacaoIndex = state.transacoes.findIndex(t => t.id === id);
+
+  editarTransacao: (id: number, dadosAtualizados: Partial<Omit<Transacao, 'id'>>) => set((state) => {
+    const transacaoIndex = state.transacoes.findIndex((t: Transacao) => t.id === id);
     if (transacaoIndex === -1) return state;
-    
+
     const transacaoAntiga = state.transacoes[transacaoIndex];
-    
+
     // Cria a transação atualizada
     const transacaoAtualizada = {
       ...transacaoAntiga,
       ...dadosAtualizados
     };
-    
+
     // Calcula o impacto no saldo
     let novoSaldo = state.saldo;
-    
+
     // Remove o valor da transação antiga do saldo
     if (transacaoAntiga.tipo === 'ganho') {
       novoSaldo -= transacaoAntiga.valor;
     } else {
       novoSaldo += transacaoAntiga.valor;
     }
-    
+
     // Adiciona o valor da transação nova ao saldo
     if (transacaoAtualizada.tipo === 'ganho') {
       novoSaldo += transacaoAtualizada.valor;
     } else {
       novoSaldo -= transacaoAtualizada.valor;
     }
-    
+
     // Atualiza a lista de transações
     const novasTransacoes = [...state.transacoes];
     novasTransacoes[transacaoIndex] = transacaoAtualizada;
-    
-    return { 
+
+    return {
       transacoes: novasTransacoes,
       saldo: novoSaldo
     };
   }),
-  
+
   // Ações para categorias
   adicionarCategoria: (categoria) => set((state) => ({
     categorias: [
       ...state.categorias,
-      { id: Math.max(0, ...state.categorias.map(c => c.id)) + 1, ...categoria }
+      { id: Math.max(0, ...state.categorias.map((c: Categoria) => c.id)) + 1, ...categoria }
     ]
   })),
-  
-  removerCategoria: (id) => set((state) => ({
-    categorias: state.categorias.filter(c => c.id !== id)
+
+  removerCategoria: (id: number) => set((state) => ({
+    categorias: state.categorias.filter((c: Categoria) => c.id !== id)
   })),
-  
-  editarCategoria: (id, dadosAtualizados) => set((state) => {
-    const categoriaIndex = state.categorias.findIndex(c => c.id === id);
+
+  editarCategoria: (id: number, dadosAtualizados: Partial<Omit<Categoria, 'id'>>) => set((state) => {
+    const categoriaIndex = state.categorias.findIndex((c: Categoria) => c.id === id);
     if (categoriaIndex === -1) return state;
-    
+
     const novasCategorias = [...state.categorias];
     novasCategorias[categoriaIndex] = {
       ...novasCategorias[categoriaIndex],
       ...dadosAtualizados
     };
-    
+
     return { categorias: novasCategorias };
   }),
-  
+
   // Ações para lembretes
   adicionarLembrete: (lembrete) => set((state) => ({
     lembretes: [
       ...state.lembretes,
-      { id: Math.max(0, ...state.lembretes.map(l => l.id)) + 1, ...lembrete }
+      { id: Math.max(0, ...state.lembretes.map((l: Lembrete) => l.id)) + 1, ...lembrete }
     ]
   })),
-  
-  removerLembrete: (id) => set((state) => ({
-    lembretes: state.lembretes.filter(l => l.id !== id)
+
+  removerLembrete: (id: number) => set((state) => ({
+    lembretes: state.lembretes.filter((l: Lembrete) => l.id !== id)
   })),
-  
-  editarLembrete: (id, dadosAtualizados) => set((state) => {
-    const lembreteIndex = state.lembretes.findIndex(l => l.id === id);
+
+  editarLembrete: (id: number, dadosAtualizados: Partial<Omit<Lembrete, 'id'>>) => set((state) => {
+    const lembreteIndex = state.lembretes.findIndex((l: Lembrete) => l.id === id);
     if (lembreteIndex === -1) return state;
-    
+
     const novosLembretes = [...state.lembretes];
     novosLembretes[lembreteIndex] = {
       ...novosLembretes[lembreteIndex],
       ...dadosAtualizados
     };
-    
+
     return { lembretes: novosLembretes };
   }),
-})); 
+}));
