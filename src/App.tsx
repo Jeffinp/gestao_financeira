@@ -6,6 +6,8 @@ import Gastos from './pages/Gastos';
 import Ganhos from './pages/Ganhos';
 import Historico from './pages/Historico';
 import Agenda from './pages/Agenda';
+import Loja from './pages/Loja';
+import ProdutoDetalhe from './pages/ProdutoDetalhe';
 
 function App() {
   return (
@@ -18,6 +20,9 @@ function App() {
             <Route path="/ganhos" element={<Ganhos />} />
             <Route path="/historico" element={<Historico />} />
             <Route path="/agenda" element={<Agenda />} />
+            <Route path="/loja" element={<Loja />} />
+            <Route path="/loja/:id" element={<ProdutoDetalhe />} />
+            <Route path="/loja/categorias/:categoria" element={<Loja />} />
           </Routes>
         </Layout>
       </Router>

@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
-import { MoonIcon, SunIcon } from '@heroicons/react/24/outline';
+import { MoonIcon, SunIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
 
 const navItems = [
     { name: 'Dashboard', path: '/' },
@@ -8,6 +8,7 @@ const navItems = [
     { name: 'Ganhos', path: '/ganhos' },
     { name: 'Histórico', path: '/historico' },
     { name: 'Agenda', path: '/agenda' },
+    { name: 'Loja', path: '/loja', icon: ShoppingBagIcon },
 ];
 
 export default function Navbar() {
@@ -26,17 +27,24 @@ export default function Navbar() {
                 <div className="flex-1 flex justify-center">
                     <ul className="flex space-x-1">
                         {navItems.map((item) => {
-                            const isActive = location.pathname === item.path;
+                            const isActive = location.pathname === item.path || 
+                                            (item.path !== '/' && location.pathname.startsWith(item.path));
+                            const Icon = item.icon;
+                            
                             return (
                                 <li key={item.path}>
                                     <Link
                                         to={item.path}
-                                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
+                                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${isActive
                                             ? 'bg-primary text-primary-foreground'
                                             : 'text-foreground hover:bg-secondary hover:text-secondary-foreground'
                                             }`}
                                     >
+                                        {Icon && <Icon className="w-4 h-4" />}
                                         {item.name}
+                                        {item.name === 'Loja' && (
+                                            <span className="ml-1 bg-shop-highlight text-xs font-bold px-1.5 py-0.5 rounded-full">Novo</span>
+                                        )}
                                     </Link>
                                 </li>
                             );

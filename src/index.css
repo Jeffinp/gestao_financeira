@@ -22,6 +22,16 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
+
+    /* Cores da loja - Light Mode */
+    --shop-primary: 230 80% 50%;
+    --shop-secondary: 250 60% 60%;
+    --shop-accent: 340 80% 55%;
+    --shop-highlight: 35 100% 60%;
+    --shop-success: 142 70% 45%;
+    --shop-warning: 35 100% 50%;
+    --shop-error: 0 80% 50%;
+    --shop-info: 200 80% 50%;
   }
 
   .dark {
@@ -44,15 +54,161 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 48%;
+
+    /* Cores da loja - Dark Mode */
+    --shop-primary: 230 70% 60%;
+    --shop-secondary: 250 50% 70%;
+    --shop-accent: 340 70% 65%;
+    --shop-highlight: 35 90% 65%;
+    --shop-success: 142 60% 55%;
+    --shop-warning: 35 90% 60%;
+    --shop-error: 0 70% 60%;
+    --shop-info: 200 70% 60%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Animações e transições globais */
+@layer utilities {
+  .transition-standard {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+
+  .transition-fast {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+
+  .transition-slow {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 500ms;
+  }
+
+  .hover-scale {
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.03);
+  }
+
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
+
+/* Fontes responsivas com clamp */
+@layer utilities {
+  .text-fluid-xs {
+    font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  }
+
+  .text-fluid-sm {
+    font-size: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+  }
+
+  .text-fluid-base {
+    font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  }
+
+  .text-fluid-lg {
+    font-size: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+  }
+
+  .text-fluid-xl {
+    font-size: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  }
+
+  .text-fluid-2xl {
+    font-size: clamp(1.5rem, 1.3rem + 1vw, 1.875rem);
+  }
+
+  .text-fluid-3xl {
+    font-size: clamp(1.875rem, 1.65rem + 1.125vw, 2.25rem);
+  }
+
+  .text-fluid-4xl {
+    font-size: clamp(2.25rem, 2rem + 1.25vw, 3rem);
+  }
+
+  .text-fluid-5xl {
+    font-size: clamp(3rem, 2.5rem + 2.5vw, 4rem);
+  }
+}
+
+/* Estilos específicos para loja */
+@layer components {
+  .btn-shop-primary {
+    @apply bg-shop-primary text-white font-medium py-2 px-4 rounded-md shadow-button hover:shadow-button-hover transition-all duration-300 hover:scale-105 active:scale-95;
+  }
+
+  .btn-shop-secondary {
+    @apply bg-shop-secondary text-white font-medium py-2 px-4 rounded-md shadow-button hover:shadow-button-hover transition-all duration-300 hover:scale-105 active:scale-95;
+  }
+
+  .btn-shop-accent {
+    @apply bg-shop-accent text-white font-medium py-2 px-4 rounded-md shadow-button hover:shadow-button-hover transition-all duration-300 hover:scale-105 active:scale-95;
+  }
+
+  .btn-shop-outline {
+    @apply border border-shop-primary text-shop-primary font-medium py-2 px-4 rounded-md transition-all duration-300 hover:bg-shop-primary hover:text-white hover:scale-105 active:scale-95;
+  }
+
+  .card-product {
+    @apply bg-card rounded-lg overflow-hidden shadow-card transition-all duration-300 hover:shadow-card-hover;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply bg-shop-primary bg-opacity-10 text-shop-primary;
+  }
+
+  .badge-secondary {
+    @apply bg-shop-secondary bg-opacity-10 text-shop-secondary;
+  }
+
+  .badge-accent {
+    @apply bg-shop-accent bg-opacity-10 text-shop-accent;
+  }
+
+  .badge-success {
+    @apply bg-shop-success bg-opacity-10 text-shop-success;
+  }
+
+  .badge-error {
+    @apply bg-shop-error bg-opacity-10 text-shop-error;
   }
 }

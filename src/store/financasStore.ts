@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { Transacao, Categoria, Lembrete } from '../types';
 
+// Definição do estado e ações da store
 interface FinancasState {
   // Estado
   saldo: number;
@@ -8,21 +9,24 @@ interface FinancasState {
   categorias: Categoria[];
   lembretes: Lembrete[];
   
-  // Ações
+  // Ações para transações
   adicionarTransacao: (transacao: Omit<Transacao, 'id'>) => void;
   removerTransacao: (id: number) => void;
   editarTransacao: (id: number, transacao: Partial<Omit<Transacao, 'id'>>) => void;
   
+  // Ações para categorias
   adicionarCategoria: (categoria: Omit<Categoria, 'id'>) => void;
   removerCategoria: (id: number) => void;
   editarCategoria: (id: number, categoria: Partial<Omit<Categoria, 'id'>>) => void;
   
+  // Ações para lembretes
   adicionarLembrete: (lembrete: Omit<Lembrete, 'id'>) => void;
   removerLembrete: (id: number) => void;
   editarLembrete: (id: number, lembrete: Partial<Omit<Lembrete, 'id'>>) => void;
 }
 
-// Dados iniciais para categorias
+// Dados iniciais
+// Categorias
 const categoriasIniciais: Categoria[] = [
   { id: 1, nome: 'Alimentação', tipo: 'gasto' },
   { id: 2, nome: 'Transporte', tipo: 'gasto' },
@@ -37,7 +41,7 @@ const categoriasIniciais: Categoria[] = [
   { id: 11, nome: 'Outros Ganhos', tipo: 'ganho' },
 ];
 
-// Dados iniciais para transações
+// Transações
 const transacoesIniciais: Transacao[] = [
   { id: 1, tipo: 'gasto', valor: 157.35, categoria: 'Alimentação', data: '2023-08-12', descricao: 'Supermercado', recorrente: false },
   { id: 2, tipo: 'ganho', valor: 3500.00, categoria: 'Salário', data: '2023-08-05', descricao: 'Salário mensal', recorrente: true },
@@ -47,7 +51,7 @@ const transacoesIniciais: Transacao[] = [
   { id: 6, tipo: 'ganho', valor: 250.00, categoria: 'Investimentos', data: '2023-08-20', descricao: 'Dividendos', recorrente: false },
 ];
 
-// Dados iniciais para lembretes
+// Lembretes
 const lembretesIniciais: Lembrete[] = [
   { id: 1, titulo: 'Pagamento do Aluguel', descricao: 'Vencimento do aluguel', data: '2023-09-05', valor: 1200, tipo: 'gasto', notificar: true },
   { id: 2, titulo: 'Recebimento do Salário', descricao: 'Depósito do salário mensal', data: '2023-09-05', valor: 3500, tipo: 'ganho', notificar: true },
@@ -55,7 +59,7 @@ const lembretesIniciais: Lembrete[] = [
   { id: 4, titulo: 'Consulta Médica', descricao: 'Consulta com Dr. Silva', data: '2023-09-15', notificar: false },
 ];
 
-// Cálculo do saldo inicial baseado nas transações
+// Função para calcular o saldo inicial
 const calcularSaldoInicial = (transacoes: Transacao[]): number => {
   return transacoes.reduce((acc, transacao) => {
     if (transacao.tipo === 'ganho') {
@@ -66,6 +70,7 @@ const calcularSaldoInicial = (transacoes: Transacao[]): number => {
   }, 0);
 };
 
+// Criação da store usando Zustand
 export const useFinancasStore = create<FinancasState>((set) => ({
   // Estado inicial
   saldo: calcularSaldoInicial(transacoesIniciais),
