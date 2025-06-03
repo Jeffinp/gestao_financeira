@@ -9,7 +9,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
-      <main>{children}</main>
+      <main className="px-4 sm:px-6 lg:px-8">{children}</main>
     </div>
   );
-} 
+}

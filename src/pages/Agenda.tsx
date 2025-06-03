@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { CalendarIcon, BellIcon, PlusIcon, CheckCircleIcon, TrashIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { CalendarIcon, PlusIcon, CheckCircleIcon, TrashIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { BellIcon as BellIconSolid } from '@heroicons/react/24/solid';
 import { useFinancasStore } from '../store/financasStore';
 import type { Lembrete } from '../types';
@@ -347,10 +347,10 @@ export default function Agenda() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.3, delay: 0.05 * index }}
                                 className={`p-4 rounded-lg hover:shadow-md transition-all ${isHoje
-                                    ? 'bg-shop-primary bg-opacity-5 border border-shop-primary border-opacity-20'
-                                    : isPassado
-                                      ? 'bg-gray-100 border border-gray-200'
-                                      : 'bg-secondary/30'
+                                  ? 'bg-shop-primary bg-opacity-5 border border-shop-primary border-opacity-20'
+                                  : isPassado
+                                    ? 'bg-gray-100 border border-gray-200'
+                                    : 'bg-secondary/30'
                                   }`}
                               >
                                 <div className="flex justify-between">
@@ -423,4 +423,4 @@ export default function Agenda() {
       </div>
     </div>
   );
-} 
+}

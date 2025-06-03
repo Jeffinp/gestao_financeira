@@ -1,6 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
     :root {
@@ -64,6 +61,24 @@
         --ring: var(--color-primary-light);
 
         --radius: 0.5rem;
+
+        /* Cores da loja - Light Mode */
+        --shop-primary: 217 91% 60%;
+        /* #2563EB */
+        --shop-secondary: 160 84% 39%;
+        /* #10B981 */
+        --shop-accent: 0 84% 60%;
+        /* #EF4444 */
+        --shop-highlight: 35 100% 60%;
+        /* #FBBF24 */
+        --shop-success: 142 70% 45%;
+        /* #22C55E */
+        --shop-warning: 35 100% 50%;
+        /* #F59E42 */
+        --shop-error: 0 80% 50%;
+        /* #EF4444 */
+        --shop-info: 200 80% 50%;
+        /* #3B82F6 */
     }
 
     .dark {
@@ -95,6 +110,24 @@
         --border: 215 28% 25%;
         --input: 215 28% 25%;
         --ring: var(--color-primary-dark);
+
+        /* Cores da loja - Dark Mode */
+        --shop-primary: 213 94% 68%;
+        /* #3B82F6 */
+        --shop-secondary: 152 76% 53%;
+        /* #34D399 */
+        --shop-accent: 0 91% 71%;
+        /* #F87171 */
+        --shop-highlight: 35 90% 65%;
+        /* #FBBF24 */
+        --shop-success: 142 60% 55%;
+        /* #22D3EE */
+        --shop-warning: 35 90% 60%;
+        /* #F59E42 */
+        --shop-error: 0 70% 60%;
+        /* #EF4444 */
+        --shop-info: 200 70% 60%;
+        /* #3B82F6 */
     }
 }
 
@@ -125,43 +158,12 @@
         transition: all 0.3s ease;
     }
 
-    .hover-lift {
-        transition: all 0.3s ease;
-    }
-
-    .hover-lift:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    }
+    /* Estilos adicionais personalizados */
 }
 
-.badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.125rem 0.5rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 500;
-}
-
-.badge-primary {
-    background-color: hsla(var(--primary), 0.2);
-    color: hsl(var(--primary));
-}
-
-.badge-secondary {
-    background-color: hsla(var(--secondary), 0.2);
-    color: hsl(var(--secondary));
-}
-
-.badge-destructive {
-    background-color: hsla(var(--destructive), 0.2);
-    color: hsl(var(--destructive));
-}
-
-.badge-accent {
-    background-color: hsla(var(--accent), 0.2);
-    color: hsl(var(--accent-foreground));
+/* Transitions for theme switching */
+* {
+    transition: color 0.2s ease;
 }
 
 

@@ -13,42 +13,42 @@ const fadeInUp = {
 export default function Dashboard() {
   const { saldo, transacoes } = useFinancasStore();
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Simulando carregamento de dados
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
-    
+
     return () => clearTimeout(timer);
   }, []);
-  
+
   // Calcula totais do mês atual
   const dataAtual = new Date();
   const primeiroDiaMes = new Date(dataAtual.getFullYear(), dataAtual.getMonth(), 1);
   const ultimoDiaMes = new Date(dataAtual.getFullYear(), dataAtual.getMonth() + 1, 0);
-  
+
   const transacoesMes = transacoes.filter(t => {
     const dataTransacao = new Date(t.data);
     return dataTransacao >= primeiroDiaMes && dataTransacao <= ultimoDiaMes;
   });
-  
+
   const ganhosMes = transacoesMes
     .filter(t => t.tipo === 'ganho')
     .reduce((total, t) => total + t.valor, 0);
-    
+
   const gastosMes = transacoesMes
     .filter(t => t.tipo === 'gasto')
     .reduce((total, t) => total + t.valor, 0);
-  
+
   // Obter transações recentes (últimas 5)
   const transacoesRecentes = [...transacoes]
     .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
     .slice(0, 5);
-  
+
   // Calcular percentual de crescimento (simulado)
   const percentualCrescimento = Math.round((ganhosMes - gastosMes) / (ganhosMes || 1) * 100);
-  
+
   // Simular alguns dados para os gráficos
   const categorias = [
     { nome: 'Alimentação', valor: 1200, cor: '#3b82f6' },
@@ -57,36 +57,35 @@ export default function Dashboard() {
     { nome: 'Moradia', valor: 1500, cor: '#ef4444' },
     { nome: 'Outros', valor: 300, cor: '#8b5cf6' }
   ];
-  
+
   const totalCategorias = categorias.reduce((acc, cat) => acc + cat.valor, 0);
-  
   return (
-    <div className="container pt-24 pb-10">
-      <motion.div 
+    <div className="container max-w-7xl mx-auto pt-24 pb-10">
+      <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="flex flex-col md:flex-row md:items-center justify-between mb-8"
       >
-        <div>
-          <h1 className="text-fluid-3xl font-bold text-balance">Painel Financeiro</h1>
-          <p className="text-muted-foreground mt-1">Resumo das suas finanças</p>
+        <div className="mb-4 md:mb-0">
+          <h1 className="text-fluid-3xl font-bold text-balance mb-2">Painel Financeiro</h1>
+          <p className="text-muted-foreground">Resumo das suas finanças</p>
         </div>
-        
-        <button 
-          className="mt-3 md:mt-0 flex items-center gap-2 text-sm hover:text-shop-primary transition-colors"
+
+        <button
+          className="flex items-center gap-2 text-sm hover:text-shop-primary transition-colors duration-200 self-start md:self-center"
           onClick={() => window.location.reload()}
         >
           <ArrowPathIcon className="h-4 w-4" />
           <span>Atualizar informações</span>
         </button>
       </motion.div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <motion.div 
+        <motion.div
           {...fadeInUp}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="bg-card hover-lift rounded-xl shadow-card p-6 border border-border/50"
+          className="bg-card hover-lift rounded-xl shadow-card p-6"
         >
           <div className="flex items-center gap-4">
             <div className="p-3 bg-shop-primary bg-opacity-10 rounded-lg">
@@ -103,7 +102,7 @@ export default function Dashboard() {
               )}
             </div>
           </div>
-          
+
           {!isLoading && (
             <div className="mt-4 pt-4 border-t border-border/30">
               <div className="flex items-center text-sm">
@@ -120,11 +119,10 @@ export default function Dashboard() {
             </div>
           )}
         </motion.div>
-        
-        <motion.div 
+        <motion.div
           {...fadeInUp}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-card hover-lift rounded-xl shadow-card p-6 border border-border/50"
+          className="bg-card hover-lift rounded-xl shadow-card p-6"
         >
           <div className="flex items-center gap-4">
             <div className="p-3 bg-green-500 bg-opacity-10 rounded-lg">
@@ -141,7 +139,7 @@ export default function Dashboard() {
               )}
             </div>
           </div>
-          
+
           {!isLoading && ganhosMes > 0 && (
             <div className="mt-4 pt-4 border-t border-border/30">
               <div className="flex items-center justify-between text-sm">
@@ -149,19 +147,18 @@ export default function Dashboard() {
                 <span className="font-medium">60%</span>
               </div>
               <div className="w-full bg-gray-100 rounded-full h-2 mt-2">
-                <div 
-                  className="bg-green-500 h-2 rounded-full transition-all" 
+                <div
+                  className="bg-green-500 h-2 rounded-full transition-all"
                   style={{ width: '60%' }}
                 ></div>
               </div>
             </div>
           )}
         </motion.div>
-        
-        <motion.div 
+        <motion.div
           {...fadeInUp}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="bg-card hover-lift rounded-xl shadow-card p-6 border border-border/50"
+          className="bg-card hover-lift rounded-xl shadow-card p-6"
         >
           <div className="flex items-center gap-4">
             <div className="p-3 bg-red-500 bg-opacity-10 rounded-lg">
@@ -178,7 +175,7 @@ export default function Dashboard() {
               )}
             </div>
           </div>
-          
+
           {!isLoading && gastosMes > 0 && (
             <div className="mt-4 pt-4 border-t border-border/30">
               <div className="flex items-center justify-between text-sm">
@@ -186,8 +183,8 @@ export default function Dashboard() {
                 <span className="font-medium">80%</span>
               </div>
               <div className="w-full bg-gray-100 rounded-full h-2 mt-2">
-                <div 
-                  className="bg-red-500 h-2 rounded-full transition-all" 
+                <div
+                  className="bg-red-500 h-2 rounded-full transition-all"
                   style={{ width: '80%' }}
                 ></div>
               </div>
@@ -195,63 +192,62 @@ export default function Dashboard() {
           )}
         </motion.div>
       </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <motion.div 
-          {...fadeInUp}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden"
-        >
-          <div className="p-6 border-b border-border/50 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <ChartPieIcon className="h-5 w-5 text-shop-primary" />
-              <h2 className="text-lg font-medium">Gastos por Categoria</h2>
-            </div>
-            <div className="text-sm text-muted-foreground">
-              {new Date().toLocaleDateString('pt-BR', { month: 'long' })}
-            </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">        <motion.div
+        {...fadeInUp}
+        transition={{ duration: 0.5, delay: 0.4 }}
+        className="bg-card hover-lift rounded-xl shadow-card overflow-hidden"
+      >
+        <div className="p-6 border-b border-border/20 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <ChartPieIcon className="h-5 w-5 text-shop-primary" />
+            <h2 className="text-lg font-medium">Gastos por Categoria</h2>
           </div>
-          
-          <div className="p-6">
-            {isLoading ? (
-              <div className="h-64 w-full bg-gray-100 animate-pulse rounded"></div>
-            ) : categorias.length > 0 ? (
-              <div className="space-y-4">
-                {categorias.map((cat, index) => (
-                  <div key={cat.nome} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span 
-                          className="inline-block w-3 h-3 rounded-full" 
-                          style={{ backgroundColor: cat.cor }}
-                        ></span>
-                        <span>{cat.nome}</span>
-                      </div>
-                      <span className="font-medium">
-                        R$ {cat.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-100 rounded-full h-2">
-                      <motion.div 
-                        initial={{ width: 0 }}
-                        animate={{ width: `${(cat.valor / totalCategorias) * 100}%` }}
-                        transition={{ duration: 1, delay: 0.1 * index }}
-                        className="h-2 rounded-full" 
+          <div className="text-sm text-muted-foreground">
+            {new Date().toLocaleDateString('pt-BR', { month: 'long' })}
+          </div>
+        </div>
+
+        <div className="p-6">
+          {isLoading ? (
+            <div className="h-64 w-full bg-gray-100 animate-pulse rounded"></div>
+          ) : categorias.length > 0 ? (
+            <div className="space-y-4">
+              {categorias.map((cat, index) => (
+                <div key={cat.nome} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="inline-block w-3 h-3 rounded-full"
                         style={{ backgroundColor: cat.cor }}
-                      ></motion.div>
+                      ></span>
+                      <span>{cat.nome}</span>
                     </div>
+                    <span className="font-medium">
+                      R$ {cat.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    </span>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="h-64 flex items-center justify-center">
-                <p className="text-muted-foreground">Nenhum dado disponível</p>
-              </div>
-            )}
-          </div>
-        </motion.div>
-        
-        <motion.div 
+                  <div className="w-full bg-gray-100 rounded-full h-2">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(cat.valor / totalCategorias) * 100}%` }}
+                      transition={{ duration: 1, delay: 0.1 * index }}
+                      className="h-2 rounded-full"
+                      style={{ backgroundColor: cat.cor }}
+                    ></motion.div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="h-64 flex items-center justify-center">
+              <p className="text-muted-foreground">Nenhum dado disponível</p>
+            </div>
+          )}
+        </div>
+      </motion.div>
+
+        <motion.div
           {...fadeInUp}
           transition={{ duration: 0.5, delay: 0.5 }}
           className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden"
@@ -265,7 +261,7 @@ export default function Dashboard() {
               Ver todas
             </a>
           </div>
-          
+
           <div className="p-2">
             {isLoading ? (
               <div className="space-y-3 p-4">
@@ -283,19 +279,18 @@ export default function Dashboard() {
             ) : transacoesRecentes.length > 0 ? (
               <div className="divide-y divide-border/50">
                 {transacoesRecentes.map((transacao, index) => (
-                  <motion.div 
-                    key={transacao.id} 
+                  <motion.div
+                    key={transacao.id}
                     initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: 0.1 * index }}
                     className="flex justify-between items-center p-4 hover:bg-secondary/20 transition-colors rounded-lg"
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        transacao.tipo === 'ganho' 
-                          ? 'bg-green-100 text-green-600' 
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${transacao.tipo === 'ganho'
+                          ? 'bg-green-100 text-green-600'
                           : 'bg-red-100 text-red-600'
-                      }`}>
+                        }`}>
                         {transacao.tipo === 'ganho' ? (
                           <ArrowTrendingUpIcon className="h-5 w-5" />
                         ) : (
@@ -311,9 +306,8 @@ export default function Dashboard() {
                         </div>
                       </div>
                     </div>
-                    <span className={`font-medium ${
-                      transacao.tipo === 'ganho' ? 'text-green-500' : 'text-red-500'
-                    }`}>
+                    <span className={`font-medium ${transacao.tipo === 'ganho' ? 'text-green-500' : 'text-red-500'
+                      }`}>
                       {transacao.tipo === 'ganho' ? '+' : '-'} R$ {transacao.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </span>
                   </motion.div>
@@ -333,8 +327,8 @@ export default function Dashboard() {
           </div>
         </motion.div>
       </div>
-      
-      <motion.div 
+
+      <motion.div
         {...fadeInUp}
         transition={{ duration: 0.5, delay: 0.6 }}
         className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden"
@@ -342,7 +336,7 @@ export default function Dashboard() {
         <div className="p-6 border-b border-border/50">
           <h2 className="text-lg font-medium">Previsão para os Próximos 3 Meses</h2>
         </div>
-        
+
         <div className="p-6">
           {isLoading ? (
             <div className="h-64 w-full bg-gray-100 animate-pulse rounded"></div>
@@ -352,22 +346,20 @@ export default function Dashboard() {
                 {['Julho', 'Agosto', 'Setembro'].map((mes, index) => {
                   const randHeight = 40 + Math.random() * 60;
                   const isPositive = randHeight > 50;
-                  
+
                   return (
                     <div key={mes} className="flex flex-col items-center justify-end h-full">
                       <div className="relative w-full flex items-end justify-center mb-8">
-                        <motion.div 
+                        <motion.div
                           initial={{ height: 0 }}
                           animate={{ height: `${randHeight}%` }}
                           transition={{ duration: 1, delay: 0.2 * index }}
-                          className={`w-16 rounded-t-lg ${
-                            isPositive ? 'bg-green-100' : 'bg-red-100'
-                          }`}
+                          className={`w-16 rounded-t-lg ${isPositive ? 'bg-green-100' : 'bg-red-100'
+                            }`}
                         >
                           <div className="absolute top-0 -mt-7 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                            <span className={`font-medium ${
-                              isPositive ? 'text-green-500' : 'text-red-500'
-                            }`}>
+                            <span className={`font-medium ${isPositive ? 'text-green-500' : 'text-red-500'
+                              }`}>
                               {isPositive ? '+' : '-'}R$ {(Math.random() * 2000).toFixed(2)}
                             </span>
                           </div>

@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useFinancasStore } from '../store/financasStore';
-import type { Transacao } from '../types';
 
 export default function Historico() {
-  const { transacoes, categorias } = useFinancasStore();
+  const { transacoes } = useFinancasStore();
 
   const [filtros, setFiltros] = useState({
     dataInicio: '',
@@ -175,4 +174,4 @@ export default function Historico() {
       </div>
     </div>
   );
-} 
+}

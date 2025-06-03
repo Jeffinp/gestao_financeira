@@ -91,11 +91,11 @@ export default {
                     info: "hsl(var(--shop-info))",
                 },
             },
+            backgroundColor: {
+                card: "hsl(var(--card))",
+            },
             borderColor: {
                 DEFAULT: "hsl(var(--border))",
-            },
-            backgroundColor: {
-                DEFAULT: "hsl(var(--background))",
             },
             textColor: {
                 DEFAULT: "hsl(var(--foreground))",
@@ -175,5 +175,134 @@ export default {
     },
     plugins: [
         require('@tailwindcss/container-queries'),
+        function ({ addComponents, addUtilities }) {
+            // Adiciona utilitários personalizados
+            const newUtilities = {
+                '.bg-card': {
+                    backgroundColor: 'hsl(var(--card))',
+                },
+                '.shadow-card': {
+                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                },
+                '.shadow-card-hover': {
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                },
+                '.hover-lift': {
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                },
+                '.hover-lift:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: '0 10px 25px -3px rgba(0, 0, 0, 0.1)',
+                },
+            }
+            addUtilities(newUtilities)
+
+            // Adiciona componentes personalizados
+            const newComponents = {
+                '.badge': {
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    borderRadius: '9999px',
+                    padding: '0.125rem 0.5rem',
+                    fontSize: '0.75rem',
+                    fontWeight: '500',
+                },
+                '.badge-primary': {
+                    backgroundColor: 'hsla(var(--shop-primary), 0.1)',
+                    color: 'hsl(var(--shop-primary))',
+                },
+                '.badge-secondary': {
+                    backgroundColor: 'hsla(var(--shop-secondary), 0.1)',
+                    color: 'hsl(var(--shop-secondary))',
+                },
+                '.badge-accent': {
+                    backgroundColor: 'hsla(var(--shop-accent), 0.1)',
+                    color: 'hsl(var(--shop-accent))',
+                },
+                '.badge-success': {
+                    backgroundColor: 'hsla(var(--shop-success), 0.1)',
+                    color: 'hsl(var(--shop-success))',
+                },
+                '.badge-error': {
+                    backgroundColor: 'hsla(var(--shop-error), 0.1)',
+                    color: 'hsl(var(--shop-error))',
+                },
+                '.card-product': {
+                    backgroundColor: 'white',
+                    borderRadius: '0.5rem',
+                    overflow: 'hidden',
+                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                    transition: 'all 0.3s ease',
+                }, '.card-product:hover': {
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                },
+                '.btn-shop-primary': {
+                    backgroundColor: 'hsl(var(--shop-primary))',
+                    color: 'white',
+                    fontWeight: '500',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '0.375rem',
+                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                    transition: 'all 0.3s ease',
+                },
+                '.btn-shop-primary:hover': {
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                    transform: 'scale(1.05)',
+                },
+                '.btn-shop-primary:active': {
+                    transform: 'scale(0.95)',
+                },
+                '.btn-shop-secondary': {
+                    backgroundColor: 'hsl(var(--shop-secondary))',
+                    color: 'white',
+                    fontWeight: '500',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '0.375rem',
+                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                    transition: 'all 0.3s ease',
+                },
+                '.btn-shop-secondary:hover': {
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                    transform: 'scale(1.05)',
+                },
+                '.btn-shop-secondary:active': {
+                    transform: 'scale(0.95)',
+                },
+                '.btn-shop-accent': {
+                    backgroundColor: 'hsl(var(--shop-accent))',
+                    color: 'white',
+                    fontWeight: '500',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '0.375rem',
+                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                    transition: 'all 0.3s ease',
+                },
+                '.btn-shop-accent:hover': {
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                    transform: 'scale(1.05)',
+                },
+                '.btn-shop-accent:active': {
+                    transform: 'scale(0.95)',
+                },
+                '.btn-shop-outline': {
+                    backgroundColor: 'transparent',
+                    color: 'hsl(var(--shop-primary))',
+                    border: '1px solid hsl(var(--shop-primary))',
+                    fontWeight: '500',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '0.375rem',
+                    transition: 'all 0.3s ease',
+                },
+                '.btn-shop-outline:hover': {
+                    backgroundColor: 'hsl(var(--shop-primary))',
+                    color: 'white',
+                    transform: 'scale(1.05)',
+                },
+                '.btn-shop-outline:active': {
+                    transform: 'scale(0.95)',
+                },
+            }
+            addComponents(newComponents)
+        }
     ],
 }

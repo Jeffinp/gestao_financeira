@@ -68,61 +68,64 @@ interface ImagemZoomProps {
   src: string;
 }
 
-// Componente de Zoom
+// Componente de Zoom refatorado com Tailwind CSS
 const ImagemZoom: React.FC<ImagemZoomProps> = ({ src }) => {
+  const [isHovering, setIsHovering] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [showZoom, setShowZoom] = useState(false);
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - left) / width) * 100;
-    const y = ((e.clientY - top) / height) * 100;
+    if (!isHovering) return;
 
-    setCursorPosition({ x, y });
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+
+    // Calcular a posição relativa do cursor (0-100%)
+    const x = Math.max(0, Math.min(100, ((e.clientX - left) / width) * 100));
+    const y = Math.max(0, Math.min(100, ((e.clientY - top) / height) * 100));
+
     setPosition({ x, y });
   };
 
   return (
     <div
-      className="relative overflow-hidden bg-gray-100 rounded-lg h-[500px] w-full"
-      onMouseEnter={() => setShowZoom(true)}
-      onMouseLeave={() => setShowZoom(false)}
+      className="relative overflow-hidden bg-gray-100 rounded-lg h-[500px] w-full cursor-zoom-in"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
       onMouseMove={handleMouseMove}
     >
+      {/* Imagem principal */}
       <img
         src={src}
         alt="Produto"
         className="w-full h-full object-cover"
       />
 
-      {showZoom && (
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-0 bg-black bg-opacity-10">
+      {/* Lente de zoom e área de zoom */}
+      {isHovering && (
+        <>
+          {/* Overlay com lente de zoom */}
+          <div className="absolute inset-0 bg-black/10 pointer-events-none">
             <div
-              className="absolute w-20 h-20 border-2 border-white rounded-md transform -translate-x-1/2 -translate-y-1/2"
+              className="absolute w-20 h-20 border-2 border-white rounded-md transform -translate-x-1/2 -translate-y-1/2 shadow-sm"
               style={{
-                left: `${cursorPosition.x}%`,
-                top: `${cursorPosition.y}%`,
-                boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.4)'
+                left: `${position.x}%`,
+                top: `${position.y}%`
               }}
-            ></div>
+            />
           </div>
 
-          <div className="absolute top-2 right-2 bg-white p-4 rounded-lg shadow-lg w-48 h-48 overflow-hidden">
+          {/* Área de zoom */}
+          <div className="absolute top-2 right-2 bg-white p-2 rounded-lg shadow-lg w-48 h-48 overflow-hidden">
             <div
-              className="absolute w-[400%] h-[400%]"
+              className="w-full h-full"
               style={{
                 backgroundImage: `url(${src})`,
                 backgroundPosition: `${position.x}% ${position.y}%`,
                 backgroundSize: '400%',
-                backgroundRepeat: 'no-repeat',
-                left: 0,
-                top: 0
+                backgroundRepeat: 'no-repeat'
               }}
-            ></div>
+            />
           </div>
-        </div>
+        </>
       )}
     </div>
   );
@@ -138,21 +141,23 @@ interface ContadorProps {
 // Componente de Contador
 const Contador: React.FC<ContadorProps> = ({ quantidade, onIncrement, onDecrement, max }) => {
   return (
-    <div className="flex items-center border border-gray-200 rounded-md">
+    <div className="flex items-center border border-gray-200 rounded-md overflow-hidden">
       <button
         onClick={onDecrement}
         disabled={quantidade <= 1}
-        className="px-3 py-1 border-r border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+        className="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        aria-label="Diminuir quantidade"
       >
-        -
+        <span className="text-lg font-medium">-</span>
       </button>
-      <div className="px-3 py-1 min-w-[40px] text-center">{quantidade}</div>
+      <div className="w-10 py-1 text-center font-medium">{quantidade}</div>
       <button
         onClick={onIncrement}
         disabled={quantidade >= max}
-        className="px-3 py-1 border-l border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+        className="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        aria-label="Aumentar quantidade"
       >
-        +
+        <span className="text-lg font-medium">+</span>
       </button>
     </div>
   );
@@ -203,36 +208,52 @@ export default function ProdutoDetalhe() {
   };
 
   return (
-    <div className="pt-20 pb-10">
-      <div className="container">
+    <div className="py-20 px-4 md:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
         {/* Breadcrumbs */}
-        <nav className="mb-6 flex items-center text-sm text-gray-500">
-          <Link to="/" className="hover:text-shop-primary transition-colors">Home</Link>
-          <span className="mx-2">/</span>
-          <Link to="/loja" className="hover:text-shop-primary transition-colors">Loja</Link>
-          <span className="mx-2">/</span>
-          <Link to="/loja/roupas" className="hover:text-shop-primary transition-colors">Roupas</Link>
-          <span className="mx-2">/</span>
-          <span className="text-gray-900">Calça Jeans</span>
+        <nav aria-label="Breadcrumb" className="mb-6 flex items-center text-sm">
+          <ol className="flex items-center space-x-2">
+            <li>
+              <Link to="/" className="text-gray-500 hover:text-[hsl(var(--shop-primary))] transition-colors">
+                Home
+              </Link>
+            </li>
+            <li className="text-gray-400">/</li>
+            <li>
+              <Link to="/loja" className="text-gray-500 hover:text-[hsl(var(--shop-primary))] transition-colors">
+                Loja
+              </Link>
+            </li>
+            <li className="text-gray-400">/</li>
+            <li>
+              <Link to="/loja/roupas" className="text-gray-500 hover:text-[hsl(var(--shop-primary))] transition-colors">
+                Roupas
+              </Link>
+            </li>
+            <li className="text-gray-400">/</li>
+            <li>
+              <span className="text-gray-900 font-medium">Calça Jeans</span>
+            </li>
+          </ol>
         </nav>
 
         {/* Botão Voltar */}
         <Link
           to="/loja"
-          className="inline-flex items-center mb-6 text-shop-primary hover:underline"
+          className="inline-flex items-center mb-6 text-[hsl(var(--shop-primary))] hover:underline"
         >
           <ArrowLeftIcon className="w-4 h-4 mr-1" />
           <span>Voltar para a loja</span>
         </Link>
 
         {/* Produto */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Galeria */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="space-y-4"
+            className="space-y-6"
           >
             {/* Imagem principal com zoom */}
             <ImagemZoom src={produto.imagens[imagemSelecionada]} />
@@ -243,16 +264,23 @@ export default function ProdutoDetalhe() {
                 <button
                   key={index}
                   onClick={() => setImagemSelecionada(index)}
-                  className={`border rounded-md overflow-hidden h-24 transition-all ${imagemSelecionada === index
-                    ? 'border-shop-primary ring-2 ring-shop-primary ring-opacity-30'
-                    : 'border-gray-200 hover:border-gray-300'
+                  className={`overflow-hidden rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[hsl(var(--shop-primary))] ${imagemSelecionada === index
+                    ? 'ring-2 ring-[hsl(var(--shop-primary))] ring-opacity-100'
+                    : 'border border-gray-200 hover:border-gray-300'
                     }`}
+                  aria-label={`Ver imagem ${index + 1}`}
+                  aria-current={imagemSelecionada === index ? 'true' : 'false'}
                 >
-                  <img
-                    src={imagem}
-                    alt={`Miniatura ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
+                  <div className="relative h-24 w-full">
+                    <img
+                      src={imagem}
+                      alt={`Miniatura ${index + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                    {imagemSelecionada === index && (
+                      <div className="absolute inset-0 bg-[hsl(var(--shop-primary))] bg-opacity-10"></div>
+                    )}
+                  </div>
                 </button>
               ))}
             </div>
@@ -289,19 +317,19 @@ export default function ProdutoDetalhe() {
               {/* Preço */}
               <div className="mt-4">
                 {produto.promocao ? (
-                  <div className="flex items-baseline">
-                    <span className="text-shop-accent font-bold text-fluid-2xl">
+                  <div className="flex items-baseline flex-wrap gap-2">
+                    <span className="text-[hsl(var(--shop-accent))] font-bold text-fluid-2xl">
                       {produto.precoPromocional.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                     </span>
-                    <span className="ml-2 text-gray-400 line-through text-lg">
+                    <span className="text-gray-400 line-through text-lg">
                       {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                     </span>
-                    <span className="ml-2 bg-shop-accent bg-opacity-10 text-shop-accent text-sm font-medium px-2 py-1 rounded-full">
+                    <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-[hsl(var(--shop-accent))] bg-opacity-10 text-[hsl(var(--shop-accent))]">
                       {Math.round((1 - produto.precoPromocional / produto.preco) * 100)}% OFF
                     </span>
                   </div>
                 ) : (
-                  <span className="text-shop-primary font-bold text-fluid-2xl">
+                  <span className="text-[hsl(var(--shop-primary))] font-bold text-fluid-2xl">
                     {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </span>
                 )}
@@ -317,7 +345,8 @@ export default function ProdutoDetalhe() {
               </p>
               <button
                 onClick={() => setMostrarMais(!mostrarMais)}
-                className="text-shop-primary font-medium hover:underline mt-1"
+                className="mt-2 text-[hsl(var(--shop-primary))] font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-[hsl(var(--shop-primary))] focus:ring-offset-2 rounded"
+                aria-expanded={mostrarMais}
               >
                 {mostrarMais ? 'Mostrar menos' : 'Ler mais'}
               </button>
@@ -333,18 +362,20 @@ export default function ProdutoDetalhe() {
                   <button
                     key={cor.id}
                     onClick={() => setCorSelecionada(cor)}
-                    className={`w-10 h-10 rounded-full relative transition-all ${corSelecionada.id === cor.id
-                      ? 'ring-2 ring-offset-2 ring-shop-primary scale-110'
+                    className={`relative w-10 h-10 rounded-full transition-all duration-300 ${corSelecionada.id === cor.id
+                      ? 'ring-2 ring-offset-2 ring-[hsl(var(--shop-primary))] scale-110'
                       : 'hover:scale-105'
                       }`}
+                    aria-label={`Cor ${cor.nome}`}
+                    title={cor.nome}
                   >
                     <span
                       className="absolute inset-0 rounded-full"
                       style={{ backgroundColor: cor.codigo }}
-                    ></span>
+                    />
                     {corSelecionada.id === cor.id && (
                       <span className="absolute inset-0 flex items-center justify-center">
-                        <CheckIcon className="w-5 h-5 text-white" />
+                        <CheckIcon className="w-5 h-5 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]" />
                       </span>
                     )}
                   </button>
@@ -358,7 +389,7 @@ export default function ProdutoDetalhe() {
                 <h3 className="font-medium">
                   Tamanho: {tamanhoSelecionado ? <span className="text-gray-600">{tamanhoSelecionado.tamanho}</span> : ''}
                 </h3>
-                <button className="text-shop-primary text-sm hover:underline">
+                <button className="text-[hsl(var(--shop-primary))] text-sm hover:underline">
                   Guia de tamanhos
                 </button>
               </div>
@@ -368,12 +399,13 @@ export default function ProdutoDetalhe() {
                     key={tamanho.id}
                     onClick={() => tamanho.disponivel && setTamanhoSelecionado(tamanho)}
                     disabled={!tamanho.disponivel}
-                    className={`w-12 h-12 rounded-md border transition-all ${tamanhoSelecionado?.id === tamanho.id
-                      ? 'border-shop-primary bg-shop-primary text-white font-medium'
+                    className={`w-12 h-12 rounded-md flex items-center justify-center transition-all duration-300 ${tamanhoSelecionado?.id === tamanho.id
+                      ? 'bg-[hsl(var(--shop-primary))] text-white font-medium border-0'
                       : tamanho.disponivel
-                        ? 'border-gray-200 hover:border-shop-primary'
-                        : 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
+                        ? 'border border-gray-200 hover:border-[hsl(var(--shop-primary))] hover:text-[hsl(var(--shop-primary))]'
+                        : 'border border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed opacity-60'
                       }`}
+                    aria-label={`Tamanho ${tamanho.tamanho}${!tamanho.disponivel ? ' (indisponível)' : ''}`}
                   >
                     {tamanho.tamanho}
                   </button>
@@ -408,27 +440,29 @@ export default function ProdutoDetalhe() {
                   onDecrement={decrementarQuantidade}
                   max={produto.estoque}
                 />
+                <span className="text-sm text-gray-500">
+                  {produto.estoque > 0 ? `(Máx: ${produto.estoque})` : '(Indisponível)'}
+                </span>
               </div>
 
-              <div className="flex items-center gap-4">
-                <motion.button
-                  onClick={adicionarAoCarrinho}
-                  disabled={!produto.disponivel}
-                  className="flex-1 btn-shop-primary"
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <ShoppingBagIcon className="w-5 h-5 mr-2" />
-                  Adicionar ao carrinho
-                </motion.button>
+              <div className="flex items-center gap-4">                <motion.button
+                onClick={adicionarAoCarrinho}
+                disabled={!produto.disponivel}
+                className="flex-1 flex items-center justify-center bg-[hsl(var(--shop-primary))] text-white font-medium py-2 px-4 rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+                whileTap={{ scale: 0.95 }}
+              >
+                <ShoppingBagIcon className="w-5 h-5 mr-2" />
+                Adicionar ao carrinho
+              </motion.button>
 
                 <motion.button
                   onClick={toggleFavorito}
-                  className="p-3 rounded-md border border-gray-200 hover:border-shop-accent transition-colors"
+                  className="p-3 rounded-md border border-gray-200 hover:border-[hsl(var(--shop-accent))] transition-colors duration-300"
                   whileTap={{ scale: 0.95 }}
                   aria-label={isFavorito ? "Remover dos favoritos" : "Adicionar aos favoritos"}
                 >
                   {isFavorito ? (
-                    <HeartIconSolid className="w-6 h-6 text-shop-accent" />
+                    <HeartIconSolid className="w-6 h-6 text-[hsl(var(--shop-accent))]" />
                   ) : (
                     <HeartIcon className="w-6 h-6 text-gray-600" />
                   )}
@@ -439,7 +473,7 @@ export default function ProdutoDetalhe() {
             {/* Informações adicionais */}
             <div className="bg-gray-50 rounded-lg p-4 space-y-3">
               <div className="flex items-center gap-3">
-                <TruckIcon className="w-5 h-5 text-shop-primary" />
+                <TruckIcon className="w-5 h-5 text-[hsl(var(--shop-primary))]" />
                 <div>
                   <h4 className="font-medium">Entrega</h4>
                   <p className="text-sm text-gray-600">Prazo de {produto.prazoEntrega}</p>
@@ -447,7 +481,7 @@ export default function ProdutoDetalhe() {
               </div>
 
               <div className="flex items-center gap-3">
-                <ShieldCheckIcon className="w-5 h-5 text-shop-primary" />
+                <ShieldCheckIcon className="w-5 h-5 text-[hsl(var(--shop-primary))]" />
                 <div>
                   <h4 className="font-medium">Garantia</h4>
                   <p className="text-sm text-gray-600">30 dias para troca ou devolução</p>
@@ -461,10 +495,10 @@ export default function ProdutoDetalhe() {
         <div className="mt-16">
           <div className="border-b border-gray-200 mb-8">
             <div className="flex space-x-8">
-              <button className="border-b-2 border-shop-primary text-shop-primary font-medium pb-4 px-1">
+              <button className="border-b-2 border-[hsl(var(--shop-primary))] text-[hsl(var(--shop-primary))] font-medium pb-4 px-1">
                 Detalhes do produto
               </button>
-              <button className="text-gray-500 hover:text-gray-700 pb-4 px-1">
+              <button className="text-gray-500 hover:text-gray-700 pb-4 px-1 transition-colors duration-300">
                 Avaliações ({produto.avaliacoes.length})
               </button>
             </div>
@@ -482,7 +516,7 @@ export default function ProdutoDetalhe() {
                 <ul className="space-y-2">
                   {produto.detalhes.map((detalhe, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="inline-block w-1.5 h-1.5 rounded-full bg-shop-primary mt-2 mr-2"></span>
+                      <span className="inline-block w-1.5 h-1.5 rounded-full bg-[hsl(var(--shop-primary))] mt-2 mr-2"></span>
                       {detalhe}
                     </li>
                   ))}
@@ -498,21 +532,28 @@ export default function ProdutoDetalhe() {
                   <div key={avaliacao.id} className="border-b border-gray-100 pb-4 last:border-b-0">
                     <div className="flex items-center justify-between">
                       <h3 className="font-medium">{avaliacao.nome}</h3>
-                      <span className="text-sm text-gray-500">{avaliacao.data}</span>
+                      <time className="text-sm text-gray-500" dateTime={avaliacao.data.split('/').reverse().join('-')}>
+                        {avaliacao.data}
+                      </time>
                     </div>
                     <div className="flex my-1">
                       {[...Array(5)].map((_, i) => (
                         <StarIcon
                           key={i}
-                          className={`w-4 h-4 ${i < avaliacao.nota ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                          className={`h-4 w-4 ${i < avaliacao.nota
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-gray-300'
+                            }`}
+                          aria-hidden="true"
                         />
                       ))}
+                      <span className="sr-only">{avaliacao.nota} de 5 estrelas</span>
                     </div>
-                    <p className="text-gray-600 text-sm">{avaliacao.comentario}</p>
+                    <p className="text-gray-600 text-sm mt-1">{avaliacao.comentario}</p>
                   </div>
                 ))}
 
-                <button className="w-full py-2 border border-shop-primary text-shop-primary rounded-md hover:bg-shop-primary hover:text-white transition-colors">
+                <button className="w-full rounded-md border border-[hsl(var(--shop-primary))] py-2 text-[hsl(var(--shop-primary))] transition-colors duration-300 hover:bg-[hsl(var(--shop-primary))] hover:text-white focus:outline-none focus:ring-2 focus:ring-[hsl(var(--shop-primary))] focus:ring-offset-2">
                   Ver todas as avaliações
                 </button>
               </div>
@@ -526,9 +567,30 @@ export default function ProdutoDetalhe() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Aqui seriam exibidos os produtos relacionados */}
-            {/* Placeholder para exemplo */}
+            {/* Mockup de produtos relacionados */}
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-gray-200 h-64 rounded-lg animate-pulse"></div>
+              <div key={i} className="group relative overflow-hidden rounded-lg bg-white shadow-md transition-all duration-300 hover:shadow-lg">
+                <div className="aspect-w-1 aspect-h-1 bg-gray-200">
+                  <div className="h-64 w-full animate-pulse bg-gray-200"></div>
+                </div>
+                <div className="p-4">
+                  <div className="h-4 w-2/3 animate-pulse rounded bg-gray-200 mb-2"></div>
+                  <div className="h-6 w-1/2 animate-pulse rounded bg-gray-200 mb-4"></div>
+                  <div className="flex justify-between items-center">
+                    <div className="h-4 w-1/3 animate-pulse rounded bg-gray-200"></div>
+                    <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200"></div>
+                  </div>
+                </div>
+
+                {/* Overlay de carregamento simulado */}
+                <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-0 transition-all duration-300 group-hover:bg-opacity-10">
+                  <div className="transform opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 translate-y-4">
+                    <div className="rounded-md px-4 py-2 bg-[hsl(var(--shop-primary))] text-white font-medium invisible group-hover:visible">
+                      Ver produto
+                    </div>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
