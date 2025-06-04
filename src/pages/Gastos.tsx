@@ -114,7 +114,7 @@ export default function Gastos() {
     .map(([categoria, valor]) => ({ categoria, valor }));
 
   return (
-    <div className="container pt-24 pb-10">
+    <div className="container max-w-7xl mx-auto pt-24 pb-10">
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}

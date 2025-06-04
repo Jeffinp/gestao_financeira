@@ -1,5 +1,14 @@
 import { useState } from 'react';
 import { useFinancasStore } from '../store/financasStore';
+import { motion } from 'framer-motion';
+import { ClockIcon, FunnelIcon, XMarkIcon } from '@heroicons/react/24/outline';
+
+// Animação para mostrar os elementos
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5 }
+};
 
 export default function Historico() {
   const { transacoes } = useFinancasStore();
@@ -55,11 +64,26 @@ export default function Historico() {
   ).sort();
 
   return (
-    <div className="container pt-24 pb-10">
-      <h1 className="text-2xl font-bold mb-6">Histórico Financeiro</h1>
+    <div className="container max-w-7xl mx-auto pt-24 pb-10">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex flex-col md:flex-row md:items-center justify-between mb-8"
+      >
+        <div className="mb-4 md:mb-0">
+          <h1 className="text-fluid-3xl font-bold text-balance mb-2">Histórico Financeiro</h1>
+          <p className="text-muted-foreground">Visualize e filtre todas as suas transações</p>
+        </div>
+      </motion.div>
 
-      <div className="bg-card rounded-lg shadow mb-8">
-        <div className="p-6 border-b border-border">
+      <motion.div
+        {...fadeInUp}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="bg-card hover-lift rounded-xl shadow-card mb-8"
+      >
+        <div className="p-6 border-b border-border/20 flex items-center gap-2">
+          <FunnelIcon className="h-5 w-5 text-shop-primary" />
           <h2 className="text-lg font-medium">Filtros</h2>
         </div>
 
@@ -132,25 +156,37 @@ export default function Historico() {
           <div className="mt-4 flex justify-end">
             <button
               onClick={limparFiltros}
-              className="px-4 py-2 rounded-md border border-input bg-background hover:bg-secondary transition"
+              className="flex items-center gap-1 px-4 py-2 rounded-md border border-input bg-background hover:bg-secondary transition"
             >
-              Limpar Filtros
+              <XMarkIcon className="h-4 w-4" />
+              <span>Limpar Filtros</span>
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="bg-card rounded-lg shadow">
-        <div className="p-6 border-b border-border">
+      <motion.div
+        {...fadeInUp}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden"
+      >
+        <div className="p-6 border-b border-border/20 flex items-center gap-2">
+          <ClockIcon className="h-5 w-5 text-shop-primary" />
           <h2 className="text-lg font-medium">Linha do Tempo</h2>
         </div>
 
         <div className="p-6">
           {transacoesFiltradas.length > 0 ? (
             <div className="space-y-6">
-              {transacoesFiltradas.map(transacao => (
-                <div key={transacao.id} className="relative pl-8 pb-6 border-l-2 border-primary">
-                  <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-primary"></div>
+              {transacoesFiltradas.map((transacao, index) => (
+                <motion.div 
+                  key={transacao.id} 
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: 0.05 * index }}
+                  className="relative pl-8 pb-6 border-l-2 border-shop-primary"
+                >
+                  <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-shop-primary"></div>
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h3 className="font-medium">{transacao.descricao}</h3>
@@ -162,7 +198,7 @@ export default function Historico() {
                       {transacao.tipo === 'ganho' ? '+' : '-'} R$ {transacao.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </span>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           ) : (
@@ -171,7 +207,7 @@ export default function Historico() {
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

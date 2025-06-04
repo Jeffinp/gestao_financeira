@@ -507,7 +507,7 @@ export default function Loja() {
   };
 
   return (
-    <div className="pt-20 pb-10">
+    <div className="container max-w-7xl mx-auto pt-24 pb-10">
       {/* Sobreposição escura quando o carrinho está visível */}
       {carrinhoVisivel && (
         <div
@@ -524,21 +524,21 @@ export default function Loja() {
         onRemover={removerDoCarrinho}
       />
 
-      <div className="container">
-        {/* Cabeçalho da loja */}
-        <div className="mb-8">
-          <h1 className="text-fluid-4xl font-bold text-balance">Loja Online</h1>
-          <p className="text-fluid-lg text-gray-600 mt-2 text-pretty">
-            Encontre os melhores produtos com os melhores preços.
-          </p>
+      {/* Cabeçalho da loja */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex flex-col md:flex-row md:items-center justify-between mb-8"
+      >
+        <div className="mb-4 md:mb-0">
+          <h1 className="text-fluid-3xl font-bold text-balance mb-2">Loja Online</h1>
+          <p className="text-muted-foreground">Encontre os melhores produtos com os melhores preços.</p>
         </div>
 
         {/* Barra superior */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <span className="text-gray-500">Mostrando {produtos.length} produtos</span>
-          </div>
-
+        <div className="flex items-center gap-4">
+          <span className="text-gray-500">Mostrando {produtos.length} produtos</span>
           <button
             onClick={() => setCarrinhoVisivel(true)}
             className="flex items-center gap-2 p-2 rounded-md bg-shop-primary text-white relative"
@@ -552,53 +552,53 @@ export default function Loja() {
             )}
           </button>
         </div>
+      </motion.div>
 
-        {/* Busca */}
-        <Busca onSearch={setTermoBusca} />
+      {/* Busca */}
+      <Busca onSearch={setTermoBusca} />
 
-        {/* Layout principal */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Coluna de filtros */}
-          <div className="lg:col-span-1">
-            <Filtro
-              categorias={categorias}
-              categoriaSelecionada={categoriaSelecionada}
-              onCategoriaChange={setCategoriaSelecionada}
-            />
-          </div>
+      {/* Layout principal */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Coluna de filtros */}
+        <div className="lg:col-span-1">
+          <Filtro
+            categorias={categorias}
+            categoriaSelecionada={categoriaSelecionada}
+            onCategoriaChange={setCategoriaSelecionada}
+          />
+        </div>
 
-          {/* Grid de produtos */}
-          <div className="lg:col-span-3">
-            {produtos.length === 0 ? (
-              <div className="bg-white rounded-lg shadow-card p-8 text-center">
-                <MagnifyingGlassIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h2 className="text-xl font-medium mb-2">Nenhum produto encontrado</h2>
-                <p className="text-gray-500 mb-4">
-                  Tente ajustar seus filtros ou buscar por outro termo.
-                </p>
-                <button
-                  onClick={() => {
-                    setCategoriaSelecionada(null);
-                    setTermoBusca('');
-                  }}
-                  className="bg-[hsl(var(--shop-primary))] text-white font-medium py-2 px-4 rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
-                >
-                  Limpar filtros
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {produtos.map((produto) => (
-                  <ProdutoCard
-                    key={produto.id}
-                    produto={produto}
-                    onAddToCart={adicionarAoCarrinho}
-                    onToggleFavorite={toggleFavorito}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+        {/* Grid de produtos */}
+        <div className="lg:col-span-3">
+          {produtos.length === 0 ? (
+            <div className="bg-white rounded-lg shadow-card p-8 text-center">
+              <MagnifyingGlassIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h2 className="text-xl font-medium mb-2">Nenhum produto encontrado</h2>
+              <p className="text-gray-500 mb-4">
+                Tente ajustar seus filtros ou buscar por outro termo.
+              </p>
+              <button
+                onClick={() => {
+                  setCategoriaSelecionada(null);
+                  setTermoBusca('');
+                }}
+                className="bg-[hsl(var(--shop-primary))] text-white font-medium py-2 px-4 rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+              >
+                Limpar filtros
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {produtos.map((produto) => (
+                <ProdutoCard
+                  key={produto.id}
+                  produto={produto}
+                  onAddToCart={adicionarAoCarrinho}
+                  onToggleFavorite={toggleFavorito}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

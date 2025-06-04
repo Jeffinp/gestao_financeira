@@ -109,7 +109,7 @@ export default function Agenda() {
   const lembretesHoje = lembretes.filter(l => l.data === hoje);
 
   return (
-    <div className="container pt-24 pb-10">
+    <div className="container max-w-7xl mx-auto pt-24 pb-10">
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
