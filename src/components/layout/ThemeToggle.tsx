@@ -1,52 +1,51 @@
-import { useState, useEffect } from 'react';
+import { useTheme } from '../../context/ThemeContext';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-
-  // Detectar preferência do sistema e configurar o tema inicial
-  useEffect(() => {
-    // Verificar se o tema está salvo no localStorage
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
-    
-    // Verificar preferência do sistema se não houver tema salvo
-    if (!savedTheme) {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setTheme(prefersDark ? 'dark' : 'light');
-      return;
-    }
-    
-    setTheme(savedTheme);
-  }, []);
-
-  // Aplicar classe 'dark' ao html quando o tema mudar
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    
-    // Salvar tema no localStorage
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  // Alternar entre temas
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
-  };
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-full bg-muted/50 hover:bg-muted transition-colors duration-200"
+      className="p-2 rounded-lg relative bg-secondary/80 hover:bg-secondary text-secondary-foreground transition-colors duration-300 overflow-hidden"
       aria-label={theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro'}
     >
-      {theme === 'light' ? (
-        <MoonIcon className="h-5 w-5 text-foreground" />
-      ) : (
-        <SunIcon className="h-5 w-5 text-foreground" />
-      )}
+      {/* Efeito de fundo animado */}
+      <span 
+        className={`absolute inset-0 transition-colors duration-500 ${
+          theme === 'dark' 
+            ? 'bg-gradient-to-br from-indigo-500/20 to-purple-500/20' 
+            : 'bg-gradient-to-br from-amber-200/20 to-yellow-300/20'
+        }`} 
+      />
+      
+      {/* Ícones com animação de transição */}
+      <AnimatePresence mode="wait" initial={false}>
+        {theme === 'light' ? (
+          <motion.div
+            key="moon"
+            initial={{ y: -30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 30, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="relative"
+          >
+            <MoonIcon className="h-5 w-5" />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="sun"
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -30, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="relative"
+          >
+            <SunIcon className="h-5 w-5" />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </button>
   );
 } 
