@@ -1,12 +1,21 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useFinancasStore } from '../store/financasStore';
-import { ArrowDownCircle, RotateCcw, Calendar, Tag, DollarSign, Clock, CheckCircle, BarChart } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useFinancasStore } from "../store/financasStore";
+import {
+  ArrowDownCircle,
+  RotateCcw,
+  Calendar,
+  Tag,
+  DollarSign,
+  Clock,
+  CheckCircle,
+  BarChart,
+} from "lucide-react";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5 }
+  transition: { duration: 0.5 },
 };
 
 export default function Gastos() {
@@ -22,29 +31,36 @@ export default function Gastos() {
   }, []);
 
   // Filtrar apenas categorias de gastos
-  const categoriasGasto = categorias.filter(cat => cat.tipo === 'gasto' || cat.tipo === 'ambos');
+  const categoriasGasto = categorias.filter(
+    (cat) => cat.tipo === "gasto" || cat.tipo === "ambos"
+  );
 
   // Filtrar apenas transações do tipo gasto
   const gastos = transacoes
-    .filter(t => t.tipo === 'gasto')
+    .filter((t) => t.tipo === "gasto")
     .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
 
   const [formData, setFormData] = useState({
-    valor: '',
-    categoria: '',
-    data: new Date().toISOString().split('T')[0],
-    descricao: '',
+    valor: "",
+    categoria: "",
+    data: new Date().toISOString().split("T")[0],
+    descricao: "",
     recorrente: false,
-    periodo: 'mensal'
+    periodo: "mensal",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { name, value, type } = e.target;
-    const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
+    const checked =
+      type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined;
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -53,7 +69,7 @@ export default function Gastos() {
 
     // Validação básica
     if (!formData.valor || !formData.categoria || !formData.data) {
-      alert('Por favor, preencha todos os campos obrigatórios.');
+      alert("Por favor, preencha todos os campos obrigatórios.");
       return;
     }
 
@@ -64,37 +80,40 @@ export default function Gastos() {
       data: formData.data,
       descricao: formData.descricao,
       recorrente: formData.recorrente,
-      tipo: 'gasto' as const
+      tipo: "gasto" as const,
     };
 
     adicionarTransacao(novoGasto);
 
     // Feedback visual de sucesso
-    const successFeedback = document.getElementById('success-feedback');
+    const successFeedback = document.getElementById("success-feedback");
     if (successFeedback) {
-      successFeedback.classList.remove('opacity-0');
+      successFeedback.classList.remove("opacity-0");
       setTimeout(() => {
-        successFeedback?.classList.add('opacity-0');
+        successFeedback?.classList.add("opacity-0");
       }, 3000);
     }
 
     // Reset do formulário
     setFormData({
-      valor: '',
-      categoria: '',
-      data: new Date().toISOString().split('T')[0],
-      descricao: '',
+      valor: "",
+      categoria: "",
+      data: new Date().toISOString().split("T")[0],
+      descricao: "",
       recorrente: false,
-      periodo: 'mensal'
+      periodo: "mensal",
     });
   };
 
   // Calcular estatísticas para o dashboard
   const totalGastoMes = gastos
-    .filter(g => {
+    .filter((g) => {
       const dataGasto = new Date(g.data);
       const hoje = new Date();
-      return dataGasto.getMonth() === hoje.getMonth() && dataGasto.getFullYear() === hoje.getFullYear();
+      return (
+        dataGasto.getMonth() === hoje.getMonth() &&
+        dataGasto.getFullYear() === hoje.getFullYear()
+      );
     })
     .reduce((acc, g) => acc + g.valor, 0);
 
@@ -122,8 +141,12 @@ export default function Gastos() {
         className="flex flex-col md:flex-row md:items-center justify-between mb-8"
       >
         <div>
-          <h1 className="text-fluid-3xl font-bold text-balance">Registrar Gastos</h1>
-          <p className="text-muted-foreground mt-1">Controle suas despesas de forma eficiente</p>
+          <h1 className="text-fluid-3xl font-bold text-balance">
+            Registrar Gastos
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Controle suas despesas de forma eficiente
+          </p>
         </div>
 
         <button
@@ -147,12 +170,17 @@ export default function Gastos() {
               <DollarSign className="h-6 w-6 text-red-500" />
             </div>
             <div>
-              <h2 className="text-sm font-medium text-muted-foreground">Total no Mês</h2>
+              <h2 className="text-sm font-medium text-muted-foreground">
+                Total no Mês
+              </h2>
               {isLoading ? (
                 <div className="h-7 w-28 bg-gray-200 animate-pulse rounded mt-1"></div>
               ) : (
                 <p className="text-xl font-bold text-red-500">
-                  R$ {totalGastoMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  R${" "}
+                  {totalGastoMes.toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                  })}
                 </p>
               )}
             </div>
@@ -165,7 +193,9 @@ export default function Gastos() {
               <BarChart className="h-6 w-6 text-shop-primary" />
             </div>
             <div className="flex-1">
-              <h2 className="text-sm font-medium text-muted-foreground">Top Categorias</h2>
+              <h2 className="text-sm font-medium text-muted-foreground">
+                Top Categorias
+              </h2>
               {isLoading ? (
                 <div className="h-7 w-28 bg-gray-200 animate-pulse rounded mt-1"></div>
               ) : topCategorias.length > 0 ? (
@@ -185,15 +215,19 @@ export default function Gastos() {
               <Clock className="h-6 w-6 text-gray-500" />
             </div>
             <div>
-              <h2 className="text-sm font-medium text-muted-foreground">Último Gasto</h2>
+              <h2 className="text-sm font-medium text-muted-foreground">
+                Último Gasto
+              </h2>
               {isLoading ? (
                 <div className="h-7 w-28 bg-gray-200 animate-pulse rounded mt-1"></div>
               ) : gastos.length > 0 ? (
                 <p className="text-sm font-medium mt-1">
-                  {new Date(gastos[0].data).toLocaleDateString('pt-BR')}
+                  {new Date(gastos[0].data).toLocaleDateString("pt-BR")}
                 </p>
               ) : (
-                <p className="text-sm text-muted-foreground mt-1">Sem registros</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Sem registros
+                </p>
               )}
             </div>
           </div>
@@ -207,26 +241,36 @@ export default function Gastos() {
           className="lg:col-span-1"
         >
           <div className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden">
-            <div className="p-6 border-b border-border/50 flex items-center justify-between">              <div className="flex items-center gap-2">
-              <ArrowDownCircle className="h-5 w-5 text-red-500" />
-              <h2 className="text-lg font-medium">Novo Gasto</h2>
-            </div>
+            <div className="p-6 border-b border-border/50 flex items-center justify-between">
+              {" "}
+              <div className="flex items-center gap-2">
+                <ArrowDownCircle className="h-5 w-5 text-red-500" />
+                <h2 className="text-lg font-medium">Novo Gasto</h2>
+              </div>
             </div>
 
             <div className="p-6">
               <form onSubmit={handleSubmit}>
                 <div className="space-y-4">
-                  <div id="success-feedback" className="bg-shop-success bg-opacity-10 text-shop-success text-sm p-3 rounded-md flex items-center gap-2 transition-opacity duration-300 opacity-0">
+                  <div
+                    id="success-feedback"
+                    className="bg-shop-success bg-opacity-10 text-shop-success text-sm p-3 rounded-md flex items-center gap-2 transition-opacity duration-300 opacity-0"
+                  >
                     <CheckCircle className="h-5 w-5" />
                     <span>Gasto registrado com sucesso!</span>
                   </div>
 
                   <div>
-                    <label htmlFor="valor" className="block text-sm font-medium mb-1">
+                    <label
+                      htmlFor="valor"
+                      className="block text-sm font-medium mb-1"
+                    >
                       Valor (R$) <span className="text-shop-error">*</span>
                     </label>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                        R$
+                      </span>
                       <input
                         id="valor"
                         name="valor"
@@ -242,7 +286,10 @@ export default function Gastos() {
                   </div>
 
                   <div>
-                    <label htmlFor="categoria" className="block text-sm font-medium mb-1">
+                    <label
+                      htmlFor="categoria"
+                      className="block text-sm font-medium mb-1"
+                    >
                       Categoria <span className="text-shop-error">*</span>
                     </label>
                     <div className="relative">
@@ -256,15 +303,20 @@ export default function Gastos() {
                         className="w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 outline-none transition-all"
                       >
                         <option value="">Selecione uma categoria</option>
-                        {categoriasGasto.map(cat => (
-                          <option key={cat.id} value={cat.nome}>{cat.nome}</option>
+                        {categoriasGasto.map((cat) => (
+                          <option key={cat.id} value={cat.nome}>
+                            {cat.nome}
+                          </option>
                         ))}
                       </select>
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="data" className="block text-sm font-medium mb-1">
+                    <label
+                      htmlFor="data"
+                      className="block text-sm font-medium mb-1"
+                    >
                       Data <span className="text-shop-error">*</span>
                     </label>
                     <div className="relative">
@@ -282,7 +334,10 @@ export default function Gastos() {
                   </div>
 
                   <div>
-                    <label htmlFor="descricao" className="block text-sm font-medium mb-1">
+                    <label
+                      htmlFor="descricao"
+                      className="block text-sm font-medium mb-1"
+                    >
                       Descrição
                     </label>
                     <textarea
@@ -313,11 +368,14 @@ export default function Gastos() {
                   {formData.recorrente && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
+                      animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <label htmlFor="periodo" className="block text-sm font-medium mb-1">
+                      <label
+                        htmlFor="periodo"
+                        className="block text-sm font-medium mb-1"
+                      >
                         Período
                       </label>
                       <select
@@ -338,7 +396,9 @@ export default function Gastos() {
                   <button
                     type="submit"
                     className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md shadow-button hover:shadow-button-hover transition-all duration-300 hover:scale-102 active:scale-98 flex items-center justify-center gap-2"
-                  >                    <ArrowDownCircle className="h-5 w-5" />
+                  >
+                    {" "}
+                    <ArrowDownCircle className="h-5 w-5" />
                     <span>Registrar Gasto</span>
                   </button>
                 </div>
@@ -353,12 +413,14 @@ export default function Gastos() {
           className="lg:col-span-2"
         >
           <div className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden">
-            <div className="p-6 border-b border-border/50 flex items-center justify-between">              <div className="flex items-center gap-2">
-              <BarChart className="h-5 w-5 text-shop-primary" />
-              <h2 className="text-lg font-medium">Histórico de Gastos</h2>
-            </div>
+            <div className="p-6 border-b border-border/50 flex items-center justify-between">
+              {" "}
+              <div className="flex items-center gap-2">
+                <BarChart className="h-5 w-5 text-shop-primary" />
+                <h2 className="text-lg font-medium">Histórico de Gastos</h2>
+              </div>
               <span className="text-sm bg-secondary-50 px-3 py-1 rounded-full">
-                {gastos.length} {gastos.length === 1 ? 'registro' : 'registros'}
+                {gastos.length} {gastos.length === 1 ? "registro" : "registros"}
               </span>
             </div>
 
@@ -366,7 +428,10 @@ export default function Gastos() {
               {isLoading ? (
                 <div className="space-y-4 p-2">
                   {[...Array(3)].map((_, i) => (
-                    <div key={i} className="bg-secondary/30 rounded-lg p-4 animate-pulse">
+                    <div
+                      key={i}
+                      className="bg-secondary/30 rounded-lg p-4 animate-pulse"
+                    >
                       <div className="flex gap-3">
                         <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
                         <div className="space-y-2 flex-1">
@@ -388,39 +453,55 @@ export default function Gastos() {
                       transition={{ duration: 0.3, delay: 0.05 * index }}
                       className="flex justify-between items-center p-4 rounded-lg bg-secondary/20 hover:bg-secondary/30 transition-colors"
                     >
-                      <div className="flex items-center gap-3">                        <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-                        <ArrowDownCircle className="h-5 w-5 text-red-500" />
-                      </div>
+                      <div className="flex items-center gap-3">
+                        {" "}
+                        <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                          <ArrowDownCircle className="h-5 w-5 text-red-500" />
+                        </div>
                         <div>
-                          <p className="font-medium">{gasto.descricao || 'Sem descrição'}</p>
+                          <p className="font-medium">
+                            {gasto.descricao || "Sem descrição"}
+                          </p>
                           <div className="flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
                             <span className="bg-secondary-50 px-2 py-0.5 rounded-full">
                               {gasto.categoria}
                             </span>
                             <span>•</span>
-                            <span>{new Date(gasto.data).toLocaleDateString('pt-BR')}</span>
+                            <span>
+                              {new Date(gasto.data).toLocaleDateString("pt-BR")}
+                            </span>
                             {gasto.recorrente && (
                               <>
                                 <span>•</span>
-                                <span className="text-shop-primary">Recorrente ({gasto.periodo || 'mensal'})</span>
+                                <span className="text-shop-primary">
+                                  Recorrente ({gasto.periodo || "mensal"})
+                                </span>
                               </>
                             )}
                           </div>
                         </div>
                       </div>
                       <span className="font-bold text-red-500 whitespace-nowrap">
-                        - R$ {gasto.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        - R${" "}
+                        {gasto.valor.toLocaleString("pt-BR", {
+                          minimumFractionDigits: 2,
+                        })}
                       </span>
                     </motion.div>
                   ))}
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-16 text-center">                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                  <ArrowDownCircle className="h-8 w-8 text-gray-400" />
-                </div>
-                  <h3 className="text-lg font-medium mb-1">Sem gastos registrados</h3>
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  {" "}
+                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                    <ArrowDownCircle className="h-8 w-8 text-gray-400" />
+                  </div>
+                  <h3 className="text-lg font-medium mb-1">
+                    Sem gastos registrados
+                  </h3>
                   <p className="text-muted-foreground max-w-md">
-                    Você ainda não registrou nenhum gasto. Use o formulário ao lado para adicionar seu primeiro registro.
+                    Você ainda não registrou nenhum gasto. Use o formulário ao
+                    lado para adicionar seu primeiro registro.
                   </p>
                 </div>
               )}
@@ -435,7 +516,9 @@ export default function Gastos() {
               className="mt-6 bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden"
             >
               <div className="p-6 border-b border-border/50">
-                <h2 className="text-lg font-medium">Top Categorias de Gastos</h2>
+                <h2 className="text-lg font-medium">
+                  Top Categorias de Gastos
+                </h2>
               </div>
 
               <div className="p-6 space-y-4">
@@ -450,7 +533,10 @@ export default function Gastos() {
                         </div>
                         <div className="text-right">
                           <span className="font-medium">
-                            R$ {cat.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                            R${" "}
+                            {cat.valor.toLocaleString("pt-BR", {
+                              minimumFractionDigits: 2,
+                            })}
                           </span>
                           <span className="text-xs text-muted-foreground ml-2">
                             ({percentage.toFixed(1)}%)

@@ -18,6 +18,12 @@ export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrollPosition, setScrollPosition] = useState(0);
 
+    // Verificar visualmente se o tema está sendo aplicado
+    useEffect(() => {
+        console.log('Tema atual:', theme);
+        console.log('Classe dark no HTML:', document.documentElement.classList.contains('dark'));
+    }, [theme]);
+
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };

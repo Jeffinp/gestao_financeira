@@ -1,66 +1,80 @@
-import { useState } from 'react';
-import { useFinancasStore } from '../store/financasStore';
-import { motion } from 'framer-motion';
-import { Clock, Filter, X } from 'lucide-react';
+import { useState } from "react";
+import { useFinancasStore } from "../store/financasStore";
+import { motion } from "framer-motion";
+import { Clock, Filter, X } from "lucide-react";
 
 // Animação para mostrar os elementos
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5 }
+  transition: { duration: 0.5 },
 };
 
 export default function Historico() {
   const { transacoes } = useFinancasStore();
 
   const [filtros, setFiltros] = useState({
-    dataInicio: '',
-    dataFim: '',
-    tipo: 'todos',
-    categoria: '',
+    dataInicio: "",
+    dataFim: "",
+    tipo: "todos",
+    categoria: "",
   });
 
-  const handleFiltroChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleFiltroChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFiltros(prev => ({ ...prev, [name]: value }));
+    setFiltros((prev) => ({ ...prev, [name]: value }));
   };
 
   const limparFiltros = () => {
     setFiltros({
-      dataInicio: '',
-      dataFim: '',
-      tipo: 'todos',
-      categoria: '',
+      dataInicio: "",
+      dataFim: "",
+      tipo: "todos",
+      categoria: "",
     });
   };
 
-  const transacoesFiltradas = transacoes.filter(transacao => {
-    // Filtro por data início
-    if (filtros.dataInicio && new Date(transacao.data) < new Date(filtros.dataInicio)) {
-      return false;
-    }
+  const transacoesFiltradas = transacoes
+    .filter((transacao) => {
+      // Filtro por data início
+      if (
+        filtros.dataInicio &&
+        new Date(transacao.data) < new Date(filtros.dataInicio)
+      ) {
+        return false;
+      }
 
-    // Filtro por data fim
-    if (filtros.dataFim && new Date(transacao.data) > new Date(filtros.dataFim)) {
-      return false;
-    }
+      // Filtro por data fim
+      if (
+        filtros.dataFim &&
+        new Date(transacao.data) > new Date(filtros.dataFim)
+      ) {
+        return false;
+      }
 
-    // Filtro por tipo
-    if (filtros.tipo !== 'todos' && transacao.tipo !== filtros.tipo) {
-      return false;
-    }
+      // Filtro por tipo
+      if (filtros.tipo !== "todos" && transacao.tipo !== filtros.tipo) {
+        return false;
+      }
 
-    // Filtro por categoria
-    if (filtros.categoria && filtros.categoria !== 'Todas' && transacao.categoria !== filtros.categoria) {
-      return false;
-    }
+      // Filtro por categoria
+      if (
+        filtros.categoria &&
+        filtros.categoria !== "Todas" &&
+        transacao.categoria !== filtros.categoria
+      ) {
+        return false;
+      }
 
-    return true;
-  }).sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
+      return true;
+    })
+    .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
 
   // Obter todas as categorias únicas das transações
   const categoriasUnicas = Array.from(
-    new Set(transacoes.map(t => t.categoria))
+    new Set(transacoes.map((t) => t.categoria))
   ).sort();
 
   return (
@@ -72,8 +86,12 @@ export default function Historico() {
         className="flex flex-col md:flex-row md:items-center justify-between mb-8"
       >
         <div className="mb-4 md:mb-0">
-          <h1 className="text-fluid-3xl font-bold text-balance mb-2">Histórico Financeiro</h1>
-          <p className="text-muted-foreground">Visualize e filtre todas as suas transações</p>
+          <h1 className="text-fluid-3xl font-bold text-balance mb-2">
+            Histórico Financeiro
+          </h1>
+          <p className="text-muted-foreground">
+            Visualize e filtre todas as suas transações
+          </p>
         </div>
       </motion.div>
 
@@ -90,7 +108,10 @@ export default function Historico() {
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label htmlFor="dataInicio" className="block text-sm font-medium mb-1">
+              <label
+                htmlFor="dataInicio"
+                className="block text-sm font-medium mb-1"
+              >
                 Data Início
               </label>
               <input
@@ -104,7 +125,10 @@ export default function Historico() {
             </div>
 
             <div>
-              <label htmlFor="dataFim" className="block text-sm font-medium mb-1">
+              <label
+                htmlFor="dataFim"
+                className="block text-sm font-medium mb-1"
+              >
                 Data Fim
               </label>
               <input
@@ -135,7 +159,10 @@ export default function Historico() {
             </div>
 
             <div>
-              <label htmlFor="categoria" className="block text-sm font-medium mb-1">
+              <label
+                htmlFor="categoria"
+                className="block text-sm font-medium mb-1"
+              >
                 Categoria
               </label>
               <select
@@ -147,7 +174,9 @@ export default function Historico() {
               >
                 <option value="Todas">Todas</option>
                 {categoriasUnicas.map((categoria, index) => (
-                  <option key={index} value={categoria}>{categoria}</option>
+                  <option key={index} value={categoria}>
+                    {categoria}
+                  </option>
                 ))}
               </select>
             </div>
@@ -191,11 +220,21 @@ export default function Historico() {
                     <div>
                       <h3 className="font-medium">{transacao.descricao}</h3>
                       <p className="text-sm text-muted-foreground">
-                        {new Date(transacao.data).toLocaleDateString('pt-BR')} • {transacao.categoria}
+                        {new Date(transacao.data).toLocaleDateString("pt-BR")} •{" "}
+                        {transacao.categoria}
                       </p>
                     </div>
-                    <span className={`font-bold ${transacao.tipo === 'ganho' ? 'text-green-500' : 'text-red-500'}`}>
-                      {transacao.tipo === 'ganho' ? '+' : '-'} R$ {transacao.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    <span
+                      className={`font-bold ${
+                        transacao.tipo === "ganho"
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {transacao.tipo === "ganho" ? "+" : "-"} R${" "}
+                      {transacao.valor.toLocaleString("pt-BR", {
+                        minimumFractionDigits: 2,
+                      })}
                     </span>
                   </div>
                 </motion.div>
