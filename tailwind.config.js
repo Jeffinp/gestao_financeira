@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-    content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx,css}"],
+    content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
     darkMode: 'class',
     theme: {
         container: {
@@ -16,96 +16,70 @@ export default {
             },
         },
         extend: {
-            container: {
-                padding: {
-                    DEFAULT: "1rem",
-                    sm: "2rem",
-                    lg: "2rem",
-                },
-            },
             colors: {
-                border: {
-                    DEFAULT: "hsl(var(--border))",
-                    dark: "hsl(var(--border-dark))",
-                },
-                input: {
-                    DEFAULT: "hsl(var(--input))",
-                    dark: "hsl(var(--input-dark))",
-                },
-                ring: {
-                    DEFAULT: "hsl(var(--ring))",
-                    dark: "hsl(var(--ring-dark))",
-                },
-                background: {
-                    DEFAULT: "hsl(var(--background))",
-                    dark: "hsl(var(--background-dark))",
-                },
-                foreground: {
-                    DEFAULT: "hsl(var(--foreground))",
-                    dark: "hsl(var(--foreground-dark))",
-                },
+                // Sistema de cores base com suporte a modo escuro e opacidade
+                border: "226 232 240", // slate-200
+                input: "226 232 240", // slate-200  
+                ring: "30 64 175", // blue-800
+                background: "255 255 255", // white
+                foreground: "15 23 42", // slate-900
                 primary: {
-                    DEFAULT: "hsl(var(--primary))",
-                    foreground: "hsl(var(--primary-foreground))",
-                    dark: "hsl(var(--primary-dark))",
+                    DEFAULT: "30 64 175", // blue-800
+                    foreground: "248 250 252", // slate-50
                 },
                 secondary: {
-                    DEFAULT: "hsl(var(--secondary))",
-                    foreground: "hsl(var(--secondary-foreground))",
-                    dark: "hsl(var(--secondary-dark))",
+                    DEFAULT: "241 245 249", // slate-100
+                    foreground: "71 85 105", // slate-600
                 },
                 destructive: {
-                    DEFAULT: "hsl(var(--destructive))",
-                    foreground: "hsl(var(--destructive-foreground))",
-                    dark: "hsl(var(--destructive-dark))",
+                    DEFAULT: "239 68 68", // red-500
+                    foreground: "255 255 255", // white
                 },
                 muted: {
-                    DEFAULT: "hsl(var(--muted))",
-                    foreground: "hsl(var(--muted-foreground))",
-                    dark: "hsl(var(--muted-dark))",
+                    DEFAULT: "248 250 252", // slate-50
+                    foreground: "100 116 139", // slate-500
                 },
                 accent: {
-                    DEFAULT: "hsl(var(--accent))",
-                    foreground: "hsl(var(--accent-foreground))",
-                    dark: "hsl(var(--accent-dark))",
+                    DEFAULT: "241 245 249", // slate-100
+                    foreground: "71 85 105", // slate-600
                 },
                 popover: {
-                    DEFAULT: "hsl(var(--popover))",
-                    foreground: "hsl(var(--popover-foreground))",
-                    dark: "hsl(var(--popover-dark))",
+                    DEFAULT: "255 255 255", // white
+                    foreground: "15 23 42", // slate-900
                 },
                 card: {
-                    DEFAULT: "hsl(var(--card))",
-                    foreground: "hsl(var(--card-foreground))",
-                    dark: "hsl(var(--card-dark))",
+                    DEFAULT: "255 255 255", // white
+                    foreground: "15 23 42", // slate-900
                 },
-                // Cores da loja
+
+                // Cores específicas para gestão financeira
                 shop: {
-                    primary: "hsl(var(--shop-primary))",
-                    secondary: "hsl(var(--shop-secondary))",
-                    accent: "hsl(var(--shop-accent))",
-                    highlight: "hsl(var(--shop-highlight))",
-                    success: "hsl(var(--shop-success))",
-                    warning: "hsl(var(--shop-warning))",
-                    error: "hsl(var(--shop-error))",
-                    info: "hsl(var(--shop-info))",
+                    primary: "30 64 175", // blue-800 - Azul profissional
+                    secondary: "71 85 105", // slate-600 - Cinza azulado  
+                    accent: "16 185 129", // emerald-500 - Verde para ganhos
+                    highlight: "251 146 60", // orange-400 - Laranja para destaque
+                    success: "34 197 94", // green-500 - Verde sucesso
+                    warning: "245 158 11", // amber-500 - Amarelo aviso
+                    error: "239 68 68", // red-500 - Vermelho erro
+                    info: "59 130 246", // blue-500 - Azul informação
                 },
-            },
-            backgroundColor: {
-                card: "hsl(var(--card))",
-            },
-            borderColor: {
-                DEFAULT: "hsl(var(--border))",
-            },
-            textColor: {
-                DEFAULT: "hsl(var(--foreground))",
             },
             borderRadius: {
-                lg: "var(--radius)",
-                md: "calc(var(--radius) - 2px)",
-                sm: "calc(var(--radius) - 4px)",
-                xl: "calc(var(--radius) + 4px)",
-                "2xl": "calc(var(--radius) + 8px)",
+                lg: "0.5rem",
+                md: "calc(0.5rem - 2px)",
+                sm: "calc(0.5rem - 4px)",
+                xl: "calc(0.5rem + 4px)",
+                "2xl": "calc(0.5rem + 8px)",
+            },
+            fontSize: {
+                // Tamanhos de fonte fluidos
+                'fluid-sm': 'clamp(0.875rem, 0.8rem + 0.3vw, 1rem)',
+                'fluid-base': 'clamp(1rem, 0.9rem + 0.4vw, 1.125rem)',
+                'fluid-lg': 'clamp(1.125rem, 1rem + 0.5vw, 1.25rem)',
+                'fluid-xl': 'clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem)',
+                'fluid-2xl': 'clamp(1.5rem, 1.3rem + 0.8vw, 2rem)',
+                'fluid-3xl': 'clamp(1.875rem, 1.6rem + 1vw, 2.5rem)',
+                'fluid-4xl': 'clamp(2.25rem, 1.9rem + 1.2vw, 3rem)',
             },
             animation: {
                 "fade-in": "fadeIn 0.5s ease-in-out",
@@ -172,20 +146,73 @@ export default {
                 'button-hover': '0 4px 15px -2px rgba(0, 0, 0, 0.3)',
             },
         },
-    },
-    plugins: [
-        require('@tailwindcss/container-queries'),
-        function ({ addComponents, addUtilities }) {
+    }, plugins: [
+        function ({ addComponents, addUtilities, addBase }) {
+            // Adiciona as variáveis CSS para suporte ao modo escuro
+            addBase({
+                ':root': {
+                    '--background': '255 255 255',
+                    '--foreground': '15 23 42',
+                    '--card': '255 255 255',
+                    '--card-foreground': '15 23 42',
+                    '--popover': '255 255 255',
+                    '--popover-foreground': '15 23 42',
+                    '--primary': '30 64 175',
+                    '--primary-foreground': '248 250 252',
+                    '--secondary': '241 245 249',
+                    '--secondary-foreground': '71 85 105',
+                    '--muted': '248 250 252',
+                    '--muted-foreground': '100 116 139',
+                    '--accent': '241 245 249',
+                    '--accent-foreground': '71 85 105',
+                    '--destructive': '239 68 68',
+                    '--destructive-foreground': '255 255 255',
+                    '--border': '226 232 240',
+                    '--input': '226 232 240',
+                    '--ring': '30 64 175',
+                    '--shop-primary': '30 64 175',
+                    '--shop-secondary': '71 85 105',
+                    '--shop-accent': '16 185 129',
+                    '--shop-highlight': '251 146 60',
+                    '--shop-success': '34 197 94',
+                    '--shop-warning': '245 158 11',
+                    '--shop-error': '239 68 68',
+                    '--shop-info': '59 130 246',
+                },
+                '.dark': {
+                    '--background': '2 6 23',
+                    '--foreground': '248 250 252',
+                    '--card': '15 23 42',
+                    '--card-foreground': '248 250 252',
+                    '--popover': '15 23 42',
+                    '--popover-foreground': '248 250 252',
+                    '--primary': '59 130 246',
+                    '--primary-foreground': '15 23 42',
+                    '--secondary': '30 41 59',
+                    '--secondary-foreground': '203 213 225',
+                    '--muted': '30 41 59',
+                    '--muted-foreground': '148 163 184',
+                    '--accent': '30 41 59',
+                    '--accent-foreground': '203 213 225',
+                    '--destructive': '239 68 68',
+                    '--destructive-foreground': '248 250 252',
+                    '--border': '30 41 59',
+                    '--input': '30 41 59',
+                    '--ring': '59 130 246',
+                    '--shop-primary': '59 130 246',
+                    '--shop-secondary': '100 116 139',
+                    '--shop-accent': '34 197 94',
+                    '--shop-highlight': '251 146 60',
+                }
+            })
+
             // Adiciona utilitários personalizados
             const newUtilities = {
-                '.bg-card': {
-                    backgroundColor: 'hsl(var(--card))',
+                '.text-balance': {
+                    'text-wrap': 'balance',
                 },
-                '.shadow-card': {
-                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-                },
-                '.shadow-card-hover': {
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                '.text-pretty': {
+                    'text-wrap': 'pretty',
                 },
                 '.hover-lift': {
                     transition: 'transform 0.3s ease, box-shadow 0.3s ease',
@@ -197,9 +224,107 @@ export default {
             }
             addUtilities(newUtilities)
 
-            // Adiciona componentes personalizados
+            // Adiciona componentes personalizados para gestão financeira
             const newComponents = {
-                '.badge': {
+                '.btn-shop-primary': {
+                    backgroundColor: 'rgb(var(--shop-primary))',
+                    color: 'white',
+                    fontWeight: '500',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '0.375rem',
+                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        transform: 'scale(1.05)',
+                    },
+                    '&:active': {
+                        transform: 'scale(0.95)',
+                    },
+                },
+                '.btn-shop-secondary': {
+                    backgroundColor: 'rgb(var(--shop-secondary))',
+                    color: 'white',
+                    fontWeight: '500',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '0.375rem',
+                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        transform: 'scale(1.05)',
+                    },
+                    '&:active': {
+                        transform: 'scale(0.95)',
+                    },
+                },
+                '.btn-shop-accent': {
+                    backgroundColor: 'rgb(var(--shop-accent))',
+                    color: 'white',
+                    fontWeight: '500',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '0.375rem',
+                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        transform: 'scale(1.05)',
+                    },
+                    '&:active': {
+                        transform: 'scale(0.95)',
+                    },
+                },
+                '.btn-shop-outline': {
+                    backgroundColor: 'transparent',
+                    color: 'rgb(var(--shop-primary))',
+                    border: '1px solid rgb(var(--shop-primary))',
+                    fontWeight: '500',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '0.375rem',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                        backgroundColor: 'rgb(var(--shop-primary))',
+                        color: 'white',
+                        transform: 'scale(1.05)',
+                    },
+                    '&:active': {
+                        transform: 'scale(0.95)',
+                    },
+                },
+                '.card-financial': {
+                    backgroundColor: 'rgb(var(--card))',
+                    color: 'rgb(var(--card-foreground))',
+                    borderRadius: '0.5rem',
+                    overflow: 'hidden',
+                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                    },
+                },
+                '.badge-success': {
+                    backgroundColor: 'rgba(var(--shop-success), 0.1)',
+                    color: 'rgb(var(--shop-success))',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    borderRadius: '9999px',
+                    padding: '0.125rem 0.5rem',
+                    fontSize: '0.75rem',
+                    fontWeight: '500',
+                },
+                '.badge-error': {
+                    backgroundColor: 'rgba(var(--shop-error), 0.1)',
+                    color: 'rgb(var(--shop-error))',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    borderRadius: '9999px',
+                    padding: '0.125rem 0.5rem',
+                    fontSize: '0.75rem',
+                    fontWeight: '500',
+                },
+                '.badge-warning': {
+                    backgroundColor: 'rgba(var(--shop-warning), 0.1)',
+                    color: 'rgb(var(--shop-warning))',
                     display: 'inline-flex',
                     alignItems: 'center',
                     borderRadius: '9999px',
@@ -208,98 +333,14 @@ export default {
                     fontWeight: '500',
                 },
                 '.badge-primary': {
-                    backgroundColor: 'hsla(var(--shop-primary), 0.1)',
-                    color: 'hsl(var(--shop-primary))',
-                },
-                '.badge-secondary': {
-                    backgroundColor: 'hsla(var(--shop-secondary), 0.1)',
-                    color: 'hsl(var(--shop-secondary))',
-                },
-                '.badge-accent': {
-                    backgroundColor: 'hsla(var(--shop-accent), 0.1)',
-                    color: 'hsl(var(--shop-accent))',
-                },
-                '.badge-success': {
-                    backgroundColor: 'hsla(var(--shop-success), 0.1)',
-                    color: 'hsl(var(--shop-success))',
-                },
-                '.badge-error': {
-                    backgroundColor: 'hsla(var(--shop-error), 0.1)',
-                    color: 'hsl(var(--shop-error))',
-                },
-                '.card-product': {
-                    backgroundColor: 'white',
-                    borderRadius: '0.5rem',
-                    overflow: 'hidden',
-                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-                    transition: 'all 0.3s ease',
-                }, '.card-product:hover': {
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-                },
-                '.btn-shop-primary': {
-                    backgroundColor: 'hsl(var(--shop-primary))',
-                    color: 'white',
+                    backgroundColor: 'rgba(var(--shop-primary), 0.1)',
+                    color: 'rgb(var(--shop-primary))',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    borderRadius: '9999px',
+                    padding: '0.125rem 0.5rem',
+                    fontSize: '0.75rem',
                     fontWeight: '500',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '0.375rem',
-                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-                    transition: 'all 0.3s ease',
-                },
-                '.btn-shop-primary:hover': {
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                    transform: 'scale(1.05)',
-                },
-                '.btn-shop-primary:active': {
-                    transform: 'scale(0.95)',
-                },
-                '.btn-shop-secondary': {
-                    backgroundColor: 'hsl(var(--shop-secondary))',
-                    color: 'white',
-                    fontWeight: '500',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '0.375rem',
-                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-                    transition: 'all 0.3s ease',
-                },
-                '.btn-shop-secondary:hover': {
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                    transform: 'scale(1.05)',
-                },
-                '.btn-shop-secondary:active': {
-                    transform: 'scale(0.95)',
-                },
-                '.btn-shop-accent': {
-                    backgroundColor: 'hsl(var(--shop-accent))',
-                    color: 'white',
-                    fontWeight: '500',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '0.375rem',
-                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-                    transition: 'all 0.3s ease',
-                },
-                '.btn-shop-accent:hover': {
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                    transform: 'scale(1.05)',
-                },
-                '.btn-shop-accent:active': {
-                    transform: 'scale(0.95)',
-                },
-                '.btn-shop-outline': {
-                    backgroundColor: 'transparent',
-                    color: 'hsl(var(--shop-primary))',
-                    border: '1px solid hsl(var(--shop-primary))',
-                    fontWeight: '500',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '0.375rem',
-                    transition: 'all 0.3s ease',
-                },
-                '.btn-shop-outline:hover': {
-                    backgroundColor: 'hsl(var(--shop-primary))',
-                    color: 'white',
-                    transform: 'scale(1.05)',
-                },
-                '.btn-shop-outline:active': {
-                    transform: 'scale(0.95)',
                 },
             }
             addComponents(newComponents)

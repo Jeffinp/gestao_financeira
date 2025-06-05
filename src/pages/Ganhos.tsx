@@ -233,7 +233,7 @@ export default function Ganhos() {
                       initial={{ opacity: 0, x: 10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.3, delay: 0.05 * index }}
-                      className="flex justify-between items-center p-4 rounded-md bg-secondary-50 border border-border/10 hover:bg-secondary/70 transition-colors"
+                      className="flex justify-between items-center p-4 rounded-md bg-secondary/20 border border-border/10 hover:bg-secondary/30 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full flex items-center justify-center bg-green-100 text-green-600">

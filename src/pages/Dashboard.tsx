@@ -288,8 +288,8 @@ export default function Dashboard() {
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center ${transacao.tipo === 'ganho'
-                          ? 'bg-green-100 text-green-600'
-                          : 'bg-red-100 text-red-600'
+                        ? 'bg-green-100 text-green-600'
+                        : 'bg-red-100 text-red-600'
                         }`}>
                         {transacao.tipo === 'ganho' ? (
                           <ArrowTrendingUpIcon className="h-5 w-5" />
