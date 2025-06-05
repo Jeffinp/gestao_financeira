@@ -12,15 +12,15 @@ const fadeInUp = {
 
 export default function Ganhos() {
   const { categorias, transacoes, adicionarTransacao } = useFinancasStore();
-  
+
   // Filtrar apenas categorias de ganhos
   const categoriasGanho = categorias.filter(cat => cat.tipo === 'ganho' || cat.tipo === 'ambos');
-  
+
   // Filtrar apenas transações do tipo ganho
   const ganhos = transacoes
     .filter(t => t.tipo === 'ganho')
     .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
-  
+
   const [formData, setFormData] = useState({
     valor: '',
     categoria: '',
@@ -29,26 +29,26 @@ export default function Ganhos() {
     recorrente: false,
     periodo: 'mensal'
   });
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
-    
+
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
   };
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validação básica
     if (!formData.valor || !formData.categoria || !formData.data) {
       alert('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
-    
+
     // Criar objeto de transação e adicionar ao store
     const novoGanho = {
       valor: parseFloat(formData.valor),
@@ -58,9 +58,9 @@ export default function Ganhos() {
       recorrente: formData.recorrente,
       tipo: 'ganho' as const
     };
-    
+
     adicionarTransacao(novoGanho);
-    
+
     // Reset do formulário
     setFormData({
       valor: '',
@@ -71,7 +71,7 @@ export default function Ganhos() {
       periodo: 'mensal'
     });
   };
-  
+
   return (
     <div className="container max-w-7xl mx-auto pt-24 pb-10">
       <motion.div
@@ -85,10 +85,10 @@ export default function Ganhos() {
           <p className="text-muted-foreground">Adicione e visualize suas receitas</p>
         </div>
       </motion.div>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <motion.div 
-          {...fadeInUp} 
+        <motion.div
+          {...fadeInUp}
           transition={{ duration: 0.5, delay: 0.1 }}
           className="lg:col-span-1"
         >
@@ -97,7 +97,7 @@ export default function Ganhos() {
               <PlusCircleIcon className="h-5 w-5 text-shop-primary" />
               <h2 className="text-lg font-medium">Novo Ganho</h2>
             </div>
-            
+
             <div className="p-6">
               <form onSubmit={handleSubmit}>
                 <div className="space-y-4">
@@ -117,7 +117,7 @@ export default function Ganhos() {
                       placeholder="0,00"
                     />
                   </div>
-                  
+
                   <div>
                     <label htmlFor="categoria" className="block text-sm font-medium mb-1">
                       Categoria
@@ -136,7 +136,7 @@ export default function Ganhos() {
                       ))}
                     </select>
                   </div>
-                  
+
                   <div>
                     <label htmlFor="data" className="block text-sm font-medium mb-1">
                       Data
@@ -151,7 +151,7 @@ export default function Ganhos() {
                       className="w-full rounded-md border border-input bg-background px-3 py-2"
                     />
                   </div>
-                  
+
                   <div>
                     <label htmlFor="descricao" className="block text-sm font-medium mb-1">
                       Descrição
@@ -166,7 +166,7 @@ export default function Ganhos() {
                       placeholder="Detalhes sobre o ganho..."
                     ></textarea>
                   </div>
-                  
+
                   <div className="flex items-center">
                     <input
                       id="recorrente"
@@ -180,7 +180,7 @@ export default function Ganhos() {
                       Ganho recorrente
                     </label>
                   </div>
-                  
+
                   {formData.recorrente && (
                     <div>
                       <label htmlFor="periodo" className="block text-sm font-medium mb-1">
@@ -200,7 +200,7 @@ export default function Ganhos() {
                       </select>
                     </div>
                   )}
-                  
+
                   <button
                     type="submit"
                     className="w-full bg-shop-primary text-primary-foreground rounded-md px-4 py-2 font-medium hover:bg-shop-primary/90 transition"
@@ -212,8 +212,8 @@ export default function Ganhos() {
             </div>
           </div>
         </motion.div>
-        
-        <motion.div 
+
+        <motion.div
           {...fadeInUp}
           transition={{ duration: 0.5, delay: 0.2 }}
           className="lg:col-span-2"
@@ -223,17 +223,17 @@ export default function Ganhos() {
               <ClockIcon className="h-5 w-5 text-shop-primary" />
               <h2 className="text-lg font-medium">Histórico de Ganhos</h2>
             </div>
-            
+
             <div className="p-6">
               {ganhos.length > 0 ? (
                 <div className="space-y-4">
                   {ganhos.map((ganho, index) => (
-                    <motion.div 
-                      key={ganho.id} 
+                    <motion.div
+                      key={ganho.id}
                       initial={{ opacity: 0, x: 10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.3, delay: 0.05 * index }}
-                      className="flex justify-between items-center p-4 rounded-md bg-secondary/50 border border-border/10 hover:bg-secondary/70 transition-colors"
+                      className="flex justify-between items-center p-4 rounded-md bg-secondary-50 border border-border/10 hover:bg-secondary/70 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full flex items-center justify-center bg-green-100 text-green-600">
@@ -270,4 +270,4 @@ export default function Ganhos() {
       </div>
     </div>
   );
-} 
+}

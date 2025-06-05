@@ -360,7 +360,7 @@ export default function Gastos() {
                 <ChartBarIcon className="h-5 w-5 text-shop-primary" />
                 <h2 className="text-lg font-medium">Histórico de Gastos</h2>
               </div>
-              <span className="text-sm bg-secondary/50 px-3 py-1 rounded-full">
+              <span className="text-sm bg-secondary-50 px-3 py-1 rounded-full">
                 {gastos.length} {gastos.length === 1 ? 'registro' : 'registros'}
               </span>
             </div>
@@ -398,7 +398,7 @@ export default function Gastos() {
                         <div>
                           <p className="font-medium">{gasto.descricao || 'Sem descrição'}</p>
                           <div className="flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
-                            <span className="bg-secondary/50 px-2 py-0.5 rounded-full">
+                            <span className="bg-secondary-50 px-2 py-0.5 rounded-full">
                               {gasto.categoria}
                             </span>
                             <span>•</span>

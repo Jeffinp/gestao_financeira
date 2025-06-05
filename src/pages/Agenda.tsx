@@ -296,7 +296,7 @@ export default function Agenda() {
                 <CalendarIcon className="h-5 w-5 text-shop-primary" />
                 <h2 className="text-lg font-medium">Lembretes Agendados</h2>
               </div>
-              <span className="text-sm bg-secondary/50 px-3 py-1 rounded-full">
+              <span className="text-sm bg-secondary-50 px-3 py-1 rounded-full">
                 {lembretes.length} {lembretes.length === 1 ? 'lembrete' : 'lembretes'}
               </span>
             </div>

@@ -99,7 +99,7 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-secondary/50 rounded-full;
+    @apply bg-secondary-50 rounded-full;
   }
 
   ::-webkit-scrollbar-thumb {
@@ -283,4 +283,8 @@
 .page-exit-active {
   opacity: 0;
   transition: opacity 300ms;
+}
+
+.bg-secondary-50 {
+  background-color: hsl(var(--secondary) / 0.5);
 }
