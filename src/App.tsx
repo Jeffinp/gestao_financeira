@@ -3,7 +3,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import Layout from "./components/layout/Layout";
 import Dashboard from "./pages/Dashboard";
 import Gastos from "./pages/Gastos";
-import Ganhos from "../Ganhos";
+import Ganhos from "./pages/Ganhos";
 import Historico from "./pages/Historico";
 import Agenda from "./pages/Agenda";
 import Loja from "./pages/Loja";
