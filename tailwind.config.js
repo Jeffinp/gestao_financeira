@@ -17,51 +17,54 @@ export default {
         },
         extend: {
             colors: {
-                // Sistema de cores base com suporte a modo escuro e opacidade
-                border: "226 232 240", // slate-200
-                input: "226 232 240", // slate-200  
-                ring: "30 64 175", // blue-800
-                background: "255 255 255", // white
-                foreground: "15 23 42", // slate-900
+                border: {
+                    DEFAULT: 'rgb(var(--border) / <alpha-value>)',
+                },
+                input: {
+                    DEFAULT: 'rgb(var(--input) / <alpha-value>)',
+                },
+                ring: {
+                    DEFAULT: 'rgb(var(--ring) / <alpha-value>)',
+                },
+                background: {
+                    DEFAULT: 'rgb(var(--background) / <alpha-value>)',
+                },
+                foreground: {
+                    DEFAULT: 'rgb(var(--foreground) / <alpha-value>)',
+                },
                 primary: {
-                    DEFAULT: "30 64 175", // blue-800
-                    foreground: "248 250 252", // slate-50
+                    DEFAULT: 'rgb(var(--primary) / <alpha-value>)',
+                    foreground: 'rgb(var(--primary-foreground) / <alpha-value>)',
                 },
                 secondary: {
-                    DEFAULT: "241 245 249", // slate-100
-                    foreground: "71 85 105", // slate-600
+                    DEFAULT: 'rgb(var(--secondary) / <alpha-value>)',
+                    foreground: 'rgb(var(--secondary-foreground) / <alpha-value>)',
                 },
                 destructive: {
-                    DEFAULT: "239 68 68", // red-500
-                    foreground: "255 255 255", // white
+                    DEFAULT: 'rgb(var(--destructive) / <alpha-value>)',
+                    foreground: 'rgb(var(--destructive-foreground) / <alpha-value>)',
                 },
                 muted: {
-                    DEFAULT: "248 250 252", // slate-50
-                    foreground: "100 116 139", // slate-500
+                    DEFAULT: 'rgb(var(--muted) / <alpha-value>)',
+                    foreground: 'rgb(var(--muted-foreground) / <alpha-value>)',
                 },
                 accent: {
-                    DEFAULT: "241 245 249", // slate-100
-                    foreground: "71 85 105", // slate-600
-                },
-                popover: {
-                    DEFAULT: "255 255 255", // white
-                    foreground: "15 23 42", // slate-900
+                    DEFAULT: 'rgb(var(--accent) / <alpha-value>)',
+                    foreground: 'rgb(var(--accent-foreground) / <alpha-value>)',
                 },
                 card: {
-                    DEFAULT: "255 255 255", // white
-                    foreground: "15 23 42", // slate-900
+                    DEFAULT: 'rgb(var(--card) / <alpha-value>)',
+                    foreground: 'rgb(var(--card-foreground) / <alpha-value>)',
                 },
-
-                // Cores específicas para gestão financeira
                 shop: {
-                    primary: "30 64 175", // blue-800 - Azul profissional
-                    secondary: "71 85 105", // slate-600 - Cinza azulado  
-                    accent: "16 185 129", // emerald-500 - Verde para ganhos
-                    highlight: "251 146 60", // orange-400 - Laranja para destaque
-                    success: "34 197 94", // green-500 - Verde sucesso
-                    warning: "245 158 11", // amber-500 - Amarelo aviso
-                    error: "239 68 68", // red-500 - Vermelho erro
-                    info: "59 130 246", // blue-500 - Azul informação
+                    primary: 'rgb(var(--shop-primary) / <alpha-value>)',
+                    secondary: 'rgb(var(--shop-secondary) / <alpha-value>)',
+                    accent: 'rgb(var(--shop-accent) / <alpha-value>)',
+                    highlight: 'rgb(var(--shop-highlight) / <alpha-value>)',
+                    success: 'rgb(var(--shop-success) / <alpha-value>)',
+                    warning: 'rgb(var(--shop-warning) / <alpha-value>)',
+                    error: 'rgb(var(--shop-error) / <alpha-value>)',
+                    info: 'rgb(var(--shop-info) / <alpha-value>)',
                 },
             },
             borderRadius: {
