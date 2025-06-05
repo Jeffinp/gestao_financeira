@@ -2,44 +2,42 @@ import { useFinancasStore } from '../store/financasStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { exportToPDF, exportToCSV, exportToJSON } from '../utils/exportUtils';
 import {
-  ArrowTrendingUpIcon,
-  ArrowTrendingDownIcon,
-  CurrencyDollarIcon,
-  ChartPieIcon,
-  ClockIcon,
-  ArrowPathIcon,
-  EyeIcon,
-  BanknotesIcon,
-  CreditCardIcon,
-  PresentationChartLineIcon,
-  CalendarDaysIcon,
-  ShoppingBagIcon,
-  ChevronRightIcon,
-  PlusIcon,
-  MinusIcon,
-  Cog6ToothIcon,
-  ChartBarIcon,
-  StarIcon,
-  FireIcon,
-  DocumentArrowDownIcon,
-  ShareIcon
-} from '@heroicons/react/24/outline';
-import { useEffect, useState } from 'react';
-import {
+  TrendingUp,
+  TrendingDown,
+  FileDown,
   PieChart,
+  RotateCcw,
+  Eye,
+  ChevronRight,
+  Plus,
+  Minus,
+  Share,
+  Calendar,
+  Clock,
+  Star,
+  Flame,
+  ShoppingBag,
+  Settings,
+  DollarSign,
+  Banknote,
+  CreditCard
+} from 'lucide-react';
+import {
+  ResponsiveContainer,
   Pie,
   Cell,
+  Tooltip,
   AreaChart,
   Area,
   XAxis,
   YAxis,
-  ResponsiveContainer,
-  Tooltip,
   BarChart,
   Bar,
   LineChart,
-  Line
+  Line,
+  Sector
 } from 'recharts';
+import { useEffect, useState } from 'react';
 
 // Componente para cards de estatísticas principais
 interface StatCardProps {
@@ -72,15 +70,14 @@ function StatCard({ title, value, icon: Icon, iconBgColor, iconColor, trend, isL
           <div className={`p-3 rounded-xl ${iconBgColor} group-hover:scale-110 transition-transform duration-300`}>
             <Icon className={`h-6 w-6 ${iconColor}`} />
           </div>
-          {trend && (
-            <div className={`flex items-center gap-1 text-sm font-medium ${trend.isPositive ? 'text-shop-success' : 'text-shop-error'}`}>
-              {trend.isPositive ? (
-                <ArrowTrendingUpIcon className="h-4 w-4" />
-              ) : (
-                <ArrowTrendingDownIcon className="h-4 w-4" />
-              )}
-              {Math.abs(trend.value)}%
-            </div>
+          {trend && (<div className={`flex items-center gap-1 text-sm font-medium ${trend.isPositive ? 'text-shop-success' : 'text-shop-error'}`}>
+            {trend.isPositive ? (
+              <TrendingUp className="h-4 w-4" />
+            ) : (
+              <TrendingDown className="h-4 w-4" />
+            )}
+            {Math.abs(trend.value)}%
+          </div>
           )}
         </div>
 
@@ -113,101 +110,178 @@ interface ModernPieChartProps {
 
 function ModernPieChart({ data, isLoading }: ModernPieChartProps) {
   const [activeIndex, setActiveIndex] = useState(-1);
-
   const total = data.reduce((acc, item) => acc + item.valor, 0);
-
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0];
-      const percentage = ((data.value / total) * 100).toFixed(1);
-      return (
-        <div className="bg-card border border-border/50 rounded-xl p-3 shadow-lg">
-          <p className="text-sm font-medium text-foreground">{data.name}</p>
-          <p className="text-xs text-muted-foreground">
-            R$ {data.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} ({percentage}%)
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
-
+  
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-80">
-        <div className="w-48 h-48 rounded-full bg-muted animate-pulse"></div>
+      <div className="flex items-center justify-center h-64">
+        <div className="w-32 h-32 rounded-full bg-muted animate-pulse"></div>
       </div>
     );
   }
 
+  // Cores sólidas para as fatias do gráfico
+  const colors = [
+    "#3b82f6", // Azul para Alimentação
+    "#10b981", // Verde para Transporte
+    "#f59e0b", // Laranja para Lazer
+    "#ef4444", // Vermelho para Moradia
+    "#8b5cf6"  // Roxo para Outros
+  ];
+
+  // Função para calcular os pontos do gráfico de pizza
+  const createPieChart = () => {
+    const size = 280; // Tamanho do SVG
+    const radius = 120; // Raio do gráfico
+    const centerX = size / 2;
+    const centerY = size / 2;
+    
+    let startAngle = 0;
+    const paths = [];
+    const labels = [];
+    
+    // Criar fatias do gráfico
+    for (let i = 0; i < data.length; i++) {
+      const value = data[i].valor;
+      const percentage = value / total;
+      const angle = percentage * 2 * Math.PI;
+      const endAngle = startAngle + angle;
+      
+      // Calcular pontos para o caminho SVG
+      const x1 = centerX + radius * Math.cos(startAngle);
+      const y1 = centerY + radius * Math.sin(startAngle);
+      const x2 = centerX + radius * Math.cos(endAngle);
+      const y2 = centerY + radius * Math.sin(endAngle);
+      
+      // Determinar se o arco é maior que 180 graus
+      const largeArcFlag = percentage > 0.5 ? 1 : 0;
+      
+      // Criar o caminho SVG para a fatia
+      const pathData = [
+        `M ${centerX} ${centerY}`,
+        `L ${x1} ${y1}`,
+        `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
+        'Z'
+      ].join(' ');
+      
+      // Calcular posição para o texto
+      const labelAngle = startAngle + angle / 2;
+      const labelRadius = radius * 0.65; // Mais perto do centro para textos
+      const labelX = centerX + labelRadius * Math.cos(labelAngle);
+      const labelY = centerY + labelRadius * Math.sin(labelAngle);
+      
+      // Adicionar caminhos e textos
+      const isActive = i === activeIndex;
+      const displacement = isActive ? 10 : 0; // Desloca a fatia selecionada
+      const displacementX = displacement * Math.cos(labelAngle);
+      const displacementY = displacement * Math.sin(labelAngle);
+      
+      paths.push(
+        <path
+          key={`slice-${i}`}
+          d={pathData}
+          fill={colors[i % colors.length]}
+          stroke="#fff"
+          strokeWidth={isActive ? 2 : 1}
+          transform={isActive ? `translate(${displacementX} ${displacementY})` : ''}
+          style={{ 
+            transition: 'transform 0.3s ease, filter 0.3s ease',
+            filter: isActive ? 'drop-shadow(0px 0px 8px rgba(0,0,0,0.3))' : 'none',
+            cursor: 'pointer'
+          }}
+          onMouseEnter={() => setActiveIndex(i)}
+          onMouseLeave={() => setActiveIndex(-1)}
+          onClick={() => setActiveIndex(i === activeIndex ? -1 : i)}
+        />
+      );
+      
+      // Adicionar texto se a fatia for grande o suficiente
+      if (percentage > 0.05) {
+        labels.push(
+          <text
+            key={`label-${i}`}
+            x={labelX}
+            y={labelY}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="#fff"
+            fontSize="14"
+            fontWeight="bold"
+            pointerEvents="none"
+          >
+            {Math.round(percentage * 100)}%
+          </text>
+        );
+      }
+      
+      // Atualizar ângulo inicial para a próxima fatia
+      startAngle = endAngle;
+    }
+    
+    return { paths, labels };
+  };
+  
+  const { paths, labels } = createPieChart();
+  
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-center">
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              innerRadius={60}
-              outerRadius={120}
-              paddingAngle={2}
-              dataKey="valor"
-              nameKey="nome"
-              onMouseEnter={(_, index) => setActiveIndex(index)}
-              onMouseLeave={() => setActiveIndex(-1)}
-            >
-              {data.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={entry.cor}
-                  stroke={index === activeIndex ? entry.cor : 'transparent'}
-                  strokeWidth={index === activeIndex ? 3 : 0}
-                  style={{
-                    filter: index === activeIndex ? 'brightness(1.1)' : 'none',
-                    transition: 'all 0.3s ease'
-                  }}
-                />
-              ))}
-            </Pie>
-            <Tooltip content={<CustomTooltip />} />
-          </PieChart>
-        </ResponsiveContainer>
+      <div className="flex justify-center">
+        <div className="bg-white p-6 rounded-xl shadow-lg" style={{ width: '340px' }}>
+          <h3 className="text-center font-bold text-xl mb-4 text-gray-800">Gastos por Categoria: R$ 2.300,00</h3>
+          
+          {/* Gráfico de pizza em SVG */}
+          <svg width="280" height="280" viewBox="0 0 280 280" style={{ margin: '0 auto', display: 'block', boxShadow: '0 0 10px rgba(0,0,0,0.05)', borderRadius: '50%', background: '#ffffff' }}>
+            {/* Círculo de fundo para garantir que não apareça nada por trás */}
+            <circle cx="140" cy="140" r="140" fill="#ffffff" />
+            <circle cx="140" cy="140" r="122" fill="#fafafa" stroke="#f0f0f0" strokeWidth="1" />
+            
+            {/* Fatias do gráfico */}
+            {paths}
+            
+            {/* Textos de percentual */}
+            {labels}
+            
+            {/* Círculo interno (opcional, para estilo donut) */}
+            <circle cx="140" cy="140" r="50" fill="white" stroke="#e0e0e0" strokeWidth="2" />
+            <text x="140" y="140" textAnchor="middle" dominantBaseline="middle" fill="#333" fontSize="14" fontWeight="bold">
+              Gastos
+            </text>
+          </svg>
+        </div>
       </div>
 
-      {/* Legenda personalizada */}
-      <div className="grid grid-cols-2 gap-3">
-        {data.map((item, index) => {
-          const percentage = ((item.valor / total) * 100).toFixed(1);
-          return (
-            <motion.div
-              key={item.nome}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="flex items-center gap-3 p-3 rounded-lg hover:bg-secondary/30 transition-colors cursor-pointer"
-              onMouseEnter={() => setActiveIndex(index)}
-              onMouseLeave={() => setActiveIndex(-1)}
-            >
+      {/* Legenda */}
+      <div className="bg-white p-4 rounded-xl shadow-sm">
+        <h3 className="text-center font-bold text-lg mb-2">Detalhamento de Gastos</h3>
+        <div className="grid grid-cols-2 gap-3">
+          {data.map((item, index) => {
+            const percentage = ((item.valor / total) * 100).toFixed(1);
+            
+            return (
               <div
-                className="w-3 h-3 rounded-full transition-transform"
-                style={{
-                  backgroundColor: item.cor,
-                  transform: index === activeIndex ? 'scale(1.2)' : 'scale(1)'
+                key={item.nome}
+                className={`p-3 rounded-lg transition-all duration-200 text-white ${
+                  activeIndex === index ? 'scale-105 shadow-lg' : ''
+                }`}
+                style={{ 
+                  transform: activeIndex === index ? 'scale(1.05)' : 'scale(1)',
+                  backgroundColor: colors[index % colors.length]
                 }}
-              />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground truncate">{item.nome}</p>
-                <p className="text-xs text-muted-foreground">{percentage}%</p>
+                onMouseEnter={() => setActiveIndex(index)}
+                onMouseLeave={() => setActiveIndex(-1)}
+                onClick={() => setActiveIndex(index === activeIndex ? -1 : index)}
+              >
+                <p className="text-sm font-bold">{item.nome}</p>
+                <div className="flex justify-between mt-1">
+                  <p className="text-xs opacity-90">{percentage}%</p>
+                  <p className="text-sm font-bold">
+                    R$ {item.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </p>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="text-sm font-semibold text-foreground">
-                  R$ {(item.valor / 1000).toFixed(1)}k
-                </p>
-              </div>
-            </motion.div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -281,6 +355,186 @@ function TrendChart({ data, isLoading }: TrendChartProps) {
         />
       </AreaChart>
     </ResponsiveContainer>
+  );
+}
+
+// Componente para gráfico de barras moderno
+interface ModernBarChartProps {
+  data: Array<{ categoria: string; valor: number; meta?: number }>;
+  isLoading: boolean;
+  title?: string;
+}
+
+function ModernBarChart({ data, isLoading, title }: ModernBarChartProps) {
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <div className="h-6 bg-muted animate-pulse rounded w-1/3"></div>
+        <div className="h-64 bg-muted animate-pulse rounded-xl"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {title && (
+        <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+      )}
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <defs>
+            <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.8} />
+              <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.3} />
+            </linearGradient>
+          </defs>
+          <XAxis
+            dataKey="categoria"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 12, fill: 'rgb(100, 116, 139)' }}
+          />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 12, fill: 'rgb(100, 116, 139)' }}
+            tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: 'rgb(var(--card))',
+              border: '1px solid rgb(var(--border) / 0.5)',
+              borderRadius: '0.75rem',
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+            }}
+            formatter={(value: any) => [
+              `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
+              'Valor'
+            ]}
+          />
+          <Bar
+            dataKey="valor"
+            fill="url(#barGradient)"
+            radius={[4, 4, 0, 0]}
+          />
+          {data.some(item => item.meta) && (
+            <Bar
+              dataKey="meta"
+              fill="rgba(239, 68, 68, 0.3)"
+              radius={[4, 4, 0, 0]}
+            />
+          )}
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+// Componente para gráfico de linha detalhado
+interface DetailedLineChartProps {
+  data: Array<{ periodo: string; receitas: number; despesas: number; economia: number }>;
+  isLoading: boolean;
+  title?: string;
+}
+
+function DetailedLineChart({ data, isLoading, title }: DetailedLineChartProps) {
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <div className="h-6 bg-muted animate-pulse rounded w-1/3"></div>
+        <div className="h-64 bg-muted animate-pulse rounded-xl"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {title && (
+        <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+      )}
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <defs>
+            <linearGradient id="receitasGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
+            </linearGradient>
+            <linearGradient id="despesasGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1} />
+            </linearGradient>
+            <linearGradient id="economiaGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1} />
+            </linearGradient>
+          </defs>
+          <XAxis
+            dataKey="periodo"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 12, fill: 'rgb(100, 116, 139)' }}
+          />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 12, fill: 'rgb(100, 116, 139)' }}
+            tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: 'rgb(var(--card))',
+              border: '1px solid rgb(var(--border) / 0.5)',
+              borderRadius: '0.75rem',
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+            }}
+            formatter={(value: any, name: string) => [
+              `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
+              name === 'receitas' ? 'Receitas' : name === 'despesas' ? 'Despesas' : 'Economia'
+            ]}
+          />
+          <Line
+            type="monotone"
+            dataKey="receitas"
+            stroke="#10b981"
+            strokeWidth={3}
+            dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
+            activeDot={{ r: 6, fill: '#10b981' }}
+          />
+          <Line
+            type="monotone"
+            dataKey="despesas"
+            stroke="#ef4444"
+            strokeWidth={3}
+            dot={{ fill: '#ef4444', strokeWidth: 2, r: 4 }}
+            activeDot={{ r: 6, fill: '#ef4444' }}
+          />
+          <Line
+            type="monotone"
+            dataKey="economia"
+            stroke="#3b82f6"
+            strokeWidth={3}
+            dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+            activeDot={{ r: 6, fill: '#3b82f6' }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+
+      {/* Legenda customizada */}
+      <div className="flex justify-center gap-6 mt-4">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-[#10b981]"></div>
+          <span className="text-sm text-muted-foreground">Receitas</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-[#ef4444]"></div>
+          <span className="text-sm text-muted-foreground">Despesas</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-[#3b82f6]"></div>
+          <span className="text-sm text-muted-foreground">Economia</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -358,11 +612,11 @@ export default function Dashboard() {
 
   // Dados para gráficos com cores mais harmoniosas
   const categorias = [
-    { nome: 'Alimentação', valor: Math.max(gastosMes * 0.3, 800), cor: '#3b82f6' },
-    { nome: 'Transporte', valor: Math.max(gastosMes * 0.15, 400), cor: '#10b981' },
-    { nome: 'Lazer', valor: Math.max(gastosMes * 0.2, 300), cor: '#f59e0b' },
-    { nome: 'Moradia', valor: Math.max(gastosMes * 0.25, 600), cor: '#ef4444' },
-    { nome: 'Outros', valor: Math.max(gastosMes * 0.1, 200), cor: '#8b5cf6' }
+    { nome: 'Alimentação', valor: 800, cor: 'var(--shop-primary)' },
+    { nome: 'Transporte', valor: 400, cor: 'var(--shop-success)' },
+    { nome: 'Lazer', valor: 300, cor: 'var(--shop-highlight)' },
+    { nome: 'Moradia', valor: 600, cor: 'var(--shop-error)' },
+    { nome: 'Outros', valor: 200, cor: 'var(--shop-accent)' }
   ];
 
   // Dados de tendência simulados
@@ -381,8 +635,7 @@ export default function Dashboard() {
       {/* Header Section Aprimorado */}
       <div className="bg-gradient-to-br from-shop-primary/10 via-shop-accent/5 to-shop-primary/15 border-b border-border/20 relative overflow-hidden">
         {/* Elementos decorativos */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-shop-primary/5 rounded-full blur-3xl -translate-y-48 translate-x-48"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-shop-accent/10 rounded-full blur-2xl translate-y-32 -translate-x-32"></div>
+        {/* Elementos decorativos removidos para evitar interferência */}
 
         <div className="container max-w-7xl mx-auto pt-24 pb-12 relative">
           <motion.div
@@ -398,7 +651,7 @@ export default function Dashboard() {
                   animate={{ rotate: [0, 5, -5, 0] }}
                   transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
                 >
-                  <ChartBarIcon className="h-8 w-8 text-shop-primary" />
+                  <BarChart className="h-8 w-8 text-shop-primary" />
                 </motion.div>
                 <div>
                   <h1 className="text-fluid-4xl font-bold text-foreground">
@@ -425,15 +678,14 @@ export default function Dashboard() {
                 whileTap={{ scale: 0.98 }}
                 className="flex items-center gap-2 px-4 py-3 bg-card/80 backdrop-blur-sm border border-border/50 rounded-xl text-sm font-medium text-foreground hover:bg-secondary/50 transition-all duration-200 shadow-sm"
                 onClick={() => window.location.reload()}
-              >
-                <ArrowPathIcon className="h-4 w-4" />
+              >                <RotateCcw className="h-4 w-4" />
                 Atualizar
               </motion.button>              <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="btn-shop-primary text-sm flex items-center gap-2 shadow-button"
               >
-                <EyeIcon className="h-4 w-4" />
+                <Eye className="h-4 w-4" />
                 Relatório Completo
               </motion.button>
 
@@ -443,7 +695,7 @@ export default function Dashboard() {
                   whileTap={{ scale: 0.98 }}
                   className="btn-shop-outline text-sm flex items-center gap-2"
                 >
-                  <DocumentArrowDownIcon className="h-4 w-4" />
+                  <FileDown className="h-4 w-4" />
                   Exportar
                 </motion.button>
                 <div className="absolute right-0 top-full mt-2 w-48 bg-card border border-border/50 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
@@ -452,21 +704,19 @@ export default function Dashboard() {
                       onClick={handleExportPDF}
                       className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-secondary/30 flex items-center gap-2"
                     >
-                      <DocumentArrowDownIcon className="h-4 w-4" />
+                      <FileDown className="h-4 w-4" />
                       Relatório PDF
                     </button>
                     <button
                       onClick={handleExportCSV}
-                      className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-secondary/30 flex items-center gap-2"
-                    >
-                      <ShareIcon className="h-4 w-4" />
+                      className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-secondary/30 flex items-center gap-2"                    >
+                      <Share className="h-4 w-4" />
                       Transações CSV
                     </button>
                     <button
                       onClick={handleExportJSON}
                       className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-secondary/30 flex items-center gap-2"
-                    >
-                      <ChartBarIcon className="h-4 w-4" />
+                    >                      <PieChart className="h-4 w-4" />
                       Dados JSON
                     </button>
                   </div>
@@ -477,8 +727,7 @@ export default function Dashboard() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="btn-shop-accent text-sm flex items-center gap-2"
-              >
-                <PlusIcon className="h-4 w-4" />
+              >                <Plus className="h-4 w-4" />
                 Nova Transação
               </motion.button>
             </div>
@@ -490,24 +739,23 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="flex items-center gap-1 mt-8 p-1 bg-card/50 backdrop-blur-sm rounded-xl border border-border/50"
-          >
-            {[
-              { id: 'overview', label: 'Visão Geral', icon: ChartPieIcon },
-              { id: 'analytics', label: 'Análises', icon: PresentationChartLineIcon },
-              { id: 'goals', label: 'Metas', icon: CalendarDaysIcon }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === tab.id
-                  ? 'bg-shop-primary text-white shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-secondary/30'
-                  }`}
-              >
-                <tab.icon className="h-4 w-4" />
-                {tab.label}
-              </button>
-            ))}
+          >            {[
+            { id: 'overview', label: 'Visão Geral', icon: PieChart },
+            { id: 'analytics', label: 'Análises', icon: LineChart },
+            { id: 'goals', label: 'Metas', icon: Calendar }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === tab.id
+                ? 'bg-shop-primary text-white shadow-sm'
+                : 'text-muted-foreground hover:text-foreground hover:bg-secondary/30'
+                }`}
+            >
+              <tab.icon className="h-4 w-4" />
+              {tab.label}
+            </button>
+          ))}
           </motion.div>
         </div>
       </div>
@@ -525,9 +773,8 @@ export default function Dashboard() {
             {/* Cards de Estatísticas Principais */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <StatCard
-                title="Saldo Total"
-                value={`R$ ${saldo.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                icon={CurrencyDollarIcon}
+                title="Saldo Total" value={`R$ ${saldo.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                icon={DollarSign}
                 iconBgColor="bg-shop-primary/10"
                 iconColor="text-shop-primary"
                 trend={{
@@ -536,10 +783,9 @@ export default function Dashboard() {
                 }}
                 isLoading={isLoading}
                 delay={0.1}
-              />              <StatCard
-                title="Receitas do Mês"
+              />              <StatCard title="Receitas do Mês"
                 value={`R$ ${ganhosMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                icon={ArrowTrendingUpIcon}
+                icon={TrendingUp}
                 iconBgColor="bg-shop-success/10"
                 iconColor="text-shop-success"
                 trend={{
@@ -553,7 +799,7 @@ export default function Dashboard() {
               <StatCard
                 title="Despesas do Mês"
                 value={`R$ ${gastosMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                icon={CreditCardIcon}
+                icon={CreditCard}
                 iconBgColor="bg-shop-error/10"
                 iconColor="text-shop-error"
                 trend={{
@@ -567,7 +813,7 @@ export default function Dashboard() {
               <StatCard
                 title="Saldo Líquido"
                 value={`R$ ${saldoLiquido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-                icon={BanknotesIcon}
+                icon={Banknote}
                 iconBgColor={saldoLiquido >= 0 ? "bg-shop-success/10" : "bg-shop-error/10"}
                 iconColor={saldoLiquido >= 0 ? "text-shop-success" : "text-shop-error"}
                 isLoading={isLoading}
@@ -587,13 +833,11 @@ export default function Dashboard() {
                 <div className="p-6 border-b border-border/20">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-shop-primary/10 rounded-lg">
-                        <ChartPieIcon className="h-5 w-5 text-shop-primary" />
-                      </div>
+                      {/* Ícone removido para não sobrepor o gráfico real */}
                       <div>
                         <h2 className="text-lg font-semibold text-foreground">Gastos por Categoria</h2>
                         <p className="text-sm text-muted-foreground">
-                          Distribuição detalhada dos gastos em {new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+                          Distribuição detalhada dos gastos em junho de 2025
                         </p>
                       </div>
                     </div>
@@ -605,6 +849,12 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </div>                <div className="p-6">
+                  {/* Aviso sobre elementos decorativos */}
+                  <div className="mb-4 p-3 bg-shop-info/10 border border-shop-info/20 rounded-lg">
+                    <p className="text-sm text-shop-info">
+                      Nota: Elementos decorativos de fundo foram temporariamente desabilitados para melhorar a visualização do gráfico.
+                    </p>
+                  </div>
                   <ModernPieChart data={categorias} isLoading={isLoading} />
                 </div>
               </motion.div>
@@ -616,16 +866,15 @@ export default function Dashboard() {
                 transition={{ duration: 0.6, delay: 0.6 }}
                 className="bg-card rounded-xl shadow-card border border-border/50 overflow-hidden"
               >
-                <div className="p-6 border-b border-border/20">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-shop-accent/10 rounded-lg">
-                      <CalendarDaysIcon className="h-5 w-5 text-shop-accent" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-foreground">Meta Mensal</h3>
-                      <p className="text-sm text-muted-foreground">Progresso de receitas</p>
-                    </div>
+                <div className="p-6 border-b border-border/20">                  <div className="flex items-center gap-3">
+                  <div className="p-2 bg-shop-accent/10 rounded-lg">
+                    <Calendar className="h-5 w-5 text-shop-accent" />
                   </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">Meta Mensal</h3>
+                    <p className="text-sm text-muted-foreground">Progresso de receitas</p>
+                  </div>
+                </div>
                 </div>
 
                 <div className="p-6">
@@ -712,16 +961,15 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-shop-highlight/10 rounded-lg">
-                      <PresentationChartLineIcon className="h-5 w-5 text-shop-highlight" />
+                      <LineChart className="h-5 w-5 text-shop-highlight" />
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-foreground">Tendência Financeira</h3>
                       <p className="text-sm text-muted-foreground">Evolução das receitas e despesas</p>
                     </div>
-                  </div>
-                  <button className="text-sm text-shop-primary hover:text-shop-primary/80 font-medium transition-colors flex items-center gap-1">
+                  </div>                  <button className="text-sm text-shop-primary hover:text-shop-primary/80 font-medium transition-colors flex items-center gap-1">
                     Ver detalhes
-                    <ChevronRightIcon className="h-4 w-4" />
+                    <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
               </div>
@@ -742,16 +990,15 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-shop-info/10 rounded-lg">
-                      <ClockIcon className="h-5 w-5 text-shop-info" />
+                      <Clock className="h-5 w-5 text-shop-info" />
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-foreground">Atividade Recente</h3>
                       <p className="text-sm text-muted-foreground">Últimas 5 transações</p>
                     </div>
-                  </div>
-                  <button className="text-sm text-shop-primary hover:text-shop-primary/80 font-medium transition-colors flex items-center gap-1">
+                  </div>                  <button className="text-sm text-shop-primary hover:text-shop-primary/80 font-medium transition-colors flex items-center gap-1">
                     Ver todas
-                    <ChevronRightIcon className="h-4 w-4" />
+                    <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
               </div>
@@ -785,9 +1032,9 @@ export default function Dashboard() {
                           : 'bg-shop-error/10 text-shop-error'
                           } group-hover:scale-110 transition-transform duration-200`}>
                           {transacao.tipo === 'ganho' ? (
-                            <PlusIcon className="h-6 w-6" />
+                            <Plus className="h-6 w-6" />
                           ) : (
-                            <MinusIcon className="h-6 w-6" />
+                            <Minus className="h-6 w-6" />
                           )}
                         </div>
 
@@ -814,7 +1061,7 @@ export default function Dashboard() {
                 ) : (
                   <div className="flex flex-col items-center justify-center py-16 text-center">
                     <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                      <ClockIcon className="h-8 w-8 text-muted-foreground" />
+                      <Clock className="h-8 w-8 text-muted-foreground" />
                     </div>
                     <p className="text-foreground font-medium mb-2">Nenhuma transação encontrada</p>
                     <p className="text-muted-foreground text-sm mb-4">Comece registrando sua primeira transação</p>
@@ -846,7 +1093,7 @@ export default function Dashboard() {
                 </select>
                 <div className="relative group">
                   <button className="btn-shop-outline text-sm flex items-center gap-2">
-                    <DocumentArrowDownIcon className="h-4 w-4" />
+                    <FileDown className="h-4 w-4" />
                     Exportar
                   </button>
                   <div className="absolute right-0 top-full mt-2 w-48 bg-card border border-border/50 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
@@ -855,21 +1102,21 @@ export default function Dashboard() {
                         onClick={handleExportPDF}
                         className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-secondary/30 flex items-center gap-2"
                       >
-                        <DocumentArrowDownIcon className="h-4 w-4" />
+                        <FileDown className="h-4 w-4" />
                         Exportar PDF
                       </button>
                       <button
                         onClick={handleExportCSV}
                         className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-secondary/30 flex items-center gap-2"
                       >
-                        <ShareIcon className="h-4 w-4" />
+                        <Share className="h-4 w-4" />
                         Exportar CSV
                       </button>
                       <button
                         onClick={handleExportJSON}
                         className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-secondary/30 flex items-center gap-2"
                       >
-                        <ChartBarIcon className="h-4 w-4" />
+                        <BarChart className="h-4 w-4" />
                         Exportar JSON
                       </button>
                     </div>
@@ -882,7 +1129,7 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-card rounded-xl shadow-card border border-border/50 p-6">
                 <div className="flex items-center gap-3 mb-4">                  <div className="p-2 bg-shop-success/10 rounded-lg">
-                  <ArrowTrendingUpIcon className="h-5 w-5 text-shop-success" />
+                  <TrendingUp className="h-5 w-5 text-shop-success" />
                 </div>
                   <h3 className="font-semibold text-foreground">Eficiência de Gastos</h3>
                 </div>
@@ -901,7 +1148,7 @@ export default function Dashboard() {
               <div className="bg-card rounded-xl shadow-card border border-border/50 p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 bg-shop-warning/10 rounded-lg">
-                    <ChartBarIcon className="h-5 w-5 text-shop-warning" />
+                    <BarChart className="h-5 w-5 text-shop-warning" />
                   </div>
                   <h3 className="font-semibold text-foreground">Padrão de Gastos</h3>
                 </div>
@@ -912,20 +1159,19 @@ export default function Dashboard() {
                   </div>
                   <div className="flex items-center justify-center gap-2 text-sm">
                     <div className="flex items-center gap-1 text-shop-error">
-                      <ArrowTrendingUpIcon className="h-4 w-4" />
+                      <TrendingUp className="h-4 w-4" />
                       <span>8% acima do ideal</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-card rounded-xl shadow-card border border-border/50 p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-shop-info/10 rounded-lg">
-                    <CalendarDaysIcon className="h-5 w-5 text-shop-info" />
-                  </div>
-                  <h3 className="font-semibold text-foreground">Previsão</h3>
+              <div className="bg-card rounded-xl shadow-card border border-border/50 p-6">                <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-shop-info/10 rounded-lg">
+                  <Calendar className="h-5 w-5 text-shop-info" />
                 </div>
+                <h3 className="font-semibold text-foreground">Previsão</h3>
+              </div>
                 <div className="space-y-3">
                   <div className="text-center">
                     <p className="text-lg font-bold text-shop-success">R$ 1.247</p>
@@ -995,7 +1241,7 @@ export default function Dashboard() {
               <div className="p-6 border-b border-border/20">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-shop-highlight/10 rounded-lg">
-                    <StarIcon className="h-5 w-5 text-shop-highlight" />
+                    <Star className="h-5 w-5 text-shop-highlight" />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-foreground">Insights Inteligentes</h3>
@@ -1007,7 +1253,7 @@ export default function Dashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="p-4 bg-shop-success/5 border border-shop-success/20 rounded-xl">
                     <div className="flex items-start gap-3">                      <div className="p-2 bg-shop-success/10 rounded-lg mt-1">
-                      <ArrowTrendingUpIcon className="h-4 w-4 text-shop-success" />
+                      <TrendingUp className="h-4 w-4 text-shop-success" />
                     </div>
                       <div>
                         <h4 className="font-medium text-foreground mb-1">Oportunidade de Economia</h4>
@@ -1024,7 +1270,7 @@ export default function Dashboard() {
                   <div className="p-4 bg-shop-info/5 border border-shop-info/20 rounded-xl">
                     <div className="flex items-start gap-3">
                       <div className="p-2 bg-shop-info/10 rounded-lg mt-1">
-                        <ChartPieIcon className="h-4 w-4 text-shop-info" />
+                        <PieChart className="h-4 w-4 text-shop-info" />
                       </div>
                       <div>
                         <h4 className="font-medium text-foreground mb-1">Padrão Identificado</h4>
@@ -1056,7 +1302,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold text-foreground">Metas Financeiras</h2>
               <button className="btn-shop-primary text-sm flex items-center gap-2">
-                <PlusIcon className="h-4 w-4" />
+                <Plus className="h-4 w-4" />
                 Nova Meta
               </button>
             </div>
@@ -1068,7 +1314,7 @@ export default function Dashboard() {
                 <div className="p-6">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="p-2 bg-shop-error/10 rounded-lg">
-                      <FireIcon className="h-5 w-5 text-shop-error" />
+                      <Flame className="h-5 w-5 text-shop-error" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-foreground">Reserva de Emergência</h3>
@@ -1103,10 +1349,9 @@ export default function Dashboard() {
               {/* Vacation Goal */}
               <div className="bg-card rounded-xl shadow-card border border-border/50 overflow-hidden">
                 <div className="p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-shop-accent/10 rounded-lg">
-                      <CalendarDaysIcon className="h-5 w-5 text-shop-accent" />
-                    </div>
+                  <div className="flex items-center gap-3 mb-4">                    <div className="p-2 bg-shop-accent/10 rounded-lg">
+                    <Calendar className="h-5 w-5 text-shop-accent" />
+                  </div>
                     <div>
                       <h3 className="font-semibold text-foreground">Viagem Europa</h3>
                       <p className="text-sm text-muted-foreground">Dezembro 2024</p>
@@ -1139,16 +1384,15 @@ export default function Dashboard() {
 
               {/* Investment Goal */}
               <div className="bg-card rounded-xl shadow-card border border-border/50 overflow-hidden">
-                <div className="p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-shop-success/10 rounded-lg">
-                      <PresentationChartLineIcon className="h-5 w-5 text-shop-success" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">Investimentos</h3>
-                      <p className="text-sm text-muted-foreground">Carteira diversificada</p>
-                    </div>
+                <div className="p-6">                  <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-shop-success/10 rounded-lg">
+                    <LineChart className="h-5 w-5 text-shop-success" />
                   </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">Investimentos</h3>
+                    <p className="text-sm text-muted-foreground">Carteira diversificada</p>
+                  </div>
+                </div>
 
                   <div className="space-y-4">
                     <div className="flex justify-between items-end">
@@ -1225,7 +1469,7 @@ export default function Dashboard() {
                 <div className="p-6 space-y-6">
                   <div className="flex items-center justify-between p-4 bg-shop-warning/5 rounded-xl border border-shop-warning/20">
                     <div className="flex items-center gap-3">
-                      <FireIcon className="h-5 w-5 text-shop-warning" />
+                      <Flame className="h-5 w-5 text-shop-warning" />
                       <div>
                         <p className="font-medium text-foreground">Reserva de Emergência</p>
                         <p className="text-sm text-muted-foreground">13 meses restantes</p>
@@ -1235,11 +1479,9 @@ export default function Dashboard() {
                       <p className="text-sm font-bold text-shop-warning">Nov/2025</p>
                       <p className="text-xs text-muted-foreground">Conclusão prevista</p>
                     </div>
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 bg-shop-accent/5 rounded-xl border border-shop-accent/20">
+                  </div>                  <div className="flex items-center justify-between p-4 bg-shop-accent/5 rounded-xl border border-shop-accent/20">
                     <div className="flex items-center gap-3">
-                      <CalendarDaysIcon className="h-5 w-5 text-shop-accent" />
+                      <Calendar className="h-5 w-5 text-shop-accent" />
                       <div>
                         <p className="font-medium text-foreground">Viagem Europa</p>
                         <p className="text-sm text-muted-foreground">8 meses restantes</p>
@@ -1249,11 +1491,9 @@ export default function Dashboard() {
                       <p className="text-sm font-bold text-shop-accent">Jun/2025</p>
                       <p className="text-xs text-muted-foreground">Conclusão prevista</p>
                     </div>
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 bg-shop-success/5 rounded-xl border border-shop-success/20">
+                  </div>                  <div className="flex items-center justify-between p-4 bg-shop-success/5 rounded-xl border border-shop-success/20">
                     <div className="flex items-center gap-3">
-                      <PresentationChartLineIcon className="h-5 w-5 text-shop-success" />
+                      <LineChart className="h-5 w-5 text-shop-success" />
                       <div>
                         <p className="font-medium text-foreground">Investimentos</p>
                         <p className="text-sm text-muted-foreground">9 meses restantes</p>
@@ -1273,7 +1513,7 @@ export default function Dashboard() {
               <div className="text-center">
                 <div className="flex justify-center mb-4">
                   <div className="p-3 bg-shop-primary/20 rounded-xl">
-                    <StarIcon className="h-8 w-8 text-shop-primary" />
+                    <Star className="h-8 w-8 text-shop-primary" />
                   </div>
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-2">Dicas para Alcançar suas Metas</h3>
@@ -1308,15 +1548,14 @@ export default function Dashboard() {
           className="mt-12 bg-gradient-to-r from-shop-primary via-shop-accent to-shop-primary rounded-xl p-8 text-center relative overflow-hidden"
         >
           {/* Elementos decorativos */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-xl -translate-y-16 translate-x-16"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full blur-lg translate-y-12 -translate-x-12"></div>
+          {/* Elementos decorativos removidos para evitar interferência */}
 
           <div className="relative">
             <motion.div
               animate={{ y: [0, -5, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             >
-              <ShoppingBagIcon className="h-12 w-12 text-white mx-auto mb-4" />
+              <ShoppingBag className="h-12 w-12 text-white mx-auto mb-4" />
             </motion.div>
             <h3 className="text-2xl font-bold text-white mb-2">Explore Recursos Avançados</h3>
             <p className="text-white/90 mb-6 max-w-2xl mx-auto">
@@ -1328,7 +1567,7 @@ export default function Dashboard() {
                 whileTap={{ scale: 0.95 }}
                 className="bg-white text-shop-primary px-6 py-3 rounded-xl font-medium hover:bg-white/90 transition-all duration-200 flex items-center gap-2 justify-center shadow-lg"
               >
-                <ShoppingBagIcon className="h-5 w-5" />
+                <ShoppingBag className="h-5 w-5" />
                 Explorar Loja
               </motion.button>
               <motion.button
@@ -1336,7 +1575,7 @@ export default function Dashboard() {
                 whileTap={{ scale: 0.95 }}
                 className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-medium hover:bg-white/30 transition-all duration-200 border border-white/30 flex items-center gap-2 justify-center"
               >
-                <Cog6ToothIcon className="h-5 w-5" />
+                <Settings className="h-5 w-5" />
                 Configurações
               </motion.button>
             </div>

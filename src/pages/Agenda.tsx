@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { CalendarIcon, PlusIcon, CheckCircleIcon, TrashIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
-import { BellIcon as BellIconSolid } from '@heroicons/react/24/solid';
+import { Calendar, Plus, CheckCircle, Trash2, RotateCcw, Bell } from 'lucide-react';
 import { useFinancasStore } from '../store/financasStore';
 import type { Lembrete } from '../types';
 
@@ -119,13 +118,11 @@ export default function Agenda() {
         <div>
           <h1 className="text-fluid-3xl font-bold text-balance">Agenda & Lembretes</h1>
           <p className="text-muted-foreground mt-1">Organize seus compromissos financeiros</p>
-        </div>
-
-        <button
+        </div>        <button
           className="mt-3 md:mt-0 flex items-center gap-2 text-sm hover:text-shop-primary transition-colors"
           onClick={() => window.location.reload()}
         >
-          <ArrowPathIcon className="h-4 w-4" />
+          <RotateCcw className="h-4 w-4" />
           <span>Atualizar lembretes</span>
         </button>
       </motion.div>
@@ -135,10 +132,9 @@ export default function Agenda() {
           {...fadeInUp}
           transition={{ duration: 0.5, delay: 0.1 }}
           className="mb-8 bg-shop-primary bg-opacity-10 border border-shop-primary border-opacity-20 rounded-xl p-4"
-        >
-          <div className="flex items-center gap-3">
+        >          <div className="flex items-center gap-3">
             <div className="bg-shop-primary bg-opacity-20 rounded-full p-2">
-              <BellIconSolid className="h-6 w-6 text-shop-primary" />
+              <Bell className="h-6 w-6 text-shop-primary" />
             </div>
             <div>
               <h2 className="font-medium text-shop-primary">Lembretes para hoje</h2>
@@ -156,8 +152,7 @@ export default function Agenda() {
         >
           <div className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden">
             <div className="p-6 border-b border-border/50 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <PlusIcon className="h-5 w-5 text-shop-primary" />
+              <div className="flex items-center gap-2">                <Plus className="h-5 w-5 text-shop-primary" />
                 <h2 className="text-lg font-medium">Novo Lembrete</h2>
               </div>
             </div>
@@ -166,7 +161,7 @@ export default function Agenda() {
               <form onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div id="success-feedback" className="bg-shop-success bg-opacity-10 text-shop-success text-sm p-3 rounded-md flex items-center gap-2 transition-opacity duration-300 opacity-0">
-                    <CheckCircleIcon className="h-5 w-5" />
+                    <CheckCircle className="h-5 w-5" />
                     <span>Lembrete adicionado com sucesso!</span>
                   </div>
 
@@ -206,7 +201,7 @@ export default function Agenda() {
                       Data <span className="text-shop-error">*</span>
                     </label>
                     <div className="relative">
-                      <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <input
                         id="data"
                         name="data"
@@ -270,13 +265,11 @@ export default function Agenda() {
                     <label htmlFor="notificar" className="ml-2 block text-sm">
                       Receber notificação na data
                     </label>
-                  </div>
-
-                  <button
+                  </div>                  <button
                     type="submit"
                     className="w-full btn-shop-primary flex items-center justify-center gap-2"
                   >
-                    <PlusIcon className="h-5 w-5" />
+                    <Plus className="h-5 w-5" />
                     <span>Adicionar Lembrete</span>
                   </button>
                 </div>
@@ -290,15 +283,14 @@ export default function Agenda() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="lg:col-span-2"
         >
-          <div className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden">
-            <div className="p-6 border-b border-border/50 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <CalendarIcon className="h-5 w-5 text-shop-primary" />
-                <h2 className="text-lg font-medium">Lembretes Agendados</h2>
-              </div>              <span className="text-sm bg-secondary/20 px-3 py-1 rounded-full text-secondary-foreground">
-                {lembretes.length} {lembretes.length === 1 ? 'lembrete' : 'lembretes'}
-              </span>
-            </div>
+          <div className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden">            <div className="p-6 border-b border-border/50 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-shop-primary" />
+              <h2 className="text-lg font-medium">Lembretes Agendados</h2>
+            </div><span className="text-sm bg-secondary/20 px-3 py-1 rounded-full text-secondary-foreground">
+              {lembretes.length} {lembretes.length === 1 ? 'lembrete' : 'lembretes'}
+            </span>
+          </div>
 
             <div className="p-4 max-h-[600px] overflow-y-auto">
               {isLoading ? (
@@ -324,9 +316,8 @@ export default function Agenda() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.1 * mesIndex }}
-                    >
-                      <h3 className="text-md font-medium mb-4 capitalize border-b pb-2 flex items-center gap-2">
-                        <CalendarIcon className="h-4 w-4 text-shop-primary" />
+                    >                      <h3 className="text-md font-medium mb-4 capitalize border-b pb-2 flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-shop-primary" />
                         {mes}
                       </h3>
 
@@ -352,50 +343,47 @@ export default function Agenda() {
                                     : 'bg-secondary/30'
                                   }`}
                               >
-                                <div className="flex justify-between">
-                                  <div className="flex gap-3">
-                                    <div className="mt-1">
-                                      <CalendarIcon className={`h-5 w-5 ${isHoje ? 'text-shop-primary' : isPassado ? 'text-gray-400' : 'text-muted-foreground'
-                                        }`} />
-                                    </div>
-                                    <div>
-                                      <div className="flex items-center gap-2">
-                                        <h4 className={`font-medium ${isHoje ? 'text-shop-primary' : ''}`}>
-                                          {lembrete.titulo}
-                                        </h4>
-                                        {lembrete.notificar && (
-                                          <BellIconSolid className="h-4 w-4 text-shop-accent" />
-                                        )}
-                                        {isHoje && (
-                                          <span className="text-xs bg-shop-primary text-white px-2 py-0.5 rounded-full">
-                                            Hoje
-                                          </span>
-                                        )}
-                                      </div>
-                                      <p className="text-sm text-muted-foreground">
-                                        {dataLembrete.toLocaleDateString('pt-BR')}
-                                      </p>
-
-                                      {lembrete.descricao && (
-                                        <p className="text-sm mt-2 text-pretty">{lembrete.descricao}</p>
-                                      )}
-
-                                      {lembrete.valor !== undefined && lembrete.tipo && (
-                                        <div className="mt-2 inline-block px-3 py-1 rounded-full text-sm font-medium bg-opacity-10 bg-secondary">
-                                          <span className={lembrete.tipo === 'ganho' ? 'text-green-500' : 'text-red-500'}>
-                                            {lembrete.tipo === 'ganho' ? '+' : '-'} R$ {lembrete.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                                          </span>
-                                        </div>
-                                      )}
-                                    </div>
+                                <div className="flex justify-between">                                  <div className="flex gap-3">
+                                  <div className="mt-1">
+                                    <Calendar className={`h-5 w-5 ${isHoje ? 'text-shop-primary' : isPassado ? 'text-gray-400' : 'text-muted-foreground'
+                                      }`} />
                                   </div>
+                                  <div>
+                                    <div className="flex items-center gap-2">
+                                      <h4 className={`font-medium ${isHoje ? 'text-shop-primary' : ''}`}>
+                                        {lembrete.titulo}
+                                      </h4>
+                                      {lembrete.notificar && (
+                                        <Bell className="h-4 w-4 text-shop-accent" />
+                                      )}
+                                      {isHoje && (
+                                        <span className="text-xs bg-shop-primary text-white px-2 py-0.5 rounded-full">
+                                          Hoje
+                                        </span>
+                                      )}
+                                    </div>
+                                    <p className="text-sm text-muted-foreground">
+                                      {dataLembrete.toLocaleDateString('pt-BR')}
+                                    </p>
 
-                                  <button
-                                    onClick={() => handleDelete(lembrete.id)}
-                                    className="text-gray-400 hover:text-shop-error transition-colors p-1"
-                                    aria-label="Remover lembrete"
-                                  >
-                                    <TrashIcon className="h-5 w-5" />
+                                    {lembrete.descricao && (
+                                      <p className="text-sm mt-2 text-pretty">{lembrete.descricao}</p>
+                                    )}
+
+                                    {lembrete.valor !== undefined && lembrete.tipo && (
+                                      <div className="mt-2 inline-block px-3 py-1 rounded-full text-sm font-medium bg-opacity-10 bg-secondary">
+                                        <span className={lembrete.tipo === 'ganho' ? 'text-green-500' : 'text-red-500'}>
+                                          {lembrete.tipo === 'ganho' ? '+' : '-'} R$ {lembrete.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>                                  <button
+                                  onClick={() => handleDelete(lembrete.id)}
+                                  className="text-gray-400 hover:text-shop-error transition-colors p-1"
+                                  aria-label="Remover lembrete"
+                                >
+                                    <Trash2 className="h-5 w-5" />
                                   </button>
                                 </div>
                               </motion.div>
@@ -405,16 +393,15 @@ export default function Agenda() {
                     </motion.div>
                   ))}
                 </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                    <CalendarIcon className="h-8 w-8 text-gray-400" />
-                  </div>
-                  <h3 className="text-lg font-medium mb-1">Sem lembretes</h3>
-                  <p className="text-muted-foreground max-w-md">
-                    Você ainda não tem lembretes agendados. Use o formulário ao lado para adicionar seu primeiro lembrete.
-                  </p>
+              ) : (<div className="flex flex-col items-center justify-center py-16 text-center">
+                <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                  <Calendar className="h-8 w-8 text-gray-400" />
                 </div>
+                <h3 className="text-lg font-medium mb-1">Sem lembretes</h3>
+                <p className="text-muted-foreground max-w-md">
+                  Você ainda não tem lembretes agendados. Use o formulário ao lado para adicionar seu primeiro lembrete.
+                </p>
+              </div>
               )}
             </div>
           </div>

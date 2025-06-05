@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useFinancasStore } from '../store/financasStore';
 import { motion } from 'framer-motion';
-import { PlusCircleIcon, BanknotesIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { PlusCircle, Banknote, Clock } from 'lucide-react';
 
 // Animação para mostrar os elementos
 const fadeInUp = {
@@ -91,10 +91,9 @@ export default function Ganhos() {
           {...fadeInUp}
           transition={{ duration: 0.5, delay: 0.1 }}
           className="lg:col-span-1"
-        >
-          <div className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden">
+        >          <div className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden">
             <div className="p-6 border-b border-border/20 flex items-center gap-2">
-              <PlusCircleIcon className="h-5 w-5 text-shop-primary" />
+              <PlusCircle className="h-5 w-5 text-shop-primary" />
               <h2 className="text-lg font-medium">Novo Ganho</h2>
             </div>
 
@@ -218,11 +217,10 @@ export default function Ganhos() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="lg:col-span-2"
         >
-          <div className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden">
-            <div className="p-6 border-b border-border/20 flex items-center gap-2">
-              <ClockIcon className="h-5 w-5 text-shop-primary" />
-              <h2 className="text-lg font-medium">Histórico de Ganhos</h2>
-            </div>
+          <div className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden">            <div className="p-6 border-b border-border/20 flex items-center gap-2">
+            <Clock className="h-5 w-5 text-shop-primary" />
+            <h2 className="text-lg font-medium">Histórico de Ganhos</h2>
+          </div>
 
             <div className="p-6">
               {ganhos.length > 0 ? (
@@ -234,10 +232,9 @@ export default function Ganhos() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.3, delay: 0.05 * index }}
                       className="flex justify-between items-center p-4 rounded-md bg-secondary/20 border border-border/10 hover:bg-secondary/30 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
+                    >                      <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full flex items-center justify-center bg-green-100 text-green-600">
-                          <BanknotesIcon className="h-5 w-5" />
+                          <Banknote className="h-5 w-5" />
                         </div>
                         <div>
                           <p className="font-medium">{ganho.descricao}</p>
@@ -255,11 +252,10 @@ export default function Ganhos() {
                       </span>
                     </motion.div>
                   ))}
-                </div>
-              ) : (
+                </div>) : (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                    <BanknotesIcon className="h-8 w-8 text-gray-400" />
+                    <Banknote className="h-8 w-8 text-gray-400" />
                   </div>
                   <p className="text-muted-foreground">Nenhum ganho registrado ainda.</p>
                 </div>

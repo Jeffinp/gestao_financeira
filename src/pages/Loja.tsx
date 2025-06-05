@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { ShoppingBagIcon, AdjustmentsHorizontalIcon, HeartIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
+import { ShoppingBag, SlidersHorizontal, Heart, Search } from 'lucide-react';
 
 // Dados simulados de produtos
 const PRODUTOS = [
@@ -152,12 +151,11 @@ const ProdutoCard: React.FC<{
         onClick={handleFavoriteClick}
         className="absolute top-2 right-2 p-2 rounded-full bg-white bg-opacity-80 shadow-sm hover:bg-opacity-100 transition-all"
         aria-label={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
-      >
-        {isFavorite ? (
-          <HeartIconSolid className="w-5 h-5 text-shop-accent" />
-        ) : (
-          <HeartIcon className="w-5 h-5 text-gray-600" />
-        )}
+      >        {isFavorite ? (
+        <Heart className="w-5 h-5 text-shop-accent fill-current" />
+      ) : (
+        <Heart className="w-5 h-5 text-gray-600" />
+      )}
       </button>
     </div>
 
@@ -211,9 +209,8 @@ const ProdutoCard: React.FC<{
           disabled={!produto.disponivel}
           className={`w-full flex items-center justify-center gap-2 ${produto.disponivel
             ? 'bg-[hsl(var(--shop-primary))] text-white font-medium py-2 px-4 rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95'
-            : 'bg-gray-300 text-gray-500 cursor-not-allowed py-2 px-4 rounded-md'}`}
-        >
-          <ShoppingBagIcon className="w-5 h-5" />
+            : 'bg-gray-300 text-gray-500 cursor-not-allowed py-2 px-4 rounded-md'}`}        >
+          <ShoppingBag className="w-5 h-5" />
           <span>{produto.disponivel ? 'Adicionar ao carrinho' : 'Indisponível'}</span>
         </button>
       </div>
@@ -232,7 +229,7 @@ const Filtro: React.FC<{
     <div className="bg-white rounded-lg shadow-card p-4 sticky top-20">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold">Filtros</h2>
-        <AdjustmentsHorizontalIcon className="w-6 h-6 text-shop-primary" />
+        <SlidersHorizontal className="w-6 h-6 text-shop-primary" />
       </div>
 
       <div className="mb-6">
@@ -313,7 +310,7 @@ const Busca: React.FC<{
           placeholder="Buscar produtos..."
           className="w-full px-4 py-3 pl-10 rounded-lg border border-gray-200 focus:border-shop-primary focus:ring-2 focus:ring-shop-primary/20 outline-none transition-all"
         />
-        <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
       </form>
     </div>
   );
@@ -338,11 +335,10 @@ const CarrinhoRapido: React.FC<{
       animate={{ x: visivel ? 0 : "100%" }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
-      <div className="flex items-center justify-between p-4 border-b">
-        <h2 className="text-xl font-bold flex items-center gap-2">
-          <ShoppingBagIcon className="w-6 h-6" />
-          Seu Carrinho
-        </h2>
+      <div className="flex items-center justify-between p-4 border-b">        <h2 className="text-xl font-bold flex items-center gap-2">
+        <ShoppingBag className="w-6 h-6" />
+        Seu Carrinho
+      </h2>
         <button
           onClick={onClose}
           className="p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -354,17 +350,16 @@ const CarrinhoRapido: React.FC<{
       </div>
 
       <div className="flex-1 overflow-y-auto p-4">
-        {carrinho.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center">
-            <ShoppingBagIcon className="w-16 h-16 text-gray-300 mb-4" />
-            <p className="text-gray-500">Seu carrinho está vazio</p>
-            <button
-              onClick={onClose}
-              className="mt-4 bg-[hsl(var(--shop-primary))] text-white font-medium py-2 px-4 rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
-            >
-              Continuar comprando
-            </button>
-          </div>
+        {carrinho.length === 0 ? (<div className="flex flex-col items-center justify-center h-full text-center">
+          <ShoppingBag className="w-16 h-16 text-gray-300 mb-4" />
+          <p className="text-gray-500">Seu carrinho está vazio</p>
+          <button
+            onClick={onClose}
+            className="mt-4 bg-[hsl(var(--shop-primary))] text-white font-medium py-2 px-4 rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+          >
+            Continuar comprando
+          </button>
+        </div>
         ) : (
           <div className="space-y-4">
             {carrinho.map((item) => (
@@ -542,8 +537,7 @@ export default function Loja() {
           <button
             onClick={() => setCarrinhoVisivel(true)}
             className="flex items-center gap-2 p-2 rounded-md bg-shop-primary text-white relative"
-          >
-            <ShoppingBagIcon className="w-5 h-5" />
+          >            <ShoppingBag className="w-5 h-5" />
             <span>Carrinho</span>
             {contagemCarrinho > 0 && (
               <span className="absolute -top-2 -right-2 bg-shop-accent text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-bounce-once">
@@ -570,23 +564,22 @@ export default function Loja() {
 
         {/* Grid de produtos */}
         <div className="lg:col-span-3">
-          {produtos.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-card p-8 text-center">
-              <MagnifyingGlassIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h2 className="text-xl font-medium mb-2">Nenhum produto encontrado</h2>
-              <p className="text-gray-500 mb-4">
-                Tente ajustar seus filtros ou buscar por outro termo.
-              </p>
-              <button
-                onClick={() => {
-                  setCategoriaSelecionada(null);
-                  setTermoBusca('');
-                }}
-                className="bg-[hsl(var(--shop-primary))] text-white font-medium py-2 px-4 rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
-              >
-                Limpar filtros
-              </button>
-            </div>
+          {produtos.length === 0 ? (<div className="bg-white rounded-lg shadow-card p-8 text-center">
+            <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h2 className="text-xl font-medium mb-2">Nenhum produto encontrado</h2>
+            <p className="text-gray-500 mb-4">
+              Tente ajustar seus filtros ou buscar por outro termo.
+            </p>
+            <button
+              onClick={() => {
+                setCategoriaSelecionada(null);
+                setTermoBusca('');
+              }}
+              className="bg-[hsl(var(--shop-primary))] text-white font-medium py-2 px-4 rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+            >
+              Limpar filtros
+            </button>
+          </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {produtos.map((produto) => (

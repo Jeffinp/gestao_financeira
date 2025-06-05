@@ -1,16 +1,15 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
-import { MoonIcon, SunIcon, ShoppingBagIcon, Bars3Icon, XMarkIcon, HomeIcon, BanknotesIcon, ArrowTrendingUpIcon, ClockIcon, CalendarIcon } from '@heroicons/react/24/outline';
+import { Moon, Sun, ShoppingBag, Menu, X, Home, Banknote, TrendingUp, Clock, Calendar } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const navItems = [
-    { name: 'Dashboard', path: '/', icon: HomeIcon },
-    { name: 'Gastos', path: '/gastos', icon: BanknotesIcon },
-    { name: 'Ganhos', path: '/ganhos', icon: ArrowTrendingUpIcon },
-    { name: 'Histórico', path: '/historico', icon: ClockIcon },
-    { name: 'Agenda', path: '/agenda', icon: CalendarIcon },
-    { name: 'Loja', path: '/loja', icon: ShoppingBagIcon },
+    { name: 'Dashboard', path: '/', icon: Home },
+    { name: 'Gastos', path: '/gastos', icon: Banknote },
+    { name: 'Ganhos', path: '/ganhos', icon: TrendingUp }, { name: 'Histórico', path: '/historico', icon: Clock },
+    { name: 'Agenda', path: '/agenda', icon: Calendar },
+    { name: 'Loja', path: '/loja', icon: ShoppingBag },
 ];
 
 export default function Navbar() {
@@ -91,18 +90,17 @@ export default function Navbar() {
                     </ul>
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={toggleTheme}
-                        className="p-2 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors duration-200"
-                        aria-label="Alternar tema"
-                    >
-                        {theme === 'dark' ? (
-                            <SunIcon className="h-5 w-5" />
-                        ) : (
-                            <MoonIcon className="h-5 w-5" />
-                        )}
-                    </button>
+                <div className="flex items-center gap-2">                    <button
+                    onClick={toggleTheme}
+                    className="p-2 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors duration-200"
+                    aria-label="Alternar tema"
+                >
+                    {theme === 'dark' ? (
+                        <Sun className="h-5 w-5" />
+                    ) : (
+                        <Moon className="h-5 w-5" />
+                    )}
+                </button>
 
                     {/* Botão do menu mobile */}
                     <button
@@ -110,7 +108,7 @@ export default function Navbar() {
                         onClick={toggleMenu}
                         aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
                     >
-                        {isMenuOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
+                        {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                     </button>
                 </div>
             </div>
@@ -140,13 +138,12 @@ export default function Navbar() {
                                 <div className="flex justify-between items-center p-4 border-b border-border/20">
                                     <Link to="/" className="flex items-center gap-2" onClick={handleNavItemClick}>
                                         <span className="font-bold text-shop-primary text-xl">MeuCofre</span>
-                                    </Link>
-                                    <button
+                                    </Link>                                    <button
                                         onClick={toggleMenu}
                                         className="p-2 rounded-lg text-foreground hover:bg-secondary transition-colors"
                                         aria-label="Fechar menu"
                                     >
-                                        <XMarkIcon className="h-6 w-6" />
+                                        <X className="h-6 w-6" />
                                     </button>
                                 </div>
 
@@ -181,16 +178,15 @@ export default function Navbar() {
 
                                 <div className="p-4 border-t border-border/20">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-sm text-muted-foreground">Tema</span>
-                                        <button
+                                        <span className="text-sm text-muted-foreground">Tema</span>                                        <button
                                             onClick={toggleTheme}
                                             className="p-2 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors duration-200"
                                             aria-label="Alternar tema"
                                         >
                                             {theme === 'dark' ? (
-                                                <SunIcon className="h-5 w-5" />
+                                                <Sun className="h-5 w-5" />
                                             ) : (
-                                                <MoonIcon className="h-5 w-5" />
+                                                <Moon className="h-5 w-5" />
                                             )}
                                         </button>
                                     </div>

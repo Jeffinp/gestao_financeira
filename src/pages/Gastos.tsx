@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useFinancasStore } from '../store/financasStore';
-import { ArrowDownCircleIcon, ArrowPathIcon, CalendarIcon, TagIcon, CurrencyDollarIcon, ClockIcon, CheckCircleIcon, ChartBarIcon } from '@heroicons/react/24/outline';
+import { ArrowDownCircle, RotateCcw, Calendar, Tag, DollarSign, Clock, CheckCircle, BarChart } from 'lucide-react';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -130,7 +130,7 @@ export default function Gastos() {
           className="mt-3 md:mt-0 flex items-center gap-2 text-sm hover:text-shop-primary transition-colors"
           onClick={() => window.location.reload()}
         >
-          <ArrowPathIcon className="h-4 w-4" />
+          <RotateCcw className="h-4 w-4" />
           <span>Atualizar dados</span>
         </button>
       </motion.div>
@@ -144,7 +144,7 @@ export default function Gastos() {
         <div className="bg-card hover-lift rounded-xl shadow-card p-5 border border-border/50">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-red-500 bg-opacity-10 rounded-lg">
-              <CurrencyDollarIcon className="h-6 w-6 text-red-500" />
+              <DollarSign className="h-6 w-6 text-red-500" />
             </div>
             <div>
               <h2 className="text-sm font-medium text-muted-foreground">Total no Mês</h2>
@@ -162,7 +162,7 @@ export default function Gastos() {
         <div className="bg-card hover-lift rounded-xl shadow-card p-5 border border-border/50">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-shop-primary bg-opacity-10 rounded-lg">
-              <ChartBarIcon className="h-6 w-6 text-shop-primary" />
+              <BarChart className="h-6 w-6 text-shop-primary" />
             </div>
             <div className="flex-1">
               <h2 className="text-sm font-medium text-muted-foreground">Top Categorias</h2>
@@ -182,7 +182,7 @@ export default function Gastos() {
         <div className="bg-card hover-lift rounded-xl shadow-card p-5 border border-border/50">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-gray-500 bg-opacity-10 rounded-lg">
-              <ClockIcon className="h-6 w-6 text-gray-500" />
+              <Clock className="h-6 w-6 text-gray-500" />
             </div>
             <div>
               <h2 className="text-sm font-medium text-muted-foreground">Último Gasto</h2>
@@ -207,18 +207,17 @@ export default function Gastos() {
           className="lg:col-span-1"
         >
           <div className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden">
-            <div className="p-6 border-b border-border/50 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <ArrowDownCircleIcon className="h-5 w-5 text-red-500" />
-                <h2 className="text-lg font-medium">Novo Gasto</h2>
-              </div>
+            <div className="p-6 border-b border-border/50 flex items-center justify-between">              <div className="flex items-center gap-2">
+              <ArrowDownCircle className="h-5 w-5 text-red-500" />
+              <h2 className="text-lg font-medium">Novo Gasto</h2>
+            </div>
             </div>
 
             <div className="p-6">
               <form onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div id="success-feedback" className="bg-shop-success bg-opacity-10 text-shop-success text-sm p-3 rounded-md flex items-center gap-2 transition-opacity duration-300 opacity-0">
-                    <CheckCircleIcon className="h-5 w-5" />
+                    <CheckCircle className="h-5 w-5" />
                     <span>Gasto registrado com sucesso!</span>
                   </div>
 
@@ -247,7 +246,7 @@ export default function Gastos() {
                       Categoria <span className="text-shop-error">*</span>
                     </label>
                     <div className="relative">
-                      <TagIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <select
                         id="categoria"
                         name="categoria"
@@ -269,7 +268,7 @@ export default function Gastos() {
                       Data <span className="text-shop-error">*</span>
                     </label>
                     <div className="relative">
-                      <CalendarIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <input
                         id="data"
                         name="data"
@@ -339,8 +338,7 @@ export default function Gastos() {
                   <button
                     type="submit"
                     className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md shadow-button hover:shadow-button-hover transition-all duration-300 hover:scale-102 active:scale-98 flex items-center justify-center gap-2"
-                  >
-                    <ArrowDownCircleIcon className="h-5 w-5" />
+                  >                    <ArrowDownCircle className="h-5 w-5" />
                     <span>Registrar Gasto</span>
                   </button>
                 </div>
@@ -355,11 +353,10 @@ export default function Gastos() {
           className="lg:col-span-2"
         >
           <div className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden">
-            <div className="p-6 border-b border-border/50 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <ChartBarIcon className="h-5 w-5 text-shop-primary" />
-                <h2 className="text-lg font-medium">Histórico de Gastos</h2>
-              </div>
+            <div className="p-6 border-b border-border/50 flex items-center justify-between">              <div className="flex items-center gap-2">
+              <BarChart className="h-5 w-5 text-shop-primary" />
+              <h2 className="text-lg font-medium">Histórico de Gastos</h2>
+            </div>
               <span className="text-sm bg-secondary-50 px-3 py-1 rounded-full">
                 {gastos.length} {gastos.length === 1 ? 'registro' : 'registros'}
               </span>
@@ -391,10 +388,9 @@ export default function Gastos() {
                       transition={{ duration: 0.3, delay: 0.05 * index }}
                       className="flex justify-between items-center p-4 rounded-lg bg-secondary/20 hover:bg-secondary/30 transition-colors"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-                          <ArrowDownCircleIcon className="h-5 w-5 text-red-500" />
-                        </div>
+                      <div className="flex items-center gap-3">                        <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                        <ArrowDownCircle className="h-5 w-5 text-red-500" />
+                      </div>
                         <div>
                           <p className="font-medium">{gasto.descricao || 'Sem descrição'}</p>
                           <div className="flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
@@ -419,10 +415,9 @@ export default function Gastos() {
                   ))}
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                    <ArrowDownCircleIcon className="h-8 w-8 text-gray-400" />
-                  </div>
+                <div className="flex flex-col items-center justify-center py-16 text-center">                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                  <ArrowDownCircle className="h-8 w-8 text-gray-400" />
+                </div>
                   <h3 className="text-lg font-medium mb-1">Sem gastos registrados</h3>
                   <p className="text-muted-foreground max-w-md">
                     Você ainda não registrou nenhum gasto. Use o formulário ao lado para adicionar seu primeiro registro.

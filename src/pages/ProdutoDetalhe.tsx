@@ -2,15 +2,14 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
-  ShoppingBagIcon,
-  ArrowLeftIcon,
-  HeartIcon,
-  CheckIcon,
-  TruckIcon,
-  ShieldCheckIcon,
-  StarIcon
-} from '@heroicons/react/24/outline';
-import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
+  ShoppingBag,
+  ArrowLeft,
+  Heart,
+  Check,
+  Truck,
+  ShieldCheck,
+  Star
+} from 'lucide-react';
 
 // Simulação de dados do produto
 const PRODUTO = {
@@ -241,7 +240,7 @@ export default function ProdutoDetalhe() {
         to="/loja"
         className="inline-flex items-center mb-6 text-[hsl(var(--shop-primary))] hover:underline"
       >
-        <ArrowLeftIcon className="w-4 h-4 mr-1" />
+        <ArrowLeft className="w-4 h-4 mr-1" />
         <span>Voltar para a loja</span>
       </Link>
 
@@ -300,13 +299,12 @@ export default function ProdutoDetalhe() {
 
             {/* Avaliação */}
             <div className="flex items-center mt-2">
-              <div className="flex">
-                {[...Array(5)].map((_, i) => (
-                  <StarIcon
-                    key={i}
-                    className={`w-5 h-5 ${i < Math.floor(produto.avaliacao) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
-                  />
-                ))}
+              <div className="flex">                {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className={`w-5 h-5 ${i < Math.floor(produto.avaliacao) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                />
+              ))}
               </div>
               <span className="ml-2 text-gray-600">
                 {produto.avaliacao} ({produto.totalAvaliacoes} avaliações)
@@ -374,7 +372,7 @@ export default function ProdutoDetalhe() {
                   />
                   {corSelecionada.id === cor.id && (
                     <span className="absolute inset-0 flex items-center justify-center">
-                      <CheckIcon className="w-5 h-5 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]" />
+                      <Check className="w-5 h-5 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]" />
                     </span>
                   )}
                 </button>
@@ -450,7 +448,7 @@ export default function ProdutoDetalhe() {
               className="flex-1 flex items-center justify-center bg-[hsl(var(--shop-primary))] text-white font-medium py-2 px-4 rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
               whileTap={{ scale: 0.95 }}
             >
-              <ShoppingBagIcon className="w-5 h-5 mr-2" />
+              <ShoppingBag className="w-5 h-5 mr-2" />
               Adicionar ao carrinho
             </motion.button>
 
@@ -459,12 +457,11 @@ export default function ProdutoDetalhe() {
                 className="p-3 rounded-md border border-gray-200 hover:border-[hsl(var(--shop-accent))] transition-colors duration-300"
                 whileTap={{ scale: 0.95 }}
                 aria-label={isFavorito ? "Remover dos favoritos" : "Adicionar aos favoritos"}
-              >
-                {isFavorito ? (
-                  <HeartIconSolid className="w-6 h-6 text-[hsl(var(--shop-accent))]" />
-                ) : (
-                  <HeartIcon className="w-6 h-6 text-gray-600" />
-                )}
+              >                {isFavorito ? (
+                <Heart className="w-6 h-6 text-[hsl(var(--shop-accent))] fill-current" />
+              ) : (
+                <Heart className="w-6 h-6 text-gray-600" />
+              )}
               </motion.button>
             </div>
           </div>
@@ -472,7 +469,7 @@ export default function ProdutoDetalhe() {
           {/* Informações adicionais */}
           <div className="bg-gray-50 rounded-lg p-4 space-y-3">
             <div className="flex items-center gap-3">
-              <TruckIcon className="w-5 h-5 text-[hsl(var(--shop-primary))]" />
+              <Truck className="w-5 h-5 text-[hsl(var(--shop-primary))]" />
               <div>
                 <h4 className="font-medium">Entrega</h4>
                 <p className="text-sm text-gray-600">Prazo de {produto.prazoEntrega}</p>
@@ -480,7 +477,7 @@ export default function ProdutoDetalhe() {
             </div>
 
             <div className="flex items-center gap-3">
-              <ShieldCheckIcon className="w-5 h-5 text-[hsl(var(--shop-primary))]" />
+              <ShieldCheck className="w-5 h-5 text-[hsl(var(--shop-primary))]" />
               <div>
                 <h4 className="font-medium">Garantia</h4>
                 <p className="text-sm text-gray-600">30 dias para troca ou devolução</p>
@@ -535,17 +532,16 @@ export default function ProdutoDetalhe() {
                       {avaliacao.data}
                     </time>
                   </div>
-                  <div className="flex my-1">
-                    {[...Array(5)].map((_, i) => (
-                      <StarIcon
-                        key={i}
-                        className={`h-4 w-4 ${i < avaliacao.nota
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'text-gray-300'
-                          }`}
-                        aria-hidden="true"
-                      />
-                    ))}
+                  <div className="flex my-1">                    {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-4 w-4 ${i < avaliacao.nota
+                        ? 'fill-yellow-400 text-yellow-400'
+                        : 'text-gray-300'
+                        }`}
+                      aria-hidden="true"
+                    />
+                  ))}
                     <span className="sr-only">{avaliacao.nota} de 5 estrelas</span>
                   </div>
                   <p className="text-gray-600 text-sm mt-1">{avaliacao.comentario}</p>

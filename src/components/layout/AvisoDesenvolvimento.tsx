@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { XMarkIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { X, AlertTriangle } from 'lucide-react';
 
 export default function AvisoDesenvolvimento() {
     const [mostrarAviso, setMostrarAviso] = useState(false); useEffect(() => {
@@ -30,20 +30,18 @@ export default function AvisoDesenvolvimento() {
                             transition={{ type: "spring", duration: 0.5 }}
                             className="bg-white border border-gray-200 rounded-2xl shadow-2xl max-w-md w-full p-6 relative"
                             onClick={(e) => e.stopPropagation()}
-                        >                            {/* Botão de fechar */}
-                            <button
-                                onClick={fecharAviso}
-                                className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
-                                aria-label="Fechar aviso"
-                            >
-                                <XMarkIcon className="h-5 w-5 text-gray-500" />
+                        >                            {/* Botão de fechar */}                            <button
+                            onClick={fecharAviso}
+                            className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+                            aria-label="Fechar aviso"
+                        >
+                                <X className="h-5 w-5 text-gray-500" />
                             </button>
 
-                            {/* Ícone de aviso */}
-                            <div className="flex items-center gap-3 mb-4">
+                            {/* Ícone de aviso */}                            <div className="flex items-center gap-3 mb-4">
                                 <div className="flex-shrink-0 w-12 h-12 rounded-full bg-shop-warning/10 flex items-center justify-center">
-                                    <ExclamationTriangleIcon className="h-6 w-6 text-shop-warning" />
-                                </div>                                <div>
+                                    <AlertTriangle className="h-6 w-6 text-shop-warning" />
+                                </div><div>
                                     <h2 className="text-lg font-semibold text-gray-900">
                                         Site em Desenvolvimento
                                     </h2>

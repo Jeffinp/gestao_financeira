@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useFinancasStore } from '../store/financasStore';
 import { motion } from 'framer-motion';
-import { ClockIcon, FunnelIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Clock, Filter, X } from 'lucide-react';
 
 // Animação para mostrar os elementos
 const fadeInUp = {
@@ -83,7 +83,7 @@ export default function Historico() {
         className="bg-card hover-lift rounded-xl shadow-card mb-8"
       >
         <div className="p-6 border-b border-border/20 flex items-center gap-2">
-          <FunnelIcon className="h-5 w-5 text-shop-primary" />
+          <Filter className="h-5 w-5 text-shop-primary" />
           <h2 className="text-lg font-medium">Filtros</h2>
         </div>
 
@@ -158,7 +158,7 @@ export default function Historico() {
               onClick={limparFiltros}
               className="flex items-center gap-1 px-4 py-2 rounded-md border border-input bg-background hover:bg-secondary transition"
             >
-              <XMarkIcon className="h-4 w-4" />
+              <X className="h-4 w-4" />
               <span>Limpar Filtros</span>
             </button>
           </div>
@@ -171,7 +171,7 @@ export default function Historico() {
         className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden"
       >
         <div className="p-6 border-b border-border/20 flex items-center gap-2">
-          <ClockIcon className="h-5 w-5 text-shop-primary" />
+          <Clock className="h-5 w-5 text-shop-primary" />
           <h2 className="text-lg font-medium">Linha do Tempo</h2>
         </div>
 
@@ -179,8 +179,8 @@ export default function Historico() {
           {transacoesFiltradas.length > 0 ? (
             <div className="space-y-6">
               {transacoesFiltradas.map((transacao, index) => (
-                <motion.div 
-                  key={transacao.id} 
+                <motion.div
+                  key={transacao.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3, delay: 0.05 * index }}
