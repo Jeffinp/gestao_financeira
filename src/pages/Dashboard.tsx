@@ -24,8 +24,6 @@ import {
 } from 'lucide-react';
 import {
   ResponsiveContainer,
-  Pie,
-  Cell,
   Tooltip,
   AreaChart,
   Area,
@@ -34,9 +32,7 @@ import {
   BarChart,
   Bar,
   LineChart,
-  Line,
-  Sector
-} from 'recharts';
+  Line} from 'recharts';
 import { useEffect, useState } from 'react';
 
 // Componente para cards de estatísticas principais
@@ -1539,6 +1535,59 @@ export default function Dashboard() {
           </motion.div>
         )}
       </AnimatePresence>
+
+        {/* Bar Chart Example Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.1 }}
+          className="mt-8 bg-card rounded-xl shadow-card border border-border/50 overflow-hidden"
+        >
+          <div className="p-6 border-b border-border/20">
+            <h3 className="text-lg font-semibold text-foreground">Comparativo Mensal</h3>
+            <p className="text-sm text-muted-foreground">Análise de gastos por categoria</p>
+          </div>
+          <div className="p-6">
+            <ModernBarChart 
+              data={[
+                { categoria: "Alimentação", valor: 800 },
+                { categoria: "Transporte", valor: 400 },
+                { categoria: "Lazer", valor: 300 },
+                { categoria: "Moradia", valor: 600 },
+                { categoria: "Outros", valor: 200 }
+              ]} 
+              isLoading={isLoading}
+              title="Gastos por Categoria"
+            />
+          </div>
+        </motion.div>
+
+        {/* Detailed Line Chart Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.1 }}
+          className="mt-8 bg-card rounded-xl shadow-card border border-border/50 overflow-hidden"
+        >
+          <div className="p-6 border-b border-border/20">
+            <h3 className="text-lg font-semibold text-foreground">Análise Detalhada</h3>
+            <p className="text-sm text-muted-foreground">Evolução financeira ao longo do tempo</p>
+          </div>
+          <div className="p-6">
+            <DetailedLineChart 
+              data={[
+                { periodo: "Jan", receitas: 3500, despesas: 2800, economia: 700 },
+                { periodo: "Fev", receitas: 3700, despesas: 3000, economia: 700 },
+                { periodo: "Mar", receitas: 3900, despesas: 3100, economia: 800 },
+                { periodo: "Abr", receitas: 4100, despesas: 3200, economia: 900 },
+                { periodo: "Mai", receitas: 4200, despesas: 3300, economia: 900 },
+                { periodo: "Jun", receitas: 4300, despesas: 3400, economia: 900 }
+              ]} 
+              isLoading={isLoading}
+              title="Evolução Financeira Semestral"
+            />
+          </div>
+        </motion.div>
 
         {/* Call to Action Section Melhorada */}
         <motion.div
