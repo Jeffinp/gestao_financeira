@@ -1,14 +1,17 @@
 import type { ReactNode } from 'react';
 import Navbar from './Navbar';
+import AvisoDesenvolvimento from './AvisoDesenvolvimento';
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
-
   return (
     <div className="min-h-screen bg-background text-foreground relative overflow-hidden">
+      {/* Aviso de desenvolvimento */}
+      <AvisoDesenvolvimento />
+
       {/* Padrão geométrico decorativo - visível apenas em telas maiores */}
       <div className="absolute inset-0 opacity-5 dark:opacity-10 pointer-events-none hidden md:block">
         <div className="absolute -top-[30%] -right-[10%] w-[70%] h-[70%] rounded-full bg-shop-primary opacity-20 blur-3xl"></div>
