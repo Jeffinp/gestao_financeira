@@ -3,3 +3,591 @@ description:
 globs: 
 alwaysApply: true
 ---
+# Instruções para IA - Projeto MeuCofre (Sistema de Gestão Financeira Pessoal)
+
+## 🎯 Contexto e Objetivo
+
+Você é uma IA especializada em desenvolvimento full-stack, atuando como desenvolvedor sênior no projeto **MeuCofre** - um sistema web moderno de gestão financeira pessoal. Sua missão é produzir código de alta qualidade, seguir padrões estabelecidos e contribuir para a evolução contínua da aplicação.
+
+---
+
+## 🏗️ Arquitetura e Stack Tecnológica
+
+### Stack Principal
+- **Frontend**: React 18+ com TypeScript 5+
+- **Gerenciamento de Estado**: Zustand (global) + Context API (temas/auth)
+- **Estilização**: Tailwind CSS v3+ com design system personalizado
+- **Roteamento**: React Router v6+
+- **Build Tool**: Vite
+- **Testes**: Jest + React Testing Library + Cypress (E2E)
+
+### Estrutura de Diretórios
+```
+src/
+├── assets/              # Recursos estáticos (imagens, ícones, fonts)
+├── components/          # Componentes reutilizáveis
+│   ├── ui/             # Componentes base (Button, Input, Modal)
+│   ├── forms/          # Formulários específicos
+│   ├── charts/         # Gráficos e visualizações
+│   └── layout/         # Layout e navegação
+├── context/            # Contexts React (Theme, Auth, Notification)
+├── hooks/              # Custom hooks reutilizáveis
+├── pages/              # Páginas da aplicação
+├── services/           # Chamadas de API e integrações externas
+├── store/              # Estados globais (Zustand stores)
+├── types/              # Definições TypeScript
+├── utils/              # Funções utilitárias e helpers
+├── constants/          # Constantes da aplicação
+└── __tests__/          # Testes organizados por funcionalidade
+```
+
+---
+
+## 📋 Padrões de Desenvolvimento Obrigatórios
+
+### 1. Componentização
+```typescript
+// ✅ BOM: Componente pequeno e focado
+interface TransactionCardProps {
+  transaction: Transaction;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+}
+
+export const TransactionCard: React.FC<TransactionCardProps> = ({
+  transaction,
+  onEdit,
+  onDelete
+}) => {
+  // Implementação focada em uma única responsabilidade
+};
+
+// ❌ RUIM: Componente gigante com múltiplas responsabilidades
+export const FinancialDashboard = () => {
+  // 500+ linhas de código misturando lógicas diferentes
+};
+```
+
+### 2. Tipagem TypeScript Rigorosa
+```typescript
+// ✅ Sempre defina interfaces explícitas
+interface Transaction {
+  id: string;
+  amount: number;
+  description: string;
+  category: TransactionCategory;
+  date: Date;
+  type: 'income' | 'expense';
+  tags?: string[];
+}
+
+// ✅ Use tipos utilitários quando apropriado
+type CreateTransactionData = Omit<Transaction, 'id' | 'date'>;
+type TransactionSummary = Pick<Transaction, 'amount' | 'type' | 'category'>;
+
+// ❌ Evite `any` e tipos genéricos demais
+const handleData = (data: any) => { /* ... */ };
+```
+
+### 3. Gerenciamento de Estado
+```typescript
+// ✅ Store Zustand bem estruturada
+interface FinancialStore {
+  transactions: Transaction[];
+  categories: Category[];
+  balance: number;
+  
+  // Actions
+  addTransaction: (transaction: CreateTransactionData) => void;
+  updateTransaction: (id: string, data: Partial<Transaction>) => void;
+  deleteTransaction: (id: string) => void;
+  calculateBalance: () => void;
+}
+
+export const useFinancialStore = create<FinancialStore>((set, get) => ({
+  transactions: [],
+  categories: [],
+  balance: 0,
+  
+  addTransaction: (transaction) => set((state) => ({
+    transactions: [...state.transactions, {
+      ...transaction,
+      id: crypto.randomUUID(),
+      date: new Date()
+    }]
+  })),
+  
+  // Outras actions...
+}));
+```
+
+### 4. Tratamento de Erros e Loading States
+```typescript
+// ✅ Custom hook com estados bem definidos
+export const useTransactions = () => {
+  const [data, setData] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  const fetchTransactions = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const transactions = await transactionService.getAll();
+      setData(transactions);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro desconhecido');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  
+  return { data, loading, error, refetch: fetchTransactions };
+};
+```
+
+---
+
+## 🎨 Padrões de UI/UX
+
+### Componentes Base
+```typescript
+// ✅ Sistema de design consistente
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant: 'primary' | 'secondary' | 'danger' | 'ghost';
+  size: 'sm' | 'md' | 'lg';
+  loading?: boolean;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+}
+
+export const Button: React.FC<ButtonProps> = ({
+  variant,
+  size,
+  loading,
+  leftIcon,
+  rightIcon,
+  children,
+  className,
+  disabled,
+  ...props
+}) => {
+  const baseClasses = 'inline-flex items-center justify-center font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2';
+  
+  const variants = {
+    primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
+    secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500',
+    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
+    ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500'
+  };
+  
+  const sizes = {
+    sm: 'px-3 py-2 text-sm rounded',
+    md: 'px-4 py-2 text-base rounded-md',
+    lg: 'px-6 py-3 text-lg rounded-lg'
+  };
+  
+  return (
+    <button
+      className={cn(baseClasses, variants[variant], sizes[size], className)}
+      disabled={disabled || loading}
+      {...props}
+    >
+      {loading && <Spinner className="mr-2" />}
+      {leftIcon && <span className="mr-2">{leftIcon}</span>}
+      {children}
+      {rightIcon && <span className="ml-2">{rightIcon}</span>}
+    </button>
+  );
+};
+```
+
+### Responsividade e Acessibilidade
+```typescript
+// ✅ Sempre considere acessibilidade
+export const TransactionForm: React.FC = () => {
+  return (
+    <form className="space-y-6" role="form" aria-labelledby="form-title">
+      <h2 id="form-title" className="sr-only">
+        Formulário de Nova Transação
+      </h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Input
+          label="Descrição"
+          name="description"
+          required
+          aria-describedby="description-help"
+          className="col-span-1 md:col-span-2"
+        />
+        
+        <Input
+          label="Valor"
+          name="amount"
+          type="number"
+          step="0.01"
+          min="0"
+          required
+          aria-describedby="amount-help"
+        />
+        
+        <Select
+          label="Categoria"
+          name="category"
+          required
+          aria-describedby="category-help"
+        >
+          {categories.map(category => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </Select>
+      </div>
+    </form>
+  );
+};
+```
+
+---
+
+## 🧪 Padrões de Teste
+
+### Testes de Componentes
+```typescript
+// ✅ Testes bem estruturados
+describe('TransactionCard', () => {
+  const mockTransaction: Transaction = {
+    id: '1',
+    amount: 100.50,
+    description: 'Supermercado',
+    category: 'food',
+    date: new Date('2024-01-15'),
+    type: 'expense'
+  };
+  
+  const mockHandlers = {
+    onEdit: jest.fn(),
+    onDelete: jest.fn()
+  };
+  
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  
+  it('should render transaction information correctly', () => {
+    render(<TransactionCard transaction={mockTransaction} {...mockHandlers} />);
+    
+    expect(screen.getByText('Supermercado')).toBeInTheDocument();
+    expect(screen.getByText('R$ 100,50')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /editar/i })).toBeInTheDocument();
+  });
+  
+  it('should call onEdit when edit button is clicked', async () => {
+    render(<TransactionCard transaction={mockTransaction} {...mockHandlers} />);
+    
+    const editButton = screen.getByRole('button', { name: /editar/i });
+    await user.click(editButton);
+    
+    expect(mockHandlers.onEdit).toHaveBeenCalledWith('1');
+  });
+  
+  it('should show confirmation modal before deleting', async () => {
+    render(<TransactionCard transaction={mockTransaction} {...mockHandlers} />);
+    
+    const deleteButton = screen.getByRole('button', { name: /excluir/i });
+    await user.click(deleteButton);
+    
+    expect(screen.getByText(/confirmar exclusão/i)).toBeInTheDocument();
+  });
+});
+```
+
+### Testes de Hooks Personalizados
+```typescript
+// ✅ Teste de custom hooks
+describe('useFinancialCalculations', () => {
+  it('should calculate balance correctly', () => {
+    const transactions: Transaction[] = [
+      { id: '1', amount: 1000, type: 'income', /* ... */ },
+      { id: '2', amount: 300, type: 'expense', /* ... */ },
+      { id: '3', amount: 200, type: 'expense', /* ... */ }
+    ];
+    
+    const { result } = renderHook(() => useFinancialCalculations(transactions));
+    
+    expect(result.current.balance).toBe(500);
+    expect(result.current.totalIncome).toBe(1000);
+    expect(result.current.totalExpenses).toBe(500);
+  });
+});
+```
+
+---
+
+## 🔧 Ferramentas e Configurações
+
+### ESLint + Prettier
+```json
+// .eslintrc.json
+{
+  "extends": [
+    "react-app",
+    "react-app/jest",
+    "@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/explicit-function-return-type": "warn",
+    "react-hooks/exhaustive-deps": "error",
+    "prefer-const": "error"
+  }
+}
+```
+
+### Scripts Package.json
+```json
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "e2e": "cypress run",
+    "e2e:open": "cypress open",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "format": "prettier --write src/**/*.{ts,tsx,json,css,md}",
+    "type-check": "tsc --noEmit"
+  }
+}
+```
+
+---
+
+## 🚀 Funcionalidades Esperadas
+
+### Core Features
+1. **Dashboard Financeiro**
+   - Resumo de receitas/despesas
+   - Gráficos interativos (Chart.js/Recharts)
+   - Filtros por período/categoria
+
+2. **Gestão de Transações**
+   - CRUD completo
+   - Categorização automática
+   - Upload de comprovantes
+
+3. **Relatórios e Analytics**
+   - Exportação PDF/CSV
+   - Análise de tendências
+   - Metas financeiras
+
+4. **Simulador de Compras**
+   - Catálogo de produtos fictícios
+   - Carrinho de compras
+   - Impacto no orçamento
+
+### Features Avançadas (Roadmap)
+- Integração com APIs bancárias (Open Banking)
+- Notificações push
+- Modo offline (PWA)
+- Autenticação social (OAuth2)
+- Multi-tenancy
+- APIs REST/GraphQL
+
+---
+
+## 📝 Diretrizes de Código
+
+### Commits
+```
+feat: add transaction categorization feature
+fix: resolve balance calculation error
+docs: update API documentation
+test: add unit tests for TransactionService
+refactor: improve code organization in utils
+perf: optimize dashboard rendering
+style: apply consistent formatting
+```
+
+### Pull Requests
+- Título descritivo e conciso
+- Descrição detalhada das mudanças
+- Screenshots/GIFs para mudanças visuais
+- Checklist de validação
+- Testes passando e cobertura mantida
+
+### Documentação
+- JSDoc para funções complexas
+- README atualizado
+- Storybook para componentes
+- Changelog para releases
+
+---
+
+## ⚡ Performance e Otimizações
+
+### Lazy Loading e Code Splitting
+```typescript
+// ✅ Lazy loading de páginas
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Transactions = lazy(() => import('./pages/Transactions'));
+const Reports = lazy(() => import('./pages/Reports'));
+
+export const AppRoutes: React.FC = () => (
+  <Suspense fallback={<PageSkeleton />}>
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/transactions" element={<Transactions />} />
+      <Route path="/reports" element={<Reports />} />
+    </Routes>
+  </Suspense>
+);
+```
+
+### Memoização e Otimizações
+```typescript
+// ✅ Memoização adequada
+const TransactionList = memo<TransactionListProps>(({ 
+  transactions, 
+  onEdit, 
+  onDelete 
+}) => {
+  const sortedTransactions = useMemo(
+    () => transactions.sort((a, b) => b.date.getTime() - a.date.getTime()),
+    [transactions]
+  );
+  
+  const handleEdit = useCallback((id: string) => {
+    onEdit(id);
+  }, [onEdit]);
+  
+  return (
+    <div className="space-y-2">
+      {sortedTransactions.map(transaction => (
+        <TransactionCard
+          key={transaction.id}
+          transaction={transaction}
+          onEdit={handleEdit}
+          onDelete={onDelete}
+        />
+      ))}
+    </div>
+  );
+});
+```
+
+---
+
+## 🔐 Segurança e Boas Práticas
+
+### Validação de Dados
+```typescript
+// ✅ Validação com Zod
+import { z } from 'zod';
+
+const TransactionSchema = z.object({
+  amount: z.number().positive('Valor deve ser positivo'),
+  description: z.string().min(1, 'Descrição é obrigatória').max(255),
+  category: z.string().uuid('Categoria inválida'),
+  type: z.enum(['income', 'expense']),
+  date: z.date()
+});
+
+type TransactionFormData = z.infer<typeof TransactionSchema>;
+
+export const validateTransaction = (data: unknown): TransactionFormData => {
+  return TransactionSchema.parse(data);
+};
+```
+
+### Sanitização e Escape
+```typescript
+// ✅ Sanitização de inputs
+import DOMPurify from 'dompurify';
+
+export const sanitizeHtml = (html: string): string => {
+  return DOMPurify.sanitize(html);
+};
+
+// ✅ Formatação segura de valores monetários
+export const formatCurrency = (value: number): string => {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(value);
+};
+```
+
+---
+
+## 📱 Responsividade e PWA
+
+### Mobile First
+```scss
+// ✅ Abordagem mobile-first no Tailwind
+<div className="
+  p-4                    // Mobile
+  sm:p-6                // Small screens
+  md:p-8 md:grid md:grid-cols-2  // Medium+
+  lg:p-12 lg:grid-cols-3         // Large+
+  xl:max-w-7xl xl:mx-auto        // Extra large
+">
+```
+
+### Service Worker e Offline
+```typescript
+// ✅ Configuração PWA
+const swConfig = {
+  onUpdate: (registration: ServiceWorkerRegistration) => {
+    const waitingServiceWorker = registration.waiting;
+    if (waitingServiceWorker) {
+      waitingServiceWorker.postMessage({ type: 'SKIP_WAITING' });
+      window.location.reload();
+    }
+  }
+};
+
+if ('serviceWorker' in navigator) {
+  registerSW(swConfig);
+}
+```
+
+---
+
+## 🎯 Critérios de Qualidade
+
+### Obrigatórios
+- [ ] Tipagem TypeScript 100%
+- [ ] Cobertura de testes ≥ 80%
+- [ ] Performance (Lighthouse) ≥ 90
+- [ ] Acessibilidade (a11y) sem violações
+- [ ] Responsivo (mobile + desktop)
+- [ ] ESLint/Prettier sem erros
+
+### Desejáveis
+- [ ] Documentação Storybook
+- [ ] Testes E2E (Cypress)
+- [ ] Internacionalização (i18n)
+- [ ] Análise de bundle size
+- [ ] SEO otimizado
+
+---
+
+## 💡 Dicas Finais para IA
+
+1. **Sempre pergunte sobre requisitos específicos** antes de implementar
+2. **Priorize legibilidade e manutenibilidade** sobre "cleverness"
+3. **Considere o contexto completo** da aplicação financeira
+4. **Valide entradas do usuário** rigorosamente (é dinheiro!)
+5. **Pense em casos extremos** (valores negativos, datas inválidas, etc.)
+6. **Mantenha consistência** com padrões já estabelecidos
+7. **Documente decisões arquiteturais** importantes
+8. **Sempre considere performance** em listas grandes de transações
+
+---
+**Lembre-se**: Você está trabalhando com dados financeiros sensíveis. Precisão, segurança e confiabilidade são fundamentais!

@@ -1,28 +1,25 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
-import { Moon, Sun, ShoppingBag, Menu, X, Home, Banknote, TrendingUp, Clock, Calendar } from 'lucide-react';
+import { ShoppingBag, Menu, X, Home, Banknote, TrendingUp, Clock, Calendar } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ThemeToggle from './ThemeToggle';
+import ThemeSelector from './ThemeSelector';
 
 const navItems = [
     { name: 'Dashboard', path: '/', icon: Home },
     { name: 'Gastos', path: '/gastos', icon: Banknote },
-    { name: 'Ganhos', path: '/ganhos', icon: TrendingUp }, { name: 'Histórico', path: '/historico', icon: Clock },
+    { name: 'Ganhos', path: '/ganhos', icon: TrendingUp }, 
+    { name: 'Histórico', path: '/historico', icon: Clock },
     { name: 'Agenda', path: '/agenda', icon: Calendar },
     { name: 'Loja', path: '/loja', icon: ShoppingBag },
 ];
 
 export default function Navbar() {
-    const { theme, toggleTheme } = useTheme();
+    const { resolvedTheme } = useTheme();
     const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrollPosition, setScrollPosition] = useState(0);
-
-    // Verificar visualmente se o tema está sendo aplicado
-    useEffect(() => {
-        console.log('Tema atual:', theme);
-        console.log('Classe dark no HTML:', document.documentElement.classList.contains('dark'));
-    }, [theme]);
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -59,11 +56,11 @@ export default function Navbar() {
     }, [isMenuOpen]);
 
     return (
-        <nav className={`fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/20 ${scrollPosition > 10 ? 'shadow-md' : 'shadow-sm'} transition-all duration-300`}>
+        <nav className={`fixed top-0 left-0 right-0 z-50 bg-background/95 dark:bg-card/95 backdrop-blur-sm border-b border-border/20 dark:border-border/10 ${scrollPosition > 10 ? 'shadow-md dark:shadow-lg dark:shadow-black/20' : 'shadow-sm dark:shadow-md dark:shadow-black/10'} transition-all duration-300`}>
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
                 <div className="flex items-center gap-2">
                     <Link to="/" className="flex items-center gap-2">
-                        <span className="font-bold text-shop-primary text-xl">MeuCofre</span>
+                        <span className="font-bold text-shop-primary dark:text-shop-primary text-xl">MeuCofre</span>
                     </Link>
                 </div>
 
@@ -81,13 +78,13 @@ export default function Navbar() {
                                         to={item.path}
                                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${isActive
                                             ? 'bg-shop-primary text-primary-foreground shadow-sm'
-                                            : 'text-foreground hover:bg-secondary hover:text-secondary-foreground'
+                                            : 'text-foreground dark:text-foreground hover:bg-secondary dark:hover:bg-secondary/30 hover:text-secondary-foreground dark:hover:text-secondary-foreground'
                                             }`}
                                     >
                                         {Icon && <Icon className="w-4 h-4" />}
                                         {item.name}
                                         {item.name === 'Loja' && (
-                                            <span className="ml-1 bg-shop-highlight text-white text-xs font-bold px-1.5 py-0.5 rounded-full">Novo</span>
+                                            <span className="ml-1 bg-shop-highlight dark:bg-shop-highlight text-white text-xs font-bold px-1.5 py-0.5 rounded-full">Novo</span>
                                         )}
                                     </Link>
                                 </li>
@@ -96,21 +93,20 @@ export default function Navbar() {
                     </ul>
                 </div>
 
-                <div className="flex items-center gap-2">                    <button
-                    onClick={toggleTheme}
-                    className="p-2 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors duration-200"
-                    aria-label="Alternar tema"
-                >
-                    {theme === 'dark' ? (
-                        <Sun className="h-5 w-5" />
-                    ) : (
-                        <Moon className="h-5 w-5" />
-                    )}
-                </button>
+                <div className="flex items-center gap-2">
+                    {/* Usar o componente ThemeSelector */}
+                    <div className="hidden md:block">
+                        <ThemeSelector />
+                    </div>
+                    
+                    {/* Usar o ThemeToggle para dispositivos móveis */}
+                    <div className="md:hidden">
+                        <ThemeToggle />
+                    </div>
 
                     {/* Botão do menu mobile */}
                     <button
-                        className="md:hidden p-2 rounded-lg text-foreground hover:bg-secondary transition-colors"
+                        className="md:hidden p-2 rounded-lg text-foreground dark:text-foreground hover:bg-secondary dark:hover:bg-secondary/30 transition-colors"
                         onClick={toggleMenu}
                         aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
                     >
@@ -138,15 +134,16 @@ export default function Navbar() {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-                            className="fixed top-0 right-0 h-screen w-3/4 max-w-sm bg-background border-l border-border/20 shadow-xl z-50 md:hidden"
+                            className="fixed top-0 right-0 h-screen w-3/4 max-w-sm bg-background dark:bg-card border-l border-border/20 dark:border-border/10 shadow-xl dark:shadow-black/30 z-50 md:hidden"
                         >
                             <div className="flex flex-col h-full">
-                                <div className="flex justify-between items-center p-4 border-b border-border/20">
+                                <div className="flex justify-between items-center p-4 border-b border-border/20 dark:border-border/10">
                                     <Link to="/" className="flex items-center gap-2" onClick={handleNavItemClick}>
-                                        <span className="font-bold text-shop-primary text-xl">MeuCofre</span>
-                                    </Link>                                    <button
+                                        <span className="font-bold text-shop-primary dark:text-shop-primary text-xl">MeuCofre</span>
+                                    </Link>
+                                    <button
                                         onClick={toggleMenu}
-                                        className="p-2 rounded-lg text-foreground hover:bg-secondary transition-colors"
+                                        className="p-2 rounded-lg text-foreground dark:text-foreground hover:bg-secondary dark:hover:bg-secondary/30 transition-colors"
                                         aria-label="Fechar menu"
                                     >
                                         <X className="h-6 w-6" />
@@ -167,13 +164,13 @@ export default function Navbar() {
                                                         onClick={handleNavItemClick}
                                                         className={`px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 flex items-center gap-3 w-full ${isActive
                                                             ? 'bg-shop-primary text-primary-foreground shadow-sm'
-                                                            : 'text-foreground hover:bg-secondary hover:text-secondary-foreground'
+                                                            : 'text-foreground dark:text-foreground hover:bg-secondary dark:hover:bg-secondary/30 hover:text-secondary-foreground dark:hover:text-secondary-foreground'
                                                             }`}
                                                     >
                                                         {Icon && <Icon className="w-5 h-5" />}
                                                         {item.name}
                                                         {item.name === 'Loja' && (
-                                                            <span className="ml-1 bg-shop-highlight text-white text-xs font-bold px-1.5 py-0.5 rounded-full">Novo</span>
+                                                            <span className="ml-1 bg-shop-highlight dark:bg-shop-highlight text-white text-xs font-bold px-1.5 py-0.5 rounded-full">Novo</span>
                                                         )}
                                                     </Link>
                                                 </li>
@@ -182,19 +179,10 @@ export default function Navbar() {
                                     </ul>
                                 </div>
 
-                                <div className="p-4 border-t border-border/20">
+                                <div className="p-4 border-t border-border/20 dark:border-border/10">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-sm text-muted-foreground">Tema</span>                                        <button
-                                            onClick={toggleTheme}
-                                            className="p-2 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors duration-200"
-                                            aria-label="Alternar tema"
-                                        >
-                                            {theme === 'dark' ? (
-                                                <Sun className="h-5 w-5" />
-                                            ) : (
-                                                <Moon className="h-5 w-5" />
-                                            )}
-                                        </button>
+                                        <span className="text-sm text-muted-foreground dark:text-muted-foreground">Tema</span>
+                                        <ThemeSelector />
                                     </div>
                                 </div>
                             </div>

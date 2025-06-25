@@ -8,10 +8,13 @@ import Historico from "./pages/Historico";
 import Agenda from "./pages/Agenda";
 import Loja from "./pages/Loja";
 import ProdutoDetalhe from "./pages/ProdutoDetalhe";
+import ThemeTransition from "./components/layout/ThemeTransition";
 
 function App() {
   return (
     <ThemeProvider>
+      <ThemeTransition />
+      
       <Router>
         <Layout>
           <Routes>

@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import { ShoppingBag, SlidersHorizontal, Heart, Search } from "lucide-react";
+import { ShoppingBag, Search, SlidersHorizontal, X, Trash } from "lucide-react";
+
+// Importando o componente ProductCard extraído
+import ProductCard from "../components/shop/ProductCard";
 
 // Dados simulados de produtos
 const PRODUTOS = [
@@ -99,253 +101,66 @@ interface ItemCarrinho extends Produto {
   quantidade: number;
 }
 
-// Componente de Produto
-const ProdutoCard: React.FC<{
-  produto: Produto;
-  onAddToCart: (produto: Produto) => void;
-  onToggleFavorite: (id: number) => void;
-}> = ({ produto, onAddToCart, onToggleFavorite }) => {
-  const { ref, inView } = useInView({
-    threshold: 0.2,
-    triggerOnce: true,
-  });
-
-  const [isFavorite, setIsFavorite] = useState(false);
-
-  const handleFavoriteClick = () => {
-    setIsFavorite(!isFavorite);
-    onToggleFavorite(produto.id);
-  };
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className="bg-white rounded-lg overflow-hidden shadow-card transition-all duration-300 hover:shadow-lg group"
-    >
-      <div className="relative overflow-hidden">
-        {/* Badge de promoção */}
-        {produto.promocao && (
-          <div className="absolute top-2 left-2 z-10">
-            <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-[hsl(var(--shop-accent))] bg-opacity-10 text-[hsl(var(--shop-accent))]">
-              Promoção
-            </span>
-          </div>
-        )}
-
-        {/* Badge de disponibilidade */}
-        {!produto.disponivel && (
-          <div className="absolute top-2 right-2 z-10">
-            {" "}
-            <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-[hsl(var(--shop-error))] bg-opacity-10 text-[hsl(var(--shop-error))]">
-              Indisponível
-            </span>
-          </div>
-        )}
-
-        {/* Imagem com efeito de zoom */}
-        <div className="overflow-hidden h-64 bg-gray-100">
-          <img
-            src={produto.imagem}
-            alt={produto.nome}
-            className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
-            loading="lazy"
-          />
-        </div>
-
-        {/* Botão de favorito */}
-        <button
-          onClick={handleFavoriteClick}
-          className="absolute top-2 right-2 p-2 rounded-full bg-white bg-opacity-80 shadow-sm hover:bg-opacity-100 transition-all"
-          aria-label={
-            isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"
-          }
-        >
-          {" "}
-          {isFavorite ? (
-            <Heart className="w-5 h-5 text-shop-accent fill-current" />
-          ) : (
-            <Heart className="w-5 h-5 text-gray-600" />
-          )}
-        </button>
-      </div>
-
-      {/* Informações do produto */}
-      <div className="p-4">
-        <h3 className="text-lg font-semibold text-pretty">{produto.nome}</h3>
-
-        {/* Preço com formatação condicional para promoção */}
-        <div className="mt-1 flex items-baseline gap-2">
-          {produto.promocao ? (
-            <>
-              <span className="text-shop-accent font-bold text-fluid-lg">
-                {produto.precoPromocional?.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-              </span>
-              <span className="text-gray-400 line-through text-sm">
-                {produto.preco.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-              </span>
-            </>
-          ) : (
-            <span className="text-shop-primary font-bold text-fluid-lg">
-              {produto.preco.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </span>
-          )}
-        </div>
-
-        {/* Avaliação */}
-        <div className="mt-2 flex items-center">
-          <div className="flex items-center">
-            {[...Array(5)].map((_, i) => (
-              <svg
-                key={i}
-                className={`w-4 h-4 ${
-                  i < Math.floor(produto.avaliacao)
-                    ? "text-yellow-400"
-                    : i < produto.avaliacao
-                    ? "text-yellow-400"
-                    : "text-gray-300"
-                }`}
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            ))}
-          </div>
-          <span className="ml-1 text-gray-500 text-sm">
-            ({produto.avaliacao})
-          </span>
-        </div>
-
-        {/* Botão de adicionar ao carrinho */}
-        <div className="mt-4">
-          <button
-            onClick={() => onAddToCart(produto)}
-            disabled={!produto.disponivel}
-            className={`w-full flex items-center justify-center gap-2 ${
-              produto.disponivel
-                ? "bg-[hsl(var(--shop-primary))] text-white font-medium py-2 px-4 rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed py-2 px-4 rounded-md"
-            }`}
-          >
-            <ShoppingBag className="w-5 h-5" />
-            <span>
-              {produto.disponivel ? "Adicionar ao carrinho" : "Indisponível"}
-            </span>
-          </button>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
-// Componente de Filtro
+// Componentes de filtro e busca
 const Filtro: React.FC<{
   categorias: string[];
   categoriaSelecionada: string | null;
   onCategoriaChange: (categoria: string | null) => void;
 }> = ({ categorias, categoriaSelecionada, onCategoriaChange }) => {
   return (
-    <div className="bg-white rounded-lg shadow-card p-4 sticky top-20">
+    <div className="bg-white rounded-lg shadow-card p-6 mb-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold">Filtros</h2>
         <SlidersHorizontal className="w-6 h-6 text-shop-primary" />
       </div>
 
-      <div className="mb-6">
-        <h3 className="font-medium mb-2">Categorias</h3>
-        <div className="space-y-2">
+      <div className="space-y-2">
+        <button
+          onClick={() => onCategoriaChange(null)}
+          className={`block w-full text-left px-3 py-2 rounded-md transition-all ${
+            categoriaSelecionada === null
+              ? "bg-shop-primary text-white font-medium"
+              : "hover:bg-gray-100"
+          }`}
+        >
+          Todas as categorias
+        </button>
+
+        {categorias.map((categoria) => (
           <button
-            onClick={() => onCategoriaChange(null)}
-            className={`w-full text-left py-2 px-3 rounded-md transition-colors ${
-              categoriaSelecionada === null
-                ? "bg-shop-primary text-white"
+            key={categoria}
+            onClick={() => onCategoriaChange(categoria)}
+            className={`block w-full text-left px-3 py-2 rounded-md transition-all ${
+              categoriaSelecionada === categoria
+                ? "bg-shop-primary text-white font-medium"
                 : "hover:bg-gray-100"
             }`}
           >
-            Todas
+            {categoria.charAt(0).toUpperCase() + categoria.slice(1)}
           </button>
-          {categorias.map((categoria) => (
-            <button
-              key={categoria}
-              onClick={() => onCategoriaChange(categoria)}
-              className={`w-full text-left py-2 px-3 rounded-md transition-colors ${
-                categoriaSelecionada === categoria
-                  ? "bg-shop-primary text-white"
-                  : "hover:bg-gray-100"
-              }`}
-            >
-              {categoria.charAt(0).toUpperCase() + categoria.slice(1)}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="mb-6">
-        <h3 className="font-medium mb-2">Preço</h3>
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <input
-              type="range"
-              className="w-full"
-              min="0"
-              max="500"
-              step="10"
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <span>R$ 0</span>
-            <span>R$ 500</span>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h3 className="font-medium mb-2">Disponibilidade</h3>
-        <div className="space-y-2">
-          <label className="flex items-center gap-2">
-            <input type="checkbox" className="w-4 h-4 text-shop-primary" />
-            <span>Em estoque</span>
-          </label>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" className="w-4 h-4 text-shop-primary" />
-            <span>Promoção</span>
-          </label>
-        </div>
+        ))}
       </div>
     </div>
   );
 };
 
-// Componente de Busca
 const Busca: React.FC<{
   onSearch: (termo: string) => void;
 }> = ({ onSearch }) => {
-  const [termo, setTermo] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSearch(termo);
-  };
-
   return (
-    <div className="mb-6">
-      <form onSubmit={handleSubmit} className="relative">
+    <div className="bg-white rounded-lg shadow-card p-6 mb-6">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          const form = e.target as HTMLFormElement;
+          const input = form.elements.namedItem("busca") as HTMLInputElement;
+          onSearch(input.value);
+        }}
+        className="relative"
+      >
         <input
           type="text"
-          value={termo}
-          onChange={(e) => setTermo(e.target.value)}
+          name="busca"
           placeholder="Buscar produtos..."
           className="w-full px-4 py-3 pl-10 rounded-lg border border-gray-200 focus:border-shop-primary focus:ring-2 focus:ring-shop-primary/20 outline-none transition-all"
         />
@@ -362,141 +177,102 @@ const CarrinhoRapido: React.FC<{
   onClose: () => void;
   onRemover: (id: number) => void;
 }> = ({ carrinho, visivel, onClose, onRemover }) => {
+  // Calcular total do carrinho
   const total = carrinho.reduce(
-    (acc, item) =>
-      acc +
-      (item.promocao && item.precoPromocional
-        ? item.precoPromocional
-        : item.preco) *
-        item.quantidade,
+    (acc, item) => acc + item.quantidade * (item.promocao ? (item.precoPromocional || item.preco) : item.preco),
     0
   );
 
+  if (!visivel) return null;
+
   return (
-    <motion.div
-      className={`fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-2xl z-50 flex flex-col ${
-        visivel ? "block" : "hidden"
-      }`}
-      initial={{ x: "100%" }}
-      animate={{ x: visivel ? 0 : "100%" }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-    >
-      <div className="flex items-center justify-between p-4 border-b">
-        {" "}
-        <h2 className="text-xl font-bold flex items-center gap-2">
-          <ShoppingBag className="w-6 h-6" />
-          Seu Carrinho
-        </h2>
+    <div className="fixed right-4 top-24 w-96 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-xl z-50 overflow-hidden border border-gray-200">
+      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <ShoppingBag className="w-5 h-5 text-shop-primary" />
+          <h3 className="font-medium">Seu Carrinho</h3>
+          <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-0.5 rounded-full">
+            {carrinho.length} {carrinho.length === 1 ? "item" : "itens"}
+          </span>
+        </div>
         <button
           onClick={onClose}
-          className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+          className="p-1 rounded-full hover:bg-gray-100 transition-colors"
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <X className="w-5 h-5" />
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4">
-        {carrinho.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center">
-            <ShoppingBag className="w-16 h-16 text-gray-300 mb-4" />
-            <p className="text-gray-500">Seu carrinho está vazio</p>
-            <button
-              onClick={onClose}
-              className="mt-4 bg-[hsl(var(--shop-primary))] text-white font-medium py-2 px-4 rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
-            >
-              Continuar comprando
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-4">
+      <div className="max-h-[60vh] overflow-y-auto">
+        {carrinho.length > 0 ? (
+          <div className="divide-y divide-gray-100">
             {carrinho.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center gap-4 p-2 border-b"
-              >
+              <div key={item.id} className="p-4 flex gap-3">
                 <img
                   src={item.imagem}
                   alt={item.nome}
-                  className="w-16 h-16 object-cover rounded-md"
+                  className="w-16 h-16 object-cover rounded"
                 />
                 <div className="flex-1">
-                  <h3 className="font-medium">{item.nome}</h3>
+                  <h4 className="font-medium line-clamp-1">{item.nome}</h4>
                   <div className="flex items-center justify-between mt-1">
                     <div>
                       <span className="text-shop-primary font-medium">
-                        {(item.promocao && item.precoPromocional
-                          ? item.precoPromocional
-                          : item.preco
+                        R${" "}
+                        {(
+                          (item.promocao
+                            ? item.precoPromocional || item.preco
+                            : item.preco) * item.quantidade
                         ).toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
+                          minimumFractionDigits: 2,
                         })}
                       </span>
-                      <span className="text-gray-500 text-sm ml-2">
-                        x {item.quantidade}
-                      </span>
+                      <div className="text-xs text-gray-500 mt-0.5">
+                        {item.quantidade} x R${" "}
+                        {(
+                          item.promocao
+                            ? item.precoPromocional || item.preco
+                            : item.preco
+                        ).toLocaleString("pt-BR", {
+                          minimumFractionDigits: 2,
+                        })}
+                      </div>
                     </div>
                     <button
                       onClick={() => onRemover(item.id)}
-                      className="text-gray-400 hover:text-shop-error transition-colors"
+                      className="p-1 rounded-full hover:bg-red-50 hover:text-red-500 transition-colors"
                     >
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
+                      <Trash className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
               </div>
             ))}
           </div>
+        ) : (
+          <div className="p-8 text-center">
+            <p className="text-gray-500">Seu carrinho está vazio.</p>
+          </div>
         )}
       </div>
 
       {carrinho.length > 0 && (
-        <div className="p-4 border-t">
+        <div className="p-4 border-t border-gray-200">
           <div className="flex items-center justify-between mb-4">
-            <span className="font-medium">Subtotal:</span>
+            <span className="font-medium">Total</span>
             <span className="font-bold text-lg">
+              R${" "}
               {total.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
+                minimumFractionDigits: 2,
               })}
             </span>
           </div>
-          <button className="w-full bg-[hsl(var(--shop-primary))] text-white font-medium py-2 px-4 rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 mb-2">
+          <button className="w-full py-2 bg-shop-primary text-white rounded-md font-medium hover:bg-shop-primary/90 transition-colors">
             Finalizar Compra
-          </button>
-          <button
-            onClick={onClose}
-            className="w-full border border-[hsl(var(--shop-primary))] text-[hsl(var(--shop-primary))] font-medium py-2 px-4 rounded-md transition-all duration-300 hover:bg-[hsl(var(--shop-primary))] hover:text-white hover:scale-105 active:scale-95"
-          >
-            Continuar Comprando
           </button>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 };
 
@@ -678,7 +454,7 @@ export default function Loja() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {produtos.map((produto) => (
-                <ProdutoCard
+                <ProductCard
                   key={produto.id}
                   produto={produto}
                   onAddToCart={adicionarAoCarrinho}

@@ -94,6 +94,7 @@ export default {
                 "bounce-once": "bounce 1s ease-in-out 1",
                 "pulse-slow": "pulse 3s infinite",
                 "spin-slow": "spin 3s linear infinite",
+                "ripple": "ripple 0.6s linear",
             },
             keyframes: {
                 fadeIn: {
@@ -119,6 +120,10 @@ export default {
                 zoomIn: {
                     "0%": { transform: "scale(0.9)", opacity: "0" },
                     "100%": { transform: "scale(1)", opacity: "1" },
+                },
+                ripple: {
+                    "0%": { transform: "scale(0)", opacity: "0.4" },
+                    "100%": { transform: "scale(4)", opacity: "0" },
                 },
             },
             transitionProperty: {
