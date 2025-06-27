@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import Navbar from './Navbar';
 import AvisoDesenvolvimento from './AvisoDesenvolvimento';
-import { useTheme } from '../../context/ThemeContext';
+
 import { useEffect } from 'react';
 
 interface LayoutProps {
@@ -9,7 +9,6 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const { resolvedTheme } = useTheme();
 
   // Aplicar classe para transições suaves ao mudar de tema
   useEffect(() => {

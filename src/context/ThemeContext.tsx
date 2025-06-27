@@ -32,7 +32,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         updateSystemTheme();
         
         // Ouvir mudanças na preferência do sistema
-        const listener = (e: MediaQueryListEvent) => {
+        const listener = () => {
             updateSystemTheme();
         };
         

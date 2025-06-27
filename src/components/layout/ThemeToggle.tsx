@@ -1,16 +1,16 @@
 import { useTheme } from "../../context/ThemeContext";
-import { Sun, Moon, Monitor } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
 export default function ThemeToggle({ className = "" }: { className?: string }) {
-  const { theme, setTheme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   const [isHovered, setIsHovered] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
 
   // Mostrar tooltip após um pequeno delay quando hover
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: number;
     if (isHovered) {
       timer = setTimeout(() => setShowTooltip(true), 500);
     } else {
@@ -18,13 +18,6 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
     }
     return () => clearTimeout(timer);
   }, [isHovered]);
-
-  // Função para alternar entre os três estados: light, dark, system
-  const cycleTheme = () => {
-    if (theme === "light") setTheme("dark");
-    else if (theme === "dark") setTheme("system");
-    else setTheme("light");
-  };
 
   return (
     <div className="relative">
