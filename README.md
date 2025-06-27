@@ -1,113 +1,136 @@
 # MeuCofre – Sistema de Gestão Financeira Pessoal
 
 <p align="center">
-  <img src="public/images/icons/apple-icon-180x180.png" width="80" alt="MeuCofre logo" />
+  <img src="public/images/icons/apple-icon-180x180.png" width="120" alt="MeuCofre logo" />
 </p>
 
 <p align="center">
-  <b>Desenvolvido por Jeferson Reis</b>  
-  <a href="https://github.com/jefersonreis" target="_blank">@jefersonreis</a>
+  <strong>Desenvolvido com ❤️ por Jeferson Reis</strong><br>
+  <a href="https://github.com/Jeffinp " target="_blank">@Jeffinp</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React">
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/Tailwind_CSS-3-38BDF8?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS">
+  <img src="https://img.shields.io/badge/Vite-5-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite">
+  <img src="https://img.shields.io/badge/Zustand-State_Management-4B3222?style=for-the-badge&logo=bear&logoColor=white" alt="Zustand">
+  <img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="MIT License">
 </p>
 
 ---
 
-## ✨ Visão Geral
+## ✨ Sobre o Projeto
 
-O <b>MeuCofre</b> é uma aplicação web moderna para controle financeiro pessoal, com foco em simplicidade, experiência do usuário e planejamento consciente. Permite gerenciar receitas, despesas, simular compras, acompanhar histórico e visualizar relatórios de forma intuitiva.
+O **MeuCofre** é um sistema web moderno e intuitivo para gestão financeira pessoal, projetado para oferecer uma visão clara e controle total sobre suas finanças. Com uma interface amigável e visualmente atraente, o objetivo é transformar a maneira como você organiza, analisa e planeja suas receitas e despesas, promovendo maior saúde e educação financeira.
+
+Este projeto foi construído com as tecnologias mais recentes do ecossistema React, demonstrando uma arquitetura de front-end robusta, escalável e pronta para o mercado.
 
 ---
 
-## 🚀 Funcionalidades
+## 🚀 Funcionalidades Principais
 
-- 📊 <b>Dashboard</b>: Gráficos interativos e resumos financeiros
-- 💸 <b>Gestão de Receitas e Despesas</b>: Cadastro, edição, categorização e filtros avançados
-- 🛒 <b>Simulador de Compras</b>: Loja fictícia para testar impacto de compras no orçamento
-- 📅 <b>Agenda Financeira</b>: Calendário interativo para lembretes e eventos
-- 🕑 <b>Histórico Detalhado</b>: Busca e filtros por período, categoria e tipo
-- 🌗 <b>Tema Claro/Escuro</b>: Alternância de tema para conforto visual
+- 📊 **Dashboard Interativo:** Visualize resumos financeiros, gráficos de despesas por categoria e projeções de gastos em tempo real.
+- 💸 **Controle de Transações:** Adicione, edite e remova receitas e despesas de forma rápida, com categorização inteligente.
+- 🛒 **Simulador de Compras:** Uma loja fictícia que permite simular o impacto de novas compras no seu orçamento mensal.
+- 📅 **Agenda Financeira:** Um calendário para agendar pagamentos, recebimentos e outros eventos financeiros importantes.
+- 📈 **Histórico Detalhado:** Filtre e pesquise transações por data, tipo ou categoria para uma análise aprofundada.
+- 🌗 **Tema Dinâmico (Claro/Escuro):** Alterne entre os temas para uma experiência de uso mais confortável em qualquer ambiente.
+- 📱 **Design Responsivo:** Acesso completo a todas as funcionalidades em qualquer dispositivo, seja desktop, tablet ou smartphone.
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
-<p>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="28" title="React" /> React 19 &nbsp;|&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="28" title="TypeScript" /> TypeScript &nbsp;|&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg" width="28" title="Tailwind CSS" /> Tailwind CSS &nbsp;|&nbsp;
-  <img src="https://raw.githubusercontent.com/pmndrs/zustand/main/docs/static/zustand-bear.svg" width="28" title="Zustand" /> Zustand &nbsp;|&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vite/vite-original.svg" width="28" title="Vite" /> Vite &nbsp;|&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jest/jest-plain.svg" width="28" title="Jest" /> Jest
-</p>
+O projeto foi desenvolvido utilizando um stack moderno e performático, focado em escalabilidade e na melhor experiência de desenvolvimento.
 
-- <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/reactrouter/reactrouter-original.svg" width="22" title="React Router" /> <b>React Router DOM</b> para navegação
-- <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/chartjs/chartjs-original.svg" width="22" title="Recharts" /> <b>Recharts</b> (em breve)
-- <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fullcalendar/fullcalendar-original.svg" width="22" title="FullCalendar" /> <b>FullCalendar</b> (em breve)
+- **Core:**
+  - **React 19:** Para a construção da interface de usuário.
+  - **TypeScript:** Para um código mais seguro, legível e manutenível.
+  - **Vite:** Build tool ultrarrápido que oferece um ambiente de desenvolvimento ágil.
+- **Estilização:**
+  - **Tailwind CSS:** Framework CSS utility-first para a criação de designs customizados de forma eficiente.
+- **Gerenciamento de Estado:**
+  - **Zustand:** Solução de gerenciamento de estado global simples, flexível e poderosa.
+- **Roteamento:**
+  - **React Router DOM:** Para a criação de rotas de navegação na aplicação.
+- **Visualização de Dados:**
+  - **Recharts:** Biblioteca de gráficos para a exibição de dados financeiros (em implementação).
 
 ---
 
 ## 📁 Estrutura do Projeto
 
-```text
+A arquitetura do projeto foi organizada de forma modular e escalável, seguindo as melhores práticas do mercado:
+
+```
 src/
-  ├── assets/        # Recursos estáticos
-  ├── components/    # Componentes reutilizáveis (UI, layout, forms, charts)
-  ├── context/       # Contextos React (Theme, etc)
-  ├── hooks/         # Hooks personalizados
-  ├── pages/         # Páginas da aplicação
-  ├── store/         # Estado global (Zustand)
-  ├── types/         # Tipos TypeScript
-  ├── utils/         # Funções utilitárias
-  └── ...
+├── assets/         # Imagens, fontes e outros recursos estáticos
+├── components/     # Componentes React reutilizáveis (UI, layout, etc.)
+├── context/        # Contextos da aplicação (ex: ThemeContext)
+├── hooks/          # Hooks customizados para lógicas reutilizáveis
+├── pages/          # Componentes que representam as páginas da aplicação
+├── store/          # Lógica de estado global com Zustand
+├── types/          # Definições de tipos e interfaces TypeScript
+├── utils/          # Funções utilitárias
+└── main.tsx        # Ponto de entrada da aplicação
 ```
 
 ---
 
-## 🧑‍💻 Como Rodar Localmente
+## 🧑‍💻 Como Rodar o Projeto Localmente
 
-1. Clone o repositório:
+Para executar o **MeuCofre** em seu ambiente de desenvolvimento, siga os passos abaixo:
 
-```bash
-git clone https://github.com/jefersonreis/MeuCofre.git
-cd MeuCofre
-```
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/jefersonreis/MeuCofre.git
+   cd MeuCofre
+   ```
 
-2. Instale as dependências:
+2. **Instale as dependências:**
+   ```bash
+   npm install
+   ```
 
-```bash
-npm install
-```
+3. **Execute a aplicação:**
+   ```bash
+   npm run dev
+   ```
 
-3. Execute o projeto:
-
-```bash
-npm run dev
-```
-
-4. Acesse em: [http://localhost:5173](http://localhost:5173)
-
----
-
-## 📈 Roadmap e Melhorias Futuras
-
-- Integração com APIs bancárias (Open Banking)
-- Notificações push e lembretes inteligentes
-- Exportação de relatórios (PDF/CSV)
-- Modo offline (PWA)
-- Autenticação de usuários
-- Versão mobile (React Native)
+4. **Acesse no navegador:**
+   Abra seu navegador e acesse [http://localhost:5173](http://localhost:5173).
 
 ---
 
-## 🤝 Contribuição
+## 📈 Roadmap e Próximos Passos
 
-Contribuições são bem-vindas! Siga as boas práticas de código, utilize commits semânticos e abra Pull Requests detalhados.
+Este projeto está em constante evolução. Os próximos passos incluem:
+
+- [ ] **Autenticação de Usuários:** Implementação de login e registro.
+- [ ] **Integração com Backend:** Conexão com uma API para persistência de dados.
+- [ ] **Testes Unitários e de Integração:** Aumentar a cobertura de testes com Jest e Testing Library.
+- [ ] **Exportação de Relatórios:** Funcionalidade para exportar dados em PDF e CSV.
+- [ ] **Progressive Web App (PWA):** Habilitar funcionalidades offline.
+
+---
+
+## 🤝 Contribuições
+
+Contribuições são muito bem-vindas! Se você tem alguma ideia para melhorar o projeto, sinta-se à vontade para abrir uma *issue* ou enviar um *pull request*.
+
+1. Faça um *fork* do projeto.
+2. Crie uma nova *branch* (`git checkout -b feature/sua-feature`).
+3. Faça o *commit* das suas alterações (`git commit -m 'feat: Adiciona nova feature'`).
+4. Envie para a *branch* original (`git push origin feature/sua-feature`).
+5. Abra um *Pull Request*.
 
 ---
 
 ## 📝 Licença
 
-Este projeto está licenciado sob a licença MIT.
+Este projeto está licenciado sob a **Licença MIT**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 <p align="center">
-  <b>Feito com 💙 por Jeferson Reis</b>
+  Feito com paixão e código por <strong>Jeferson Reis</strong>
 </p>
