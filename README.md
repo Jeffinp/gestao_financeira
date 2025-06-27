@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Desenvolvido com ❤️ por Jeferson Reis</strong><br>
-  <a href="https://github.com/Jeffinp " target="_blank">@Jeffinp</a>
+  <a href="https://github.com/Jeffinp" target="_blank">@Jeffinp</a>
 </p>
 
 <p align="center">
@@ -66,13 +66,21 @@ A arquitetura do projeto foi organizada de forma modular e escalável, seguindo 
 ```
 src/
 ├── assets/         # Imagens, fontes e outros recursos estáticos
-├── components/     # Componentes React reutilizáveis (UI, layout, etc.)
-├── context/        # Contextos da aplicação (ex: ThemeContext)
+├── components/     # Componentes React reutilizáveis
+│   ├── charts/       # Gráficos para visualização de dados
+│   ├── dashboard/    # Componentes específicos do painel principal
+│   ├── forms/        # Formulários, como o de adicionar transação
+│   ├── layout/       # Estrutura principal (Navbar, Sidebar, etc.)
+│   ├── shop/         # Componentes para a loja de simulação
+│   ├── transactions/ # Listagem e itens de transações
+│   └── ui/           # Pequenos elementos de interface (StatCard, etc.)
+├── context/        # Contexto para o gerenciamento de tema (Claro/Escuro)
 ├── hooks/          # Hooks customizados para lógicas reutilizáveis
-├── pages/          # Componentes que representam as páginas da aplicação
+├── pages/          # Páginas da aplicação (Dashboard, Ganhos, Gastos, etc.)
 ├── store/          # Lógica de estado global com Zustand
 ├── types/          # Definições de tipos e interfaces TypeScript
 ├── utils/          # Funções utilitárias
+├── App.tsx         # Componente raiz com a definição das rotas
 └── main.tsx        # Ponto de entrada da aplicação
 ```
 
