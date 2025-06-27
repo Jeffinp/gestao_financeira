@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { BarChart, RotateCcw, Eye, FileDown, Plus, Share, PieChart } from "lucide-react";
+import { BarChart, RotateCcw, Eye, FileDown, Plus, Share } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 
 interface DashboardHeaderProps {
@@ -25,8 +25,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   return (
     <div className={`${
       isDark
-        ? 'bg-gradient-to-br from-blue-900/10 via-blue-800/5 to-blue-900/10 border-gray-700/20'
-        : 'bg-gradient-to-br from-[#062140]/10 via-[#083a73]/5 to-[#062140]/10 border-[#fed282]/20'
+        ? 'bg-gradient-to-br from-primary-700/10 via-primary-600/5 to-primary-700/10 border-dark-border'
+        : 'bg-gradient-to-br from-primary-900/10 via-primary-800/5 to-primary-900/10 border-accent-400/20'
     } border-b relative overflow-hidden`}>
       <div className="container max-w-7xl mx-auto pt-24 pb-12 relative">
         <motion.div
@@ -40,30 +40,30 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               <motion.div
                 className={`p-3 rounded-xl ${
                   isDark 
-                    ? 'bg-blue-600/20' 
-                    : 'bg-[#062140]/20'
+                    ? 'bg-primary-600/20' 
+                    : 'bg-primary-900/20'
                 }`}
                 animate={{ rotate: [0, 5, -5, 0] }}
                 transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
               >
                 <BarChart className={`h-8 w-8 ${
                   isDark 
-                    ? 'text-blue-500' 
-                    : 'text-[#062140]'
+                    ? 'text-primary-500' 
+                    : 'text-primary-900'
                 }`} />
               </motion.div>
               <div>
                 <h1 className={`text-fluid-4xl font-bold ${
                   isDark 
-                    ? 'text-white' 
-                    : 'text-gray-800'
+                    ? 'text-dark-text-primary' 
+                    : 'text-light-text-primary'
                 }`}>
                   Dashboard Financeiro
                 </h1>
                 <p className={`text-fluid-base ${
                   isDark 
-                    ? 'text-gray-400' 
-                    : 'text-gray-500'
+                    ? 'text-dark-text-secondary' 
+                    : 'text-light-text-secondary'
                 }`}>
                   {new Date().toLocaleDateString("pt-BR", {
                     weekday: "long",
@@ -76,22 +76,22 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             </div>
             <p className={`text-fluid-base max-w-2xl ${
               isDark 
-                ? 'text-gray-400' 
-                : 'text-gray-500'
+                ? 'text-dark-text-secondary' 
+                : 'text-light-text-secondary'
             }`}>
               Gerencie suas finanças com inteligência e tome decisões baseadas
               em dados precisos
             </p>
           </div>
 
-          <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex flex-wrap gap-3 mt-8">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className={`flex items-center gap-2 px-4 py-3 backdrop-blur-sm border rounded-xl text-sm font-medium transition-all duration-200 shadow-sm ${
+              className={`flex items-center gap-2 px-4 py-3 backdrop-blur-sm border rounded-xl text-fluid-sm font-medium transition-all duration-250 shadow-button hover:shadow-button-hover ${
                 isDark 
-                  ? 'bg-gray-800/80 border-gray-700/50 text-gray-200 hover:bg-gray-700/50' 
-                  : 'bg-white/80 border-[#fed282]/30 text-gray-700 hover:bg-gray-100/50'
+                  ? 'bg-dark-card border-dark-border text-dark-text-primary hover:bg-gray-700/50' 
+                  : 'bg-light-card border-accent-400/30 text-light-text-primary hover:bg-gray-100/50'
               }`}
               onClick={onRefresh}
             >
@@ -102,95 +102,104 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className={`text-sm flex items-center gap-2 shadow-button px-4 py-3 rounded-xl font-medium ${
+              className={`text-fluid-sm flex items-center gap-2 shadow-button hover:shadow-button-hover px-4 py-3 rounded-xl font-medium ${
                 isDark 
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                  : 'bg-[#062140] hover:bg-[#051426] text-white'
+                  ? 'bg-primary-600 hover:bg-primary-700 text-white' 
+                  : 'bg-primary-900 hover:bg-primary-950 text-white'
               }`}
             >
               <Eye className="h-4 w-4" />
               Relatório Completo
             </motion.button>
             
-            {hasExportOptions && (
-              <div className="relative group">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`text-sm flex items-center gap-2 px-4 py-3 rounded-xl border font-medium ${
-                    isDark 
-                      ? 'border-gray-700 text-gray-300 hover:bg-gray-800' 
-                      : 'border-[#fed282]/50 text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <FileDown className="h-4 w-4" />
-                  Exportar
-                </motion.button>
-                <div className={`absolute right-0 top-full mt-2 w-48 border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 ${
-                  isDark 
-                    ? 'bg-gray-800 border-gray-700' 
-                    : 'bg-white border-[#fed282]/30'
-                }`}>
-                  <div className="py-2">
-                    {onExportPDF && (
-                      <button
-                        onClick={onExportPDF}
-                        className={`w-full px-4 py-2 text-left text-sm flex items-center gap-2 ${
-                          isDark 
-                            ? 'text-gray-200 hover:bg-gray-700/30' 
-                            : 'text-gray-700 hover:bg-gray-100'
-                        }`}
-                      >
-                        <FileDown className="h-4 w-4" />
-                        Relatório PDF
-                      </button>
-                    )}
-                    {onExportCSV && (
-                      <button
-                        onClick={onExportCSV}
-                        className={`w-full px-4 py-2 text-left text-sm flex items-center gap-2 ${
-                          isDark 
-                            ? 'text-gray-200 hover:bg-gray-700/30' 
-                            : 'text-gray-700 hover:bg-gray-100'
-                        }`}
-                      >
-                        <Share className="h-4 w-4" />
-                        Transações CSV
-                      </button>
-                    )}
-                    {onExportJSON && (
-                      <button
-                        onClick={onExportJSON}
-                        className={`w-full px-4 py-2 text-left text-sm flex items-center gap-2 ${
-                          isDark 
-                            ? 'text-gray-200 hover:bg-gray-700/30' 
-                            : 'text-gray-700 hover:bg-gray-100'
-                        }`}
-                      >
-                        <PieChart className="h-4 w-4" />
-                        Dados JSON
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-            
             {onNewTransaction && (
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className={`text-sm flex items-center gap-2 px-4 py-3 rounded-xl font-medium ${
-                  isDark 
-                    ? 'bg-amber-500 hover:bg-amber-600 text-white' 
-                    : 'bg-[#fed282] hover:bg-[#edc272] text-[#062140]'
-                }`}
                 onClick={onNewTransaction}
+                className={`text-fluid-sm flex items-center gap-2 shadow-button hover:shadow-button-hover px-4 py-3 rounded-xl font-medium ${
+                  isDark 
+                    ? 'bg-success-500 hover:bg-success-600 text-white' 
+                    : 'bg-success-500 hover:bg-success-600 text-white'
+                }`}
               >
                 <Plus className="h-4 w-4" />
                 Nova Transação
               </motion.button>
             )}
+
+            {hasExportOptions && (
+              <div className="relative group">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`text-fluid-sm flex items-center gap-2 shadow-button hover:shadow-button-hover px-4 py-3 rounded-xl font-medium ${
+                    isDark 
+                      ? 'bg-dark-card border border-dark-border text-dark-text-primary hover:bg-gray-700/50' 
+                      : 'bg-light-card border border-light-border text-light-text-primary hover:bg-gray-100/50'
+                  }`}
+                >
+                  <FileDown className="h-4 w-4" />
+                  Exportar
+                </motion.button>
+
+                <div className={`absolute right-0 top-full mt-2 p-2 rounded-xl shadow-dropdown z-10 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-250 ${
+                  isDark 
+                    ? 'bg-dark-card border border-dark-border' 
+                    : 'bg-light-card border border-light-border'
+                }`}>
+                  {onExportPDF && (
+                    <button
+                      onClick={onExportPDF}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-fluid-sm ${
+                        isDark 
+                          ? 'hover:bg-gray-700/50 text-dark-text-primary' 
+                          : 'hover:bg-gray-100 text-light-text-primary'
+                      }`}
+                    >
+                      Exportar como PDF
+                    </button>
+                  )}
+                  {onExportCSV && (
+                    <button
+                      onClick={onExportCSV}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-fluid-sm ${
+                        isDark 
+                          ? 'hover:bg-gray-700/50 text-dark-text-primary' 
+                          : 'hover:bg-gray-100 text-light-text-primary'
+                      }`}
+                    >
+                      Exportar como CSV
+                    </button>
+                  )}
+                  {onExportJSON && (
+                    <button
+                      onClick={onExportJSON}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-fluid-sm ${
+                        isDark 
+                          ? 'hover:bg-gray-700/50 text-dark-text-primary' 
+                          : 'hover:bg-gray-100 text-light-text-primary'
+                      }`}
+                    >
+                      Exportar como JSON
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`text-fluid-sm flex items-center gap-2 shadow-button hover:shadow-button-hover px-4 py-3 rounded-xl font-medium ${
+                isDark 
+                  ? 'bg-dark-card border border-dark-border text-dark-text-primary hover:bg-gray-700/50' 
+                  : 'bg-light-card border border-light-border text-light-text-primary hover:bg-gray-100/50'
+              }`}
+            >
+              <Share className="h-4 w-4" />
+              Compartilhar
+            </motion.button>
           </div>
         </motion.div>
       </div>

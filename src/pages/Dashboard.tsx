@@ -21,48 +21,35 @@ import DashboardHeader from "../components/dashboard/DashboardHeader";
 export default function Dashboard() {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
-  const { saldo, transacoes } = useFinancasStore();
+  const [activeTab, setActiveTab] = useState("overview");
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<
-    "overview" | "analytics" | "goals"
-  >("overview");
 
-  // Handlers para exportação
-  const handleExportPDF = () => {
-    const exportData = {
-      title: "Relatório Financeiro",
-      period: `${new Date().toLocaleDateString("pt-BR", {
-        month: "long",
-        year: "numeric",
-      })}`,
-      saldo,
-      ganhosMes,
-      gastosMes,
-      transacoes: transacoesRecentes,
-      categorias,
-    };
-    exportToPDF(exportData);
-  };
+  // Obtendo dados da store
+  const {
+    saldo,
+    ganhosMes,
+    gastosMes,
+    transacoesRecentes,
+    categorias: categoriasOriginais,
+    dadosTendencia,
+    dadosBarras,
+    dadosLinha,
+  } = useFinancasStore();
 
-  const handleExportCSV = () => {
-    exportToCSV(transacoes);
-  };
+  // Cálculo de percentual de crescimento
+  const percentualCrescimento = 15; // Simulado
+  const saldoLiquido = ganhosMes - gastosMes;
 
-  const handleExportJSON = () => {
-    const exportData = {
-      saldo,
-      transacoes,
-      categorias,
-      period: new Date().toLocaleDateString("pt-BR", {
-        month: "long",
-        year: "numeric",
-      }),
-      generatedAt: new Date().toISOString(),
-    };
-    exportToJSON(exportData);
-  };
+  // Convertendo categorias para o formato esperado pelo ModernPieChart
+  const categorias = categoriasOriginais
+    .filter(cat => cat.tipo === 'gasto')
+    .slice(0, 5)
+    .map((cat, index) => ({
+      name: cat.nome,
+      value: dadosBarras[index]?.valor || Math.floor(Math.random() * 500) + 200,
+    }));
 
-  // Simulando carregamento de dados mais realista
+  // Simulando carregamento
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -71,108 +58,52 @@ export default function Dashboard() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Calcula totais do mês atual
-  const dataAtual = new Date();
-  const primeiroDiaMes = new Date(
-    dataAtual.getFullYear(),
-    dataAtual.getMonth(),
-    1
-  );
-  const ultimoDiaMes = new Date(
-    dataAtual.getFullYear(),
-    dataAtual.getMonth() + 1,
-    0
-  );
+  // Funções de exportação
+  const handleExportPDF = () => {
+    exportToPDF({
+      saldo,
+      ganhosMes,
+      gastosMes,
+      transacoesRecentes,
+    });
+  };
 
-  const transacoesMes = transacoes.filter((t) => {
-    const dataTransacao = new Date(t.data);
-    return dataTransacao >= primeiroDiaMes && dataTransacao <= ultimoDiaMes;
-  });
+  const handleExportCSV = () => {
+    exportToCSV(transacoesRecentes);
+  };
 
-  const ganhosMes = transacoesMes
-    .filter((t) => t.tipo === "ganho")
-    .reduce((total, t) => total + t.valor, 0);
-
-  const gastosMes = transacoesMes
-    .filter((t) => t.tipo === "gasto")
-    .reduce((total, t) => total + t.valor, 0);
-
-  const saldoLiquido = ganhosMes - gastosMes;
-
-  // Obter transações recentes (últimas 5)
-  const transacoesRecentes = [...transacoes]
-    .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
-    .slice(0, 5);
-
-  // Calcular percentual de crescimento (simulado)
-  const percentualCrescimento = Math.round(
-    (saldoLiquido / (ganhosMes || 1)) * 100
-  );
-
-  // Dados para gráficos com cores mais harmoniosas
-  const categorias = [
-    { nome: "Alimentação", valor: 800, cor: "#3b82f6" }, // blue-500
-    { nome: "Transporte", valor: 400, cor: "#10b981" }, // emerald-500
-    { nome: "Lazer", valor: 300, cor: "#f59e0b" }, // amber-500
-    { nome: "Moradia", valor: 600, cor: "#ef4444" }, // red-500
-    { nome: "Outros", valor: 200, cor: "#8b5cf6" }, // violet-500
-  ];
-
-  // Dados de tendência simulados
-  const dadosTendencia = [
-    { mes: "Set", receitas: 3200, despesas: 2800, liquido: 400 },
-    { mes: "Out", receitas: 3800, despesas: 3100, liquido: 700 },
-    { mes: "Nov", receitas: 4200, despesas: 3400, liquido: 800 },
-    {
-      mes: "Dez",
-      receitas: ganhosMes,
-      despesas: gastosMes,
-      liquido: saldoLiquido,
-    },
-  ];
-
-  // Dados para o gráfico de barras
-  const dadosBarras = [
-    { categoria: "Alimentação", valor: 800, meta: 700 },
-    { categoria: "Transporte", valor: 400, meta: 500 },
-    { categoria: "Lazer", valor: 300, meta: 400 },
-    { categoria: "Moradia", valor: 600, meta: 600 },
-    { categoria: "Outros", valor: 200, meta: 300 },
-  ];
-
-  // Dados para o gráfico de linha detalhado
-  const dadosLinha = [
-    { periodo: "Semana 1", receitas: 1200, despesas: 800, economia: 400 },
-    { periodo: "Semana 2", receitas: 900, despesas: 700, economia: 200 },
-    { periodo: "Semana 3", receitas: 1500, despesas: 1100, economia: 400 },
-    { periodo: "Semana 4", receitas: 1100, despesas: 900, economia: 200 },
-  ];
-
-  const metaMensal = 5000; // Meta simulada
-  const progressoMeta =
-    ganhosMes > 0 ? Math.min((ganhosMes / metaMensal) * 100, 100) : 0;
+  const handleExportJSON = () => {
+    exportToJSON({
+      saldo,
+      ganhosMes,
+      gastosMes,
+      transacoesRecentes,
+    });
+  };
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-white'} ${isDark ? 'text-white' : 'text-gray-800'}`}>
-      {/* Header Section usando o componente DashboardHeader */}
-      <DashboardHeader 
-        onRefresh={() => window.location.reload()}
-        onNewTransaction={() => {}}
+    <div className={`min-h-screen pb-12 ${
+      isDark ? 'bg-dark-background' : 'bg-light-background'
+    }`}>
+      {/* Header do Dashboard */}
+      <DashboardHeader
+        onRefresh={() => setIsLoading(true)}
         onExportPDF={handleExportPDF}
         onExportCSV={handleExportCSV}
         onExportJSON={handleExportJSON}
       />
 
+      {/* Conteúdo principal */}
       <div className="container max-w-7xl mx-auto px-4 py-8">
         {/* Tabs de navegação */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className={`flex items-center gap-1 mb-8 p-1 rounded-xl border ${
+          className={`flex items-center gap-1 mb-8 p-1.5 rounded-xl border shadow-card ${
             isDark
-              ? 'bg-gray-800/60 border-gray-700'
-              : 'bg-white border-[#fed282]/20'
+              ? 'bg-dark-card border-dark-border'
+              : 'bg-light-card border-light-border'
           } backdrop-blur-sm`}
         >
           {[
@@ -183,14 +114,14 @@ export default function Dashboard() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-fluid-sm font-medium transition-all duration-250 ${
                 activeTab === tab.id
                   ? isDark 
-                    ? 'bg-blue-600 text-white shadow-sm' 
-                    : 'bg-[#062140] text-white shadow-sm'
+                    ? 'bg-primary-600 text-white shadow-sm' 
+                    : 'bg-primary-900 text-white shadow-sm'
                   : isDark
-                    ? 'text-gray-300 hover:text-white hover:bg-gray-700/50'
-                    : 'text-gray-600 hover:text-[#062140] hover:bg-gray-100'
+                    ? 'text-dark-text-secondary hover:text-dark-text-primary hover:bg-gray-800/50'
+                    : 'text-light-text-secondary hover:text-light-text-primary hover:bg-gray-100'
               }`}
             >
               <tab.icon className="h-4 w-4" />
@@ -225,8 +156,8 @@ export default function Dashboard() {
                     <path d="M14 13.5V5c0-1.1.9-2 2-2h0c1.1 0 2 .9 2 2v8.5" />
                   </svg>
                 )}
-                iconBgColor={isDark ? "bg-blue-900/30" : "bg-blue-400/20"}
-                iconColor={isDark ? "text-blue-400" : "text-blue-300"}
+                iconBgColor={isDark ? "bg-primary-700/30" : "bg-primary-400/20"}
+                iconColor={isDark ? "text-primary-400" : "text-primary-300"}
                 trend={{
                   value: percentualCrescimento,
                   isPositive: percentualCrescimento > 0,
@@ -255,8 +186,8 @@ export default function Dashboard() {
                     <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                   </svg>
                 )}
-                iconBgColor={isDark ? "bg-green-900/30" : "bg-green-400/20"}
-                iconColor={isDark ? "text-green-400" : "text-green-300"}
+                iconBgColor={isDark ? "bg-success-500/30" : "bg-success-500/20"}
+                iconColor={isDark ? "text-success-500" : "text-success-500"}
                 trend={{ value: 12, isPositive: true }}
                 isLoading={isLoading}
                 delay={0.1}
@@ -282,8 +213,8 @@ export default function Dashboard() {
                     <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                   </svg>
                 )}
-                iconBgColor={isDark ? "bg-red-900/30" : "bg-red-400/20"}
-                iconColor={isDark ? "text-red-400" : "text-red-300"}
+                iconBgColor={isDark ? "bg-error-500/30" : "bg-error-500/20"}
+                iconColor={isDark ? "text-error-500" : "text-error-500"}
                 trend={{ value: 8, isPositive: false }}
                 isLoading={isLoading}
                 delay={0.2}
@@ -309,8 +240,8 @@ export default function Dashboard() {
                     <path d="M2 20h.01M7 20v-4m5-10v14M17 20v-10m5 10v-6" />
                   </svg>
                 )}
-                iconBgColor={isDark ? "bg-purple-900/30" : "bg-purple-400/20"}
-                iconColor={isDark ? "text-purple-400" : "text-purple-300"}
+                iconBgColor={isDark ? "bg-info-500/30" : "bg-info-500/20"}
+                iconColor={isDark ? "text-info-500" : "text-info-500"}
                 trend={{
                   value: percentualCrescimento,
                   isPositive: percentualCrescimento > 0,
@@ -325,90 +256,61 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-6">
                 {/* Gráfico de tendência */}
-                <div className={`p-6 rounded-lg border ${
-                  isDark 
-                    ? 'bg-gray-800/60 border-gray-700' 
-                    : 'bg-white border-[#fed282]/20'
-                }`}>
-                  <TrendChart data={dadosTendencia} isLoading={isLoading} isDark={isDark} />
-                </div>
+                <TrendChart data={dadosTendencia} isLoading={isLoading} isDark={isDark} />
 
                 {/* Gráfico de barras */}
-                <div className={`p-6 rounded-lg border ${
-                  isDark 
-                    ? 'bg-gray-800/60 border-gray-700' 
-                    : 'bg-white border-[#fed282]/20'
-                }`}>
-                  <ModernBarChart 
-                    data={dadosBarras} 
-                    isLoading={isLoading} 
-                    title="Gastos por Categoria vs. Meta" 
-                    isDark={isDark}
-                  />
-                </div>
+                <ModernBarChart 
+                  data={dadosBarras} 
+                  isLoading={isLoading} 
+                  title="Gastos por Categoria vs. Meta" 
+                  isDark={isDark}
+                />
               </div>
 
               <div className="space-y-6">
                 {/* Gráfico de pizza */}
-                <div className={`p-6 rounded-lg border ${
-                  isDark 
-                    ? 'bg-gray-800/60 border-gray-700' 
-                    : 'bg-white border-[#fed282]/20'
-                }`}>
-                  <ModernPieChart data={categorias} isLoading={isLoading} isDark={isDark} />
-                </div>
+                <ModernPieChart data={categorias} isLoading={isLoading} isDark={isDark} />
 
                 {/* Meta mensal */}
-                <div className={`rounded-lg border overflow-hidden ${
+                <div className={`rounded-xl border overflow-hidden shadow-card ${
                   isDark 
-                    ? 'bg-gray-800/60 border-gray-700' 
-                    : 'bg-white border-[#fed282]/20'
+                    ? 'bg-dark-card border-dark-border' 
+                    : 'bg-light-card border-light-border'
                 }`}>
                   <div className={`p-6 border-b ${
-                    isDark ? 'border-gray-700' : 'border-[#fed282]/20'
+                    isDark ? 'border-dark-border' : 'border-light-border'
                   }`}>
                     <h3 className={`font-bold ${
-                      isDark ? 'text-white' : 'text-gray-800'
+                      isDark ? 'text-dark-text-primary' : 'text-light-text-primary'
                     }`}>Meta de Receita Mensal</h3>
                   </div>
                   <div className="p-6">
-                    <div className="flex justify-between mb-2">
-                      <span className={`text-sm ${
-                        isDark ? 'text-gray-400' : 'text-gray-600'
-                      }`}>
-                        Progresso
-                      </span>
-                      <span className={`text-sm font-medium ${
-                        isDark ? 'text-white' : 'text-gray-800'
-                      }`}>
-                        {progressoMeta.toFixed(0)}%
-                      </span>
-                    </div>
-                    <div className={`w-full rounded-full h-2.5 ${
-                      isDark ? 'bg-gray-700' : 'bg-gray-200'
-                    }`}>
-                      <div
-                        className={`h-2.5 rounded-full ${
-                          isDark ? 'bg-blue-600' : 'bg-[#062140]'
-                        }`}
-                        style={{ width: `${progressoMeta}%` }}
-                      ></div>
-                    </div>
-                    <div className="flex justify-between mt-2 text-sm">
-                      <span className={`${
-                        isDark ? 'text-white' : 'text-gray-800'
-                      }`}>
-                        R$ {ganhosMes.toLocaleString("pt-BR", {
-                          minimumFractionDigits: 2,
-                        })}
-                      </span>
-                      <span className={`${
-                        isDark ? 'text-gray-400' : 'text-gray-600'
-                      }`}>
-                        Meta: R$ {metaMensal.toLocaleString("pt-BR", {
-                          minimumFractionDigits: 2,
-                        })}
-                      </span>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className={`text-fluid-sm ${
+                          isDark ? 'text-dark-text-secondary' : 'text-light-text-secondary'
+                        }`}>
+                          Progresso
+                        </span>
+                        <span className={`text-fluid-sm font-medium ${
+                          isDark ? 'text-dark-text-primary' : 'text-light-text-primary'
+                        }`}>
+                          75%
+                        </span>
+                      </div>
+                      <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div className="h-full bg-primary-600 dark:bg-primary-500 rounded-full" style={{ width: "75%" }}></div>
+                      </div>
+                      <div className="flex justify-between items-center text-fluid-xs">
+                        <span className={isDark ? 'text-dark-text-secondary' : 'text-light-text-secondary'}>
+                          R$ 6.000,00
+                        </span>
+                        <span className={`font-medium ${
+                          isDark ? 'text-dark-text-secondary' : 'text-light-text-secondary'
+                        }`}>
+                          Meta: R$ 8.000,00
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -417,19 +319,13 @@ export default function Dashboard() {
 
             {/* Transações recentes */}
             <div className="grid grid-cols-1 gap-6">
-              <div className={`p-6 rounded-lg border ${
-                isDark 
-                  ? 'bg-gray-800/60 border-gray-700' 
-                  : 'bg-white border-[#fed282]/20'
-              }`}>
-                <TransactionList 
-                  transactions={transacoesRecentes}
-                  title="Transações Recentes"
-                  isLoading={isLoading}
-                  emptyMessage="Nenhuma transação registrada ainda. Adicione sua primeira transação!"
-                  isDark={isDark}
-                />
-              </div>
+              <TransactionList 
+                transactions={transacoesRecentes}
+                title="Transações Recentes"
+                isLoading={isLoading}
+                emptyMessage="Nenhuma transação registrada ainda. Adicione sua primeira transação!"
+                isDark={isDark}
+              />
             </div>
           </div>
         )}
@@ -437,41 +333,23 @@ export default function Dashboard() {
         {activeTab === "analytics" && (
           <div className="space-y-8">
             {/* Gráfico de linha detalhado */}
-            <div className={`p-6 rounded-lg border ${
-              isDark 
-                ? 'bg-gray-800/60 border-gray-700' 
-                : 'bg-white border-[#fed282]/20'
-            }`}>
-              <DetailedLineChart 
-                data={dadosLinha} 
-                isLoading={isLoading} 
-                title="Análise Financeira Detalhada" 
-                isDark={isDark}
-              />
-            </div>
+            <DetailedLineChart 
+              data={dadosLinha} 
+              isLoading={isLoading} 
+              title="Análise Financeira Detalhada" 
+              isDark={isDark}
+            />
 
             {/* Outros componentes de análise */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className={`p-6 rounded-lg border ${
-                isDark 
-                  ? 'bg-gray-800/60 border-gray-700' 
-                  : 'bg-white border-[#fed282]/20'
-              }`}>
-                <ModernBarChart 
-                  data={dadosBarras} 
-                  isLoading={isLoading} 
-                  title="Gastos por Categoria" 
-                  isDark={isDark}
-                />
-              </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ModernBarChart 
+                data={dadosBarras} 
+                isLoading={isLoading} 
+                title="Gastos por Categoria" 
+                isDark={isDark}
+              />
               
-              <div className={`p-6 rounded-lg border ${
-                isDark 
-                  ? 'bg-gray-800/60 border-gray-700' 
-                  : 'bg-white border-[#fed282]/20'
-              }`}>
-                <ModernPieChart data={categorias} isLoading={isLoading} isDark={isDark} />
-              </div>
+              <ModernPieChart data={categorias} isLoading={isLoading} isDark={isDark} />
             </div>
           </div>
         )}
@@ -479,21 +357,21 @@ export default function Dashboard() {
         {activeTab === "goals" && (
           <div className="space-y-8">
             {/* Conteúdo da aba de metas */}
-            <div className={`rounded-lg border overflow-hidden ${
+            <div className={`rounded-xl border overflow-hidden shadow-card ${
               isDark 
-                ? 'bg-gray-800/60 border-gray-700' 
-                : 'bg-white border-[#fed282]/20'
+                ? 'bg-dark-card border-dark-border' 
+                : 'bg-light-card border-light-border'
             }`}>
               <div className={`p-6 border-b ${
-                isDark ? 'border-gray-700' : 'border-[#fed282]/20'
+                isDark ? 'border-dark-border' : 'border-light-border'
               }`}>
                 <h3 className={`font-bold text-lg ${
-                  isDark ? 'text-white' : 'text-gray-800'
+                  isDark ? 'text-dark-text-primary' : 'text-light-text-primary'
                 }`}>Suas Metas Financeiras</h3>
               </div>
               <div className="p-6">
                 <p className={`${
-                  isDark ? 'text-gray-400' : 'text-gray-600'
+                  isDark ? 'text-dark-text-secondary' : 'text-light-text-secondary'
                 }`}>
                   Funcionalidade de metas em desenvolvimento...
                 </p>

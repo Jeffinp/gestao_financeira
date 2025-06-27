@@ -5,8 +5,8 @@ interface StatCardProps {
   title: string;
   value: string;
   icon: React.FC<{ className?: string }>;
-  iconBgColor: string;
-  iconColor: string;
+  iconBgColor?: string;
+  iconColor?: string;
   trend?: {
     value: number;
     isPositive: boolean;
@@ -32,20 +32,20 @@ const StatCard: React.FC<StatCardProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
-      className={`rounded-xl p-6 border ${
+      className={`rounded-xl p-6 border shadow-card hover:shadow-card-hover transition-all duration-250 ${
         isDark 
-          ? 'bg-gray-800/60 border-gray-700' 
-          : 'bg-[#062140]/80 border-[#fed282]/20'
+          ? 'bg-dark-card border-dark-border' 
+          : 'bg-primary-900 border-accent-400/20'
       }`}
     >
       <div className="flex justify-between items-start">
         <div className="space-y-1.5">
-          <p className={`text-sm font-medium ${
-            isDark ? 'text-gray-400' : 'text-gray-300'
+          <p className={`text-fluid-sm font-medium ${
+            isDark ? 'text-dark-text-secondary' : 'text-light-text-secondary'
           }`}>{title}</p>
           {isLoading ? (
             <div className={`h-8 w-24 animate-pulse rounded ${
-              isDark ? 'bg-gray-700' : 'bg-[#083a73]'
+              isDark ? 'bg-gray-700' : 'bg-primary-800'
             }`}></div>
           ) : (
             <h3 className="text-2xl font-bold text-white">
@@ -53,13 +53,13 @@ const StatCard: React.FC<StatCardProps> = ({
             </h3>
           )}
 
-          {trend && !isLoading && (
+          {trend && (
             <div className="flex items-center">
               <span
-                className={`flex items-center text-sm ${
+                className={`flex items-center text-fluid-xs ${
                   trend.isPositive
-                    ? "text-emerald-400" 
-                    : "text-red-400"
+                    ? "text-success-500" 
+                    : "text-error-500"
                 }`}
               >
                 <svg
@@ -80,8 +80,8 @@ const StatCard: React.FC<StatCardProps> = ({
                 </svg>
                 {trend.value}%
               </span>
-              <span className={`text-xs ml-1.5 ${
-                isDark ? 'text-gray-400' : 'text-gray-300'
+              <span className={`text-fluid-xs ml-1.5 ${
+                isDark ? 'text-dark-text-muted' : 'text-light-text-muted'
               }`}>vs. mês anterior</span>
             </div>
           )}
@@ -90,14 +90,15 @@ const StatCard: React.FC<StatCardProps> = ({
         {isLoading ? (
           <div
             className={`w-12 h-12 rounded-lg animate-pulse ${
-              isDark ? 'bg-gray-700' : 'bg-[#083a73]'
+              isDark ? 'bg-gray-700' : 'bg-primary-800'
             }`}
           />
         ) : (
           <div
-            className={`${iconBgColor} p-3 rounded-lg`}
+            className={`${iconBgColor || (isDark ? 'bg-primary-700/30' : 'bg-primary-400/20')} 
+            p-3 rounded-lg`}
           >
-            <Icon className={`w-6 h-6 ${iconColor}`} />
+            <Icon className={`w-6 h-6 ${iconColor || (isDark ? 'text-primary-400' : 'text-primary-300')}`} />
           </div>
         )}
       </div>

@@ -9,6 +9,28 @@ interface FinancasState {
   categorias: Categoria[];
   lembretes: Lembrete[];
   
+  // Dados para gráficos e dashboard
+  ganhosMes: number;
+  gastosMes: number;
+  transacoesRecentes: Transacao[];
+  dadosTendencia: Array<{
+    mes: string;
+    receitas: number;
+    despesas: number;
+    liquido: number;
+  }>;
+  dadosBarras: Array<{
+    categoria: string;
+    valor: number;
+    meta?: number;
+  }>;
+  dadosLinha: Array<{
+    periodo: string;
+    receitas: number;
+    despesas: number;
+    economia: number;
+  }>;
+  
   // Ações para transações
   adicionarTransacao: (transacao: Omit<Transacao, 'id'>) => void;
   removerTransacao: (id: number) => void;
@@ -59,6 +81,29 @@ const lembretesIniciais: Lembrete[] = [
   { id: 4, titulo: 'Consulta Médica', descricao: 'Consulta com Dr. Silva', data: '2023-09-15', notificar: false },
 ];
 
+// Dados para gráficos
+const dadosTendenciaIniciais = [
+  { mes: "Set", receitas: 3200, despesas: 2800, liquido: 400 },
+  { mes: "Out", receitas: 3800, despesas: 3100, liquido: 700 },
+  { mes: "Nov", receitas: 4200, despesas: 3400, liquido: 800 },
+  { mes: "Dez", receitas: 4500, despesas: 3600, liquido: 900 },
+];
+
+const dadosBarrasIniciais = [
+  { categoria: "Alimentação", valor: 800, meta: 700 },
+  { categoria: "Transporte", valor: 400, meta: 500 },
+  { categoria: "Lazer", valor: 300, meta: 400 },
+  { categoria: "Moradia", valor: 600, meta: 600 },
+  { categoria: "Outros", valor: 200, meta: 300 },
+];
+
+const dadosLinhaIniciais = [
+  { periodo: "Semana 1", receitas: 1200, despesas: 800, economia: 400 },
+  { periodo: "Semana 2", receitas: 900, despesas: 700, economia: 200 },
+  { periodo: "Semana 3", receitas: 1500, despesas: 1100, economia: 400 },
+  { periodo: "Semana 4", receitas: 1100, despesas: 900, economia: 200 },
+];
+
 // Função para calcular o saldo inicial
 const calcularSaldoInicial = (transacoes: Transacao[]): number => {
   return transacoes.reduce((acc, transacao) => {
@@ -70,6 +115,26 @@ const calcularSaldoInicial = (transacoes: Transacao[]): number => {
   }, 0);
 };
 
+// Calcular ganhos e gastos do mês
+const calcularGanhosMes = (transacoes: Transacao[]): number => {
+  return transacoes
+    .filter(t => t.tipo === 'ganho')
+    .reduce((total, t) => total + t.valor, 0);
+};
+
+const calcularGastosMes = (transacoes: Transacao[]): number => {
+  return transacoes
+    .filter(t => t.tipo === 'gasto')
+    .reduce((total, t) => total + t.valor, 0);
+};
+
+// Obter transações recentes
+const obterTransacoesRecentes = (transacoes: Transacao[]): Transacao[] => {
+  return [...transacoes]
+    .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
+    .slice(0, 5);
+};
+
 // Criação da store usando Zustand
 export const useFinancasStore = create<FinancasState>((set) => ({
   // Estado inicial
@@ -77,6 +142,14 @@ export const useFinancasStore = create<FinancasState>((set) => ({
   transacoes: transacoesIniciais,
   categorias: categoriasIniciais,
   lembretes: lembretesIniciais,
+  
+  // Dados para gráficos e dashboard
+  ganhosMes: calcularGanhosMes(transacoesIniciais),
+  gastosMes: calcularGastosMes(transacoesIniciais),
+  transacoesRecentes: obterTransacoesRecentes(transacoesIniciais),
+  dadosTendencia: dadosTendenciaIniciais,
+  dadosBarras: dadosBarrasIniciais,
+  dadosLinha: dadosLinhaIniciais,
   
   // Ações para transações
   adicionarTransacao: (transacao) => set((state) => {
@@ -90,9 +163,15 @@ export const useFinancasStore = create<FinancasState>((set) => ({
       ? state.saldo + transacao.valor 
       : state.saldo - transacao.valor;
     
+    // Atualiza a lista de transações
+    const novasTransacoes = [novaTransacao, ...state.transacoes];
+    
     return { 
-      transacoes: [novaTransacao, ...state.transacoes],
-      saldo: novoSaldo
+      transacoes: novasTransacoes,
+      saldo: novoSaldo,
+      ganhosMes: transacao.tipo === 'ganho' ? state.ganhosMes + transacao.valor : state.ganhosMes,
+      gastosMes: transacao.tipo === 'gasto' ? state.gastosMes + transacao.valor : state.gastosMes,
+      transacoesRecentes: obterTransacoesRecentes(novasTransacoes)
     };
   }),
   
@@ -105,9 +184,15 @@ export const useFinancasStore = create<FinancasState>((set) => ({
       ? state.saldo - transacao.valor 
       : state.saldo + transacao.valor;
     
+    // Atualiza a lista de transações
+    const novasTransacoes = state.transacoes.filter(t => t.id !== id);
+    
     return { 
-      transacoes: state.transacoes.filter(t => t.id !== id),
-      saldo: novoSaldo
+      transacoes: novasTransacoes,
+      saldo: novoSaldo,
+      ganhosMes: transacao.tipo === 'ganho' ? state.ganhosMes - transacao.valor : state.ganhosMes,
+      gastosMes: transacao.tipo === 'gasto' ? state.gastosMes - transacao.valor : state.gastosMes,
+      transacoesRecentes: obterTransacoesRecentes(novasTransacoes)
     };
   }),
   
@@ -125,19 +210,25 @@ export const useFinancasStore = create<FinancasState>((set) => ({
     
     // Calcula o impacto no saldo
     let novoSaldo = state.saldo;
+    let novosGanhosMes = state.ganhosMes;
+    let novosGastosMes = state.gastosMes;
     
-    // Remove o valor da transação antiga do saldo
+    // Remove o valor da transação antiga do saldo e dos totais
     if (transacaoAntiga.tipo === 'ganho') {
       novoSaldo -= transacaoAntiga.valor;
+      novosGanhosMes -= transacaoAntiga.valor;
     } else {
       novoSaldo += transacaoAntiga.valor;
+      novosGastosMes -= transacaoAntiga.valor;
     }
     
-    // Adiciona o valor da transação nova ao saldo
+    // Adiciona o valor da transação nova ao saldo e aos totais
     if (transacaoAtualizada.tipo === 'ganho') {
       novoSaldo += transacaoAtualizada.valor;
+      novosGanhosMes += transacaoAtualizada.valor;
     } else {
       novoSaldo -= transacaoAtualizada.valor;
+      novosGastosMes += transacaoAtualizada.valor;
     }
     
     // Atualiza a lista de transações
@@ -146,7 +237,10 @@ export const useFinancasStore = create<FinancasState>((set) => ({
     
     return { 
       transacoes: novasTransacoes,
-      saldo: novoSaldo
+      saldo: novoSaldo,
+      ganhosMes: novosGanhosMes,
+      gastosMes: novosGastosMes,
+      transacoesRecentes: obterTransacoesRecentes(novasTransacoes)
     };
   }),
   
