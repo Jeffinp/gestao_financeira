@@ -298,11 +298,11 @@ export default function Agenda() {
                   {[...Array(3)].map((_, i) => (
                     <div key={i} className="bg-secondary/30 rounded-lg p-4 animate-pulse">
                       <div className="flex gap-3">
-                        <div className="w-5 h-5 bg-gray-300 rounded-full"></div>
+                        <div className="w-5 h-5 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
                         <div className="space-y-2 flex-1">
-                          <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                          <div className="h-3 bg-gray-300 rounded w-1/4"></div>
-                          <div className="h-3 bg-gray-300 rounded w-1/2"></div>
+                          <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
+                          <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-1/4"></div>
+                          <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
                         </div>
                       </div>
                     </div>
@@ -339,7 +339,7 @@ export default function Agenda() {
                                 className={`p-4 rounded-lg hover:shadow-md transition-all ${isHoje
                                   ? 'bg-shop-primary bg-opacity-5 border border-shop-primary border-opacity-20'
                                   : isPassado
-                                    ? 'bg-gray-100 border border-gray-200'
+                                    ? 'bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700'
                                     : 'bg-secondary/30'
                                   }`}
                               >
@@ -394,7 +394,7 @@ export default function Agenda() {
                   ))}
                 </div>
               ) : (<div className="flex flex-col items-center justify-center py-16 text-center">
-                <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
                   <Calendar className="h-8 w-8 text-gray-400" />
                 </div>
                 <h3 className="text-lg font-medium mb-1">Sem lembretes</h3>

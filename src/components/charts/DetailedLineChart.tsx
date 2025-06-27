@@ -18,29 +18,41 @@ interface DetailedLineChartProps {
   }>;
   isLoading: boolean;
   title?: string;
+  isDark?: boolean;
 }
 
 const DetailedLineChart: React.FC<DetailedLineChartProps> = ({
   data,
   isLoading,
   title,
+  isDark: propIsDark,
 }) => {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
+  const { resolvedTheme } = useTheme();
+  const isDark = propIsDark !== undefined ? propIsDark : resolvedTheme === 'dark';
 
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <div className="h-6 bg-muted animate-pulse rounded w-1/3"></div>
-        <div className="h-64 bg-muted animate-pulse rounded-xl"></div>
+        <div className={`h-6 animate-pulse rounded w-1/3 ${
+          isDark ? 'bg-gray-700' : 'bg-gray-200'
+        }`}></div>
+        <div className={`h-64 animate-pulse rounded-xl ${
+          isDark ? 'bg-gray-700' : 'bg-gray-200'
+        }`}></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4" style={{ color: isDark ? '#fff' : '#333', backgroundColor: isDark ? 'rgba(15, 23, 42, 0.3)' : 'transparent' }}>
+    <div className={`space-y-4 p-4 rounded-xl border shadow-sm ${
+      isDark 
+        ? 'bg-gray-800/60 border-gray-700' 
+        : 'bg-white border-[#fed282]/20'
+    }`}>
       {title && (
-        <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+        <h3 className={`text-lg font-semibold ${
+          isDark ? 'text-white' : 'text-gray-800'
+        }`}>{title}</h3>
       )}
       <ResponsiveContainer width="100%" height={300}>
         <LineChart
@@ -65,18 +77,18 @@ const DetailedLineChart: React.FC<DetailedLineChartProps> = ({
             dataKey="periodo"
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 12, fill: "rgb(100, 116, 139)" }}
+            tick={{ fontSize: 12, fill: isDark ? "#94a3b8" : "#64748b" }}
           />
           <YAxis
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 12, fill: "rgb(100, 116, 139)" }}
+            tick={{ fontSize: 12, fill: isDark ? "#94a3b8" : "#64748b" }}
             tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: "rgb(var(--card))",
-              border: "1px solid rgb(var(--border) / 0.5)",
+              backgroundColor: isDark ? "#1f2937" : "#ffffff",
+              border: isDark ? "1px solid #374151" : "1px solid #e5e7eb",
               borderRadius: "0.75rem",
               boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
             }}
@@ -122,15 +134,21 @@ const DetailedLineChart: React.FC<DetailedLineChartProps> = ({
       <div className="flex justify-center gap-6 mt-4">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-[#10b981]"></div>
-          <span className="text-sm text-muted-foreground">Receitas</span>
+          <span className={`text-sm ${
+            isDark ? 'text-gray-300' : 'text-gray-600'
+          }`}>Receitas</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-[#ef4444]"></div>
-          <span className="text-sm text-muted-foreground">Despesas</span>
+          <span className={`text-sm ${
+            isDark ? 'text-gray-300' : 'text-gray-600'
+          }`}>Despesas</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-[#3b82f6]"></div>
-          <span className="text-sm text-muted-foreground">Economia</span>
+          <span className={`text-sm ${
+            isDark ? 'text-gray-300' : 'text-gray-600'
+          }`}>Economia</span>
         </div>
       </div>
     </div>

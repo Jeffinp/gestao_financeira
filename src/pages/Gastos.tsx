@@ -114,7 +114,7 @@ export default function Gastos() {
                 Total no Mês
               </h2>
               {isLoading ? (
-                <div className="h-7 w-28 bg-gray-200 animate-pulse rounded mt-1"></div>
+                <div className="h-7 w-28 bg-gray-200 dark:bg-gray-700 animate-pulse rounded mt-1"></div>
               ) : (
                 <p className="text-xl font-bold text-red-500">
                   R${" "}
@@ -137,7 +137,7 @@ export default function Gastos() {
                 Top Categorias
               </h2>
               {isLoading ? (
-                <div className="h-7 w-28 bg-gray-200 animate-pulse rounded mt-1"></div>
+                <div className="h-7 w-28 bg-gray-200 dark:bg-gray-700 animate-pulse rounded mt-1"></div>
               ) : (
                 <div className="mt-1">
                   {topCategorias.length > 0 ? (
@@ -180,7 +180,7 @@ export default function Gastos() {
                 Último Gasto
               </h2>
               {isLoading ? (
-                <div className="h-7 w-28 bg-gray-200 animate-pulse rounded mt-1"></div>
+                <div className="h-7 w-28 bg-gray-200 dark:bg-gray-700 animate-pulse rounded mt-1"></div>
               ) : gastos.length > 0 ? (
                 <div className="mt-1">
                   <p className="text-foreground font-medium">
@@ -246,10 +246,10 @@ export default function Gastos() {
                     className="p-4 animate-pulse flex justify-between items-center"
                   >
                     <div className="space-y-2">
-                      <div className="h-4 bg-gray-200 rounded w-24"></div>
-                      <div className="h-3 bg-gray-200 rounded w-32"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
                     </div>
-                    <div className="h-6 bg-gray-200 rounded w-16"></div>
+                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
                   </div>
                 ))
               ) : gastos.length > 0 ? (

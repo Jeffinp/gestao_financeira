@@ -108,7 +108,7 @@ const Filtro: React.FC<{
   onCategoriaChange: (categoria: string | null) => void;
 }> = ({ categorias, categoriaSelecionada, onCategoriaChange }) => {
   return (
-    <div className="bg-white rounded-lg shadow-card p-6 mb-6">
+    <div className="bg-card text-card-foreground rounded-lg shadow-card p-6 mb-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold">Filtros</h2>
         <SlidersHorizontal className="w-6 h-6 text-shop-primary" />
@@ -148,7 +148,7 @@ const Busca: React.FC<{
   onSearch: (termo: string) => void;
 }> = ({ onSearch }) => {
   return (
-    <div className="bg-white rounded-lg shadow-card p-6 mb-6">
+    <div className="bg-card text-card-foreground rounded-lg shadow-card p-6 mb-6">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -179,14 +179,17 @@ const CarrinhoRapido: React.FC<{
 }> = ({ carrinho, visivel, onClose, onRemover }) => {
   // Calcular total do carrinho
   const total = carrinho.reduce(
-    (acc, item) => acc + item.quantidade * (item.promocao ? (item.precoPromocional || item.preco) : item.preco),
+    (acc, item) =>
+      acc +
+      item.quantidade *
+        (item.promocao ? item.precoPromocional || item.preco : item.preco),
     0
   );
 
   if (!visivel) return null;
 
   return (
-    <div className="fixed right-4 top-24 w-96 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-xl z-50 overflow-hidden border border-gray-200">
+    <div className="fixed right-4 top-24 w-96 max-w-[calc(100vw-2rem)] bg-popover text-popover-foreground rounded-lg shadow-xl z-50 overflow-hidden border border-border">
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <ShoppingBag className="w-5 h-5 text-shop-primary" />
@@ -229,10 +232,9 @@ const CarrinhoRapido: React.FC<{
                       </span>
                       <div className="text-xs text-gray-500 mt-0.5">
                         {item.quantidade} x R${" "}
-                        {(
-                          item.promocao
-                            ? item.precoPromocional || item.preco
-                            : item.preco
+                        {(item.promocao
+                          ? item.precoPromocional || item.preco
+                          : item.preco
                         ).toLocaleString("pt-BR", {
                           minimumFractionDigits: 2,
                         })}
@@ -433,7 +435,7 @@ export default function Loja() {
         {/* Grid de produtos */}
         <div className="lg:col-span-3">
           {produtos.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-card p-8 text-center">
+            <div className="bg-card text-card-foreground rounded-lg shadow-card p-8 text-center">
               <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h2 className="text-xl font-medium mb-2">
                 Nenhum produto encontrado

@@ -7,6 +7,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTheme } from "../context/ThemeContext";
 
 // Importando componentes modularizados
 import StatCard from "../components/ui/StatCard";
@@ -18,6 +19,8 @@ import TransactionList from "../components/transactions/TransactionList";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
 
 export default function Dashboard() {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
   const { saldo, transacoes } = useFinancasStore();
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<
@@ -108,11 +111,11 @@ export default function Dashboard() {
 
   // Dados para gráficos com cores mais harmoniosas
   const categorias = [
-    { nome: "Alimentação", valor: 800, cor: "var(--shop-primary)" },
-    { nome: "Transporte", valor: 400, cor: "var(--shop-success)" },
-    { nome: "Lazer", valor: 300, cor: "var(--shop-highlight)" },
-    { nome: "Moradia", valor: 600, cor: "var(--shop-error)" },
-    { nome: "Outros", valor: 200, cor: "var(--shop-accent)" },
+    { nome: "Alimentação", valor: 800, cor: "#3b82f6" }, // blue-500
+    { nome: "Transporte", valor: 400, cor: "#10b981" }, // emerald-500
+    { nome: "Lazer", valor: 300, cor: "#f59e0b" }, // amber-500
+    { nome: "Moradia", valor: 600, cor: "#ef4444" }, // red-500
+    { nome: "Outros", valor: 200, cor: "#8b5cf6" }, // violet-500
   ];
 
   // Dados de tendência simulados
@@ -150,7 +153,7 @@ export default function Dashboard() {
     ganhosMes > 0 ? Math.min((ganhosMes / metaMensal) * 100, 100) : 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-white'} ${isDark ? 'text-white' : 'text-gray-800'}`}>
       {/* Header Section usando o componente DashboardHeader */}
       <DashboardHeader 
         onRefresh={() => window.location.reload()}
@@ -166,7 +169,11 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex items-center gap-1 mb-8 p-1 bg-card/50 backdrop-blur-sm rounded-xl border border-border/50"
+          className={`flex items-center gap-1 mb-8 p-1 rounded-xl border ${
+            isDark
+              ? 'bg-gray-800/60 border-gray-700'
+              : 'bg-white border-[#fed282]/20'
+          } backdrop-blur-sm`}
         >
           {[
             { id: "overview", label: "Visão Geral", icon: PieChart },
@@ -178,8 +185,12 @@ export default function Dashboard() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                 activeTab === tab.id
-                  ? "bg-shop-primary text-white shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
+                  ? isDark 
+                    ? 'bg-blue-600 text-white shadow-sm' 
+                    : 'bg-[#062140] text-white shadow-sm'
+                  : isDark
+                    ? 'text-gray-300 hover:text-white hover:bg-gray-700/50'
+                    : 'text-gray-600 hover:text-[#062140] hover:bg-gray-100'
               }`}
             >
               <tab.icon className="h-4 w-4" />
@@ -214,14 +225,15 @@ export default function Dashboard() {
                     <path d="M14 13.5V5c0-1.1.9-2 2-2h0c1.1 0 2 .9 2 2v8.5" />
                   </svg>
                 )}
-                iconBgColor="bg-blue-100"
-                iconColor="text-blue-500"
+                iconBgColor={isDark ? "bg-blue-900/30" : "bg-blue-400/20"}
+                iconColor={isDark ? "text-blue-400" : "text-blue-300"}
                 trend={{
                   value: percentualCrescimento,
                   isPositive: percentualCrescimento > 0,
                 }}
                 isLoading={isLoading}
                 delay={0}
+                isDark={isDark}
               />
 
               <StatCard
@@ -243,11 +255,12 @@ export default function Dashboard() {
                     <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                   </svg>
                 )}
-                iconBgColor="bg-green-100"
-                iconColor="text-green-500"
+                iconBgColor={isDark ? "bg-green-900/30" : "bg-green-400/20"}
+                iconColor={isDark ? "text-green-400" : "text-green-300"}
                 trend={{ value: 12, isPositive: true }}
                 isLoading={isLoading}
                 delay={0.1}
+                isDark={isDark}
               />
 
               <StatCard
@@ -269,11 +282,12 @@ export default function Dashboard() {
                     <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                   </svg>
                 )}
-                iconBgColor="bg-red-100"
-                iconColor="text-red-500"
+                iconBgColor={isDark ? "bg-red-900/30" : "bg-red-400/20"}
+                iconColor={isDark ? "text-red-400" : "text-red-300"}
                 trend={{ value: 8, isPositive: false }}
                 isLoading={isLoading}
                 delay={0.2}
+                isDark={isDark}
               />
 
               <StatCard
@@ -295,14 +309,15 @@ export default function Dashboard() {
                     <path d="M2 20h.01M7 20v-4m5-10v14M17 20v-10m5 10v-6" />
                   </svg>
                 )}
-                iconBgColor="bg-purple-100"
-                iconColor="text-purple-500"
+                iconBgColor={isDark ? "bg-purple-900/30" : "bg-purple-400/20"}
+                iconColor={isDark ? "text-purple-400" : "text-purple-300"}
                 trend={{
                   value: percentualCrescimento,
                   isPositive: percentualCrescimento > 0,
                 }}
                 isLoading={isLoading}
                 delay={0.3}
+                isDark={isDark}
               />
             </div>
 
@@ -310,47 +325,86 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-6">
                 {/* Gráfico de tendência */}
-                <TrendChart data={dadosTendencia} isLoading={isLoading} />
+                <div className={`p-6 rounded-lg border ${
+                  isDark 
+                    ? 'bg-gray-800/60 border-gray-700' 
+                    : 'bg-white border-[#fed282]/20'
+                }`}>
+                  <TrendChart data={dadosTendencia} isLoading={isLoading} isDark={isDark} />
+                </div>
 
                 {/* Gráfico de barras */}
-                <ModernBarChart 
-                  data={dadosBarras} 
-                  isLoading={isLoading} 
-                  title="Gastos por Categoria vs. Meta" 
-                />
+                <div className={`p-6 rounded-lg border ${
+                  isDark 
+                    ? 'bg-gray-800/60 border-gray-700' 
+                    : 'bg-white border-[#fed282]/20'
+                }`}>
+                  <ModernBarChart 
+                    data={dadosBarras} 
+                    isLoading={isLoading} 
+                    title="Gastos por Categoria vs. Meta" 
+                    isDark={isDark}
+                  />
+                </div>
               </div>
 
               <div className="space-y-6">
                 {/* Gráfico de pizza */}
-                <ModernPieChart data={categorias} isLoading={isLoading} />
+                <div className={`p-6 rounded-lg border ${
+                  isDark 
+                    ? 'bg-gray-800/60 border-gray-700' 
+                    : 'bg-white border-[#fed282]/20'
+                }`}>
+                  <ModernPieChart data={categorias} isLoading={isLoading} isDark={isDark} />
+                </div>
 
                 {/* Meta mensal */}
-                <div className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden">
-                  <div className="p-6 border-b border-border/50">
-                    <h3 className="font-bold">Meta de Receita Mensal</h3>
+                <div className={`rounded-lg border overflow-hidden ${
+                  isDark 
+                    ? 'bg-gray-800/60 border-gray-700' 
+                    : 'bg-white border-[#fed282]/20'
+                }`}>
+                  <div className={`p-6 border-b ${
+                    isDark ? 'border-gray-700' : 'border-[#fed282]/20'
+                  }`}>
+                    <h3 className={`font-bold ${
+                      isDark ? 'text-white' : 'text-gray-800'
+                    }`}>Meta de Receita Mensal</h3>
                   </div>
                   <div className="p-6">
                     <div className="flex justify-between mb-2">
-                      <span className="text-sm text-muted-foreground">
+                      <span className={`text-sm ${
+                        isDark ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
                         Progresso
                       </span>
-                      <span className="text-sm font-medium">
+                      <span className={`text-sm font-medium ${
+                        isDark ? 'text-white' : 'text-gray-800'
+                      }`}>
                         {progressoMeta.toFixed(0)}%
                       </span>
                     </div>
-                    <div className="w-full bg-secondary/30 rounded-full h-2.5">
+                    <div className={`w-full rounded-full h-2.5 ${
+                      isDark ? 'bg-gray-700' : 'bg-gray-200'
+                    }`}>
                       <div
-                        className="bg-shop-primary h-2.5 rounded-full"
+                        className={`h-2.5 rounded-full ${
+                          isDark ? 'bg-blue-600' : 'bg-[#062140]'
+                        }`}
                         style={{ width: `${progressoMeta}%` }}
                       ></div>
                     </div>
                     <div className="flex justify-between mt-2 text-sm">
-                      <span>
+                      <span className={`${
+                        isDark ? 'text-white' : 'text-gray-800'
+                      }`}>
                         R$ {ganhosMes.toLocaleString("pt-BR", {
                           minimumFractionDigits: 2,
                         })}
                       </span>
-                      <span className="text-muted-foreground">
+                      <span className={`${
+                        isDark ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
                         Meta: R$ {metaMensal.toLocaleString("pt-BR", {
                           minimumFractionDigits: 2,
                         })}
@@ -363,12 +417,19 @@ export default function Dashboard() {
 
             {/* Transações recentes */}
             <div className="grid grid-cols-1 gap-6">
-              <TransactionList 
-                transactions={transacoesRecentes}
-                title="Transações Recentes"
-                isLoading={isLoading}
-                emptyMessage="Nenhuma transação registrada ainda. Adicione sua primeira transação!"
-              />
+              <div className={`p-6 rounded-lg border ${
+                isDark 
+                  ? 'bg-gray-800/60 border-gray-700' 
+                  : 'bg-white border-[#fed282]/20'
+              }`}>
+                <TransactionList 
+                  transactions={transacoesRecentes}
+                  title="Transações Recentes"
+                  isLoading={isLoading}
+                  emptyMessage="Nenhuma transação registrada ainda. Adicione sua primeira transação!"
+                  isDark={isDark}
+                />
+              </div>
             </div>
           </div>
         )}
@@ -376,21 +437,41 @@ export default function Dashboard() {
         {activeTab === "analytics" && (
           <div className="space-y-8">
             {/* Gráfico de linha detalhado */}
-            <DetailedLineChart 
-              data={dadosLinha} 
-              isLoading={isLoading} 
-              title="Análise Financeira Detalhada" 
-            />
+            <div className={`p-6 rounded-lg border ${
+              isDark 
+                ? 'bg-gray-800/60 border-gray-700' 
+                : 'bg-white border-[#fed282]/20'
+            }`}>
+              <DetailedLineChart 
+                data={dadosLinha} 
+                isLoading={isLoading} 
+                title="Análise Financeira Detalhada" 
+                isDark={isDark}
+              />
+            </div>
 
             {/* Outros componentes de análise */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <ModernBarChart 
-                data={dadosBarras} 
-                isLoading={isLoading} 
-                title="Gastos por Categoria" 
-              />
+              <div className={`p-6 rounded-lg border ${
+                isDark 
+                  ? 'bg-gray-800/60 border-gray-700' 
+                  : 'bg-white border-[#fed282]/20'
+              }`}>
+                <ModernBarChart 
+                  data={dadosBarras} 
+                  isLoading={isLoading} 
+                  title="Gastos por Categoria" 
+                  isDark={isDark}
+                />
+              </div>
               
-              <ModernPieChart data={categorias} isLoading={isLoading} />
+              <div className={`p-6 rounded-lg border ${
+                isDark 
+                  ? 'bg-gray-800/60 border-gray-700' 
+                  : 'bg-white border-[#fed282]/20'
+              }`}>
+                <ModernPieChart data={categorias} isLoading={isLoading} isDark={isDark} />
+              </div>
             </div>
           </div>
         )}
@@ -398,12 +479,22 @@ export default function Dashboard() {
         {activeTab === "goals" && (
           <div className="space-y-8">
             {/* Conteúdo da aba de metas */}
-            <div className="bg-card rounded-xl shadow-card border border-border/50 overflow-hidden">
-              <div className="p-6 border-b border-border/50">
-                <h3 className="font-bold text-lg">Suas Metas Financeiras</h3>
+            <div className={`rounded-lg border overflow-hidden ${
+              isDark 
+                ? 'bg-gray-800/60 border-gray-700' 
+                : 'bg-white border-[#fed282]/20'
+            }`}>
+              <div className={`p-6 border-b ${
+                isDark ? 'border-gray-700' : 'border-[#fed282]/20'
+              }`}>
+                <h3 className={`font-bold text-lg ${
+                  isDark ? 'text-white' : 'text-gray-800'
+                }`}>Suas Metas Financeiras</h3>
               </div>
               <div className="p-6">
-                <p className="text-muted-foreground">
+                <p className={`${
+                  isDark ? 'text-gray-400' : 'text-gray-600'
+                }`}>
                   Funcionalidade de metas em desenvolvimento...
                 </p>
               </div>

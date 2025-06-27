@@ -1,19 +1,19 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, TrendingDown } from "lucide-react";
 
 interface StatCardProps {
   title: string;
   value: string;
-  icon: React.ComponentType<{ className: string }>;
+  icon: React.FC<{ className?: string }>;
   iconBgColor: string;
   iconColor: string;
   trend?: {
     value: number;
     isPositive: boolean;
   };
-  isLoading: boolean;
+  isLoading?: boolean;
   delay?: number;
+  isDark?: boolean;
 }
 
 const StatCard: React.FC<StatCardProps> = ({
@@ -23,59 +23,81 @@ const StatCard: React.FC<StatCardProps> = ({
   iconBgColor,
   iconColor,
   trend,
-  isLoading,
+  isLoading = false,
   delay = 0,
+  isDark = false,
 }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay }}
-      className="bg-card hover-lift rounded-xl shadow-card border border-border/50 p-6 group relative overflow-hidden"
+      transition={{ duration: 0.5, delay }}
+      className={`rounded-xl p-6 border ${
+        isDark 
+          ? 'bg-gray-800/60 border-gray-700' 
+          : 'bg-[#062140]/80 border-[#fed282]/20'
+      }`}
     >
-      {/* Efeito de brilho */}
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="flex justify-between items-start">
+        <div className="space-y-1.5">
+          <p className={`text-sm font-medium ${
+            isDark ? 'text-gray-400' : 'text-gray-300'
+          }`}>{title}</p>
+          {isLoading ? (
+            <div className={`h-8 w-24 animate-pulse rounded ${
+              isDark ? 'bg-gray-700' : 'bg-[#083a73]'
+            }`}></div>
+          ) : (
+            <h3 className="text-2xl font-bold text-white">
+              {value}
+            </h3>
+          )}
 
-      <div className="relative">
-        <div className="flex items-center justify-between mb-4">
-          <div
-            className={`p-3 rounded-xl ${iconBgColor} group-hover:scale-110 transition-transform duration-300`}
-          >
-            <Icon className={`h-6 w-6 ${iconColor}`} />
-          </div>
-          {trend && (
-            <div
-              className={`flex items-center gap-1 text-sm font-medium ${
-                trend.isPositive ? "text-shop-success" : "text-shop-error"
-              }`}
-            >
-              {trend.isPositive ? (
-                <TrendingUp className="h-4 w-4" />
-              ) : (
-                <TrendingDown className="h-4 w-4" />
-              )}
-              {Math.abs(trend.value)}%
+          {trend && !isLoading && (
+            <div className="flex items-center">
+              <span
+                className={`flex items-center text-sm ${
+                  trend.isPositive
+                    ? "text-emerald-400" 
+                    : "text-red-400"
+                }`}
+              >
+                <svg
+                  className={`mr-1 w-3 h-3 ${
+                    !trend.isPositive ? "transform rotate-180" : ""
+                  }`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 15l7-7 7 7"
+                  ></path>
+                </svg>
+                {trend.value}%
+              </span>
+              <span className={`text-xs ml-1.5 ${
+                isDark ? 'text-gray-400' : 'text-gray-300'
+              }`}>vs. mês anterior</span>
             </div>
           )}
         </div>
 
-        <div>
-          <h3 className="text-sm font-medium text-muted-foreground mb-2">
-            {title}
-          </h3>
-          {isLoading ? (
-            <div className="h-8 bg-muted animate-pulse rounded-md w-32"></div>
-          ) : (
-            <p className="text-2xl font-bold text-foreground">{value}</p>
-          )}
-        </div>
-
-        {trend && !isLoading && (
-          <div className="mt-4 pt-4 border-t border-border/30">
-            <p className="text-xs text-muted-foreground">
-              {trend.isPositive ? "Aumento" : "Diminuição"} comparado ao mês
-              anterior
-            </p>
+        {isLoading ? (
+          <div
+            className={`w-12 h-12 rounded-lg animate-pulse ${
+              isDark ? 'bg-gray-700' : 'bg-[#083a73]'
+            }`}
+          />
+        ) : (
+          <div
+            className={`${iconBgColor} p-3 rounded-lg`}
+          >
+            <Icon className={`w-6 h-6 ${iconColor}`} />
           </div>
         )}
       </div>

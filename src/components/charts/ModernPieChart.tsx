@@ -4,18 +4,21 @@ import { useTheme } from "../../context/ThemeContext";
 interface ModernPieChartProps {
   data: Array<{ nome: string; valor: number; cor: string }>;
   isLoading: boolean;
+  isDark?: boolean;
 }
 
-const ModernPieChart: React.FC<ModernPieChartProps> = ({ data, isLoading }) => {
+const ModernPieChart: React.FC<ModernPieChartProps> = ({ data, isLoading, isDark: propIsDark }) => {
   const [activeIndex, setActiveIndex] = useState(-1);
   const total = data.reduce((acc, item) => acc + item.valor, 0);
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
+  const { resolvedTheme } = useTheme();
+  const isDark = propIsDark !== undefined ? propIsDark : resolvedTheme === 'dark';
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-32 h-32 rounded-full bg-muted animate-pulse"></div>
+        <div className={`w-32 h-32 rounded-full animate-pulse ${
+          isDark ? 'bg-gray-700' : 'bg-gray-200'
+        }`}></div>
       </div>
     );
   }
@@ -81,7 +84,7 @@ const ModernPieChart: React.FC<ModernPieChartProps> = ({ data, isLoading }) => {
           key={`slice-${i}`}
           d={pathData}
           fill={colors[i % colors.length]}
-          stroke="#fff"
+          stroke={isDark ? "#1f2937" : "#f9fafb"}
           strokeWidth={isActive ? 2 : 1}
           transform={isActive ? `translate(${displacementX} ${displacementY})` : ''}
           style={{
@@ -126,8 +129,14 @@ const ModernPieChart: React.FC<ModernPieChartProps> = ({ data, isLoading }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-center">
-        <div className="bg-card p-6 rounded-xl shadow-lg" style={{ width: '340px' }}>
-          <h3 className="text-center font-bold text-xl mb-4 text-foreground">Gastos por Categoria: R$ 2.300,00</h3>
+        <div className={`p-6 rounded-xl shadow-lg border ${
+          isDark 
+            ? 'bg-gray-800/60 border-gray-700' 
+            : 'bg-white border-[#fed282]/20'
+        }`} style={{ width: '340px' }}>
+          <h3 className={`text-center font-bold text-xl mb-4 ${
+            isDark ? 'text-white' : 'text-gray-800'
+          }`}>Gastos por Categoria: R$ 2.300,00</h3>
 
           {/* Gráfico de pizza em SVG */}
           <svg width="280" height="280" viewBox="0 0 280 280" style={{
@@ -135,11 +144,11 @@ const ModernPieChart: React.FC<ModernPieChartProps> = ({ data, isLoading }) => {
             display: 'block',
             boxShadow: isDark ? '0 0 10px rgba(255,255,255,0.05)' : '0 0 10px rgba(0,0,0,0.05)',
             borderRadius: '50%',
-            background: isDark ? 'rgb(15, 23, 42)' : '#ffffff'
+            background: isDark ? '#1f2937' : '#f9fafb'
           }}>
             {/* Círculo de fundo para garantir que não apareça nada por trás */}
-            <circle cx="140" cy="140" r="140" fill={isDark ? 'rgb(15, 23, 42)' : '#ffffff'} />
-            <circle cx="140" cy="140" r="122" fill={isDark ? 'rgb(2, 6, 23)' : '#fafafa'} stroke={isDark ? 'rgba(255,255,255,0.1)' : '#f0f0f0'} strokeWidth="1" />
+            <circle cx="140" cy="140" r="140" fill={isDark ? '#1f2937' : '#f9fafb'} />
+            <circle cx="140" cy="140" r="122" fill={isDark ? '#111827' : '#f1f5f9'} stroke={isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'} strokeWidth="1" />
 
             {/* Fatias do gráfico */}
             {paths}
@@ -148,8 +157,8 @@ const ModernPieChart: React.FC<ModernPieChartProps> = ({ data, isLoading }) => {
             {labels}
 
             {/* Círculo interno (opcional, para estilo donut) */}
-            <circle cx="140" cy="140" r="50" fill={isDark ? 'rgb(15, 23, 42)' : 'white'} stroke={isDark ? 'rgba(255,255,255,0.1)' : '#e0e0e0'} strokeWidth="2" />
-            <text x="140" y="140" textAnchor="middle" dominantBaseline="middle" fill={isDark ? '#fff' : '#333'} fontSize="14" fontWeight="bold">
+            <circle cx="140" cy="140" r="50" fill={isDark ? '#1f2937' : '#f9fafb'} stroke={isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'} strokeWidth="2" />
+            <text x="140" y="140" textAnchor="middle" dominantBaseline="middle" fill={isDark ? '#fff' : '#334155'} fontSize="14" fontWeight="bold">
               Gastos
             </text>
           </svg>
@@ -157,8 +166,14 @@ const ModernPieChart: React.FC<ModernPieChartProps> = ({ data, isLoading }) => {
       </div>
 
       {/* Legenda */}
-      <div className="bg-card p-4 rounded-xl shadow-sm">
-        <h3 className="text-center font-bold text-lg mb-2 text-foreground">Detalhamento de Gastos</h3>
+      <div className={`p-4 rounded-xl shadow-sm border ${
+        isDark 
+          ? 'bg-gray-800/60 border-gray-700' 
+          : 'bg-white border-[#fed282]/20'
+      }`}>
+        <h3 className={`text-center font-bold text-lg mb-2 ${
+          isDark ? 'text-white' : 'text-gray-800'
+        }`}>Detalhamento de Gastos</h3>
         <div className="grid grid-cols-2 gap-3">
           {data.map((item, index) => {
             const percentage = ((item.valor / total) * 100).toFixed(1);

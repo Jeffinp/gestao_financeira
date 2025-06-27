@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
+import { useSystemTheme } from '../hooks/useSystemTheme';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -14,31 +15,11 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
+    // Usar o hook existente para obter o tema do sistema
+    const systemTheme = useSystemTheme();
     const [theme, setTheme] = useState<Theme>('system');
-    const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>('light');
     const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
     const [isMounted, setIsMounted] = useState(false);
-
-    // Detectar preferência do sistema
-    useEffect(() => {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        
-        // Definir tema inicial do sistema
-        const updateSystemTheme = () => {
-            const newSystemTheme = mediaQuery.matches ? 'dark' : 'light';
-            setSystemTheme(newSystemTheme);
-        };
-        
-        updateSystemTheme();
-        
-        // Ouvir mudanças na preferência do sistema
-        const listener = () => {
-            updateSystemTheme();
-        };
-        
-        mediaQuery.addEventListener('change', listener);
-        return () => mediaQuery.removeEventListener('change', listener);
-    }, []);
 
     // Inicializar tema do localStorage
     useEffect(() => {
@@ -51,9 +32,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     // Resolver tema final (light ou dark) baseado na configuração
     useEffect(() => {
+        if (!isMounted) return;
+        
         const newResolvedTheme = theme === 'system' ? systemTheme : theme;
-        setResolvedTheme(newResolvedTheme as 'light' | 'dark');
-    }, [theme, systemTheme]);
+        setResolvedTheme(newResolvedTheme);
+    }, [theme, systemTheme, isMounted]);
 
     // Aplicar tema ao DOM
     useEffect(() => {
@@ -61,11 +44,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         
         const root = document.documentElement;
         
-        if (resolvedTheme === 'dark') {
-            root.classList.add('dark');
-        } else {
-            root.classList.remove('dark');
-        }
+        // Primeiro remover todas as classes de tema para evitar conflitos
+        root.classList.remove('light', 'dark');
+        
+        // Aplicar a classe de tema certa
+        root.classList.add(resolvedTheme);
         
         // Adicionar um atributo data-theme para CSS mais específico
         root.setAttribute('data-theme', resolvedTheme);
@@ -79,7 +62,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         setTheme(prevTheme => {
             if (prevTheme === 'light') return 'dark';
             if (prevTheme === 'dark') return 'light';
-            // Se estiver no modo 'system', mudar para o oposto do tema do sistema
             return systemTheme === 'light' ? 'dark' : 'light';
         });
     };

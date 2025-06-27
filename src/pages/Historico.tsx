@@ -98,9 +98,9 @@ export default function Historico() {
       <motion.div
         {...fadeInUp}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="bg-card hover-lift rounded-xl shadow-card mb-8"
+        className="bg-card hover-lift rounded-xl shadow-card mb-8 border border-border/50"
       >
-        <div className="p-6 border-b border-border/20 flex items-center gap-2">
+        <div className="p-6 border-b border-border/50 flex items-center gap-2">
           <Filter className="h-5 w-5 text-shop-primary" />
           <h2 className="text-lg font-medium">Filtros</h2>
         </div>
@@ -199,7 +199,7 @@ export default function Historico() {
         transition={{ duration: 0.5, delay: 0.2 }}
         className="bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden"
       >
-        <div className="p-6 border-b border-border/20 flex items-center gap-2">
+        <div className="p-6 border-b border-border/50 flex items-center gap-2">
           <Clock className="h-5 w-5 text-shop-primary" />
           <h2 className="text-lg font-medium">Linha do Tempo</h2>
         </div>

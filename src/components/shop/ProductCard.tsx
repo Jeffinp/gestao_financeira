@@ -46,7 +46,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       initial={{ opacity: 0, y: 50 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="bg-white rounded-lg overflow-hidden shadow-card transition-all duration-300 hover:shadow-lg group"
+      className="bg-card text-card-foreground rounded-lg overflow-hidden shadow-card transition-all duration-300 hover:shadow-lg group"
     >
       <div className="relative overflow-hidden">
         {/* Badge de promoção */}
@@ -82,7 +82,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {/* Botão de favorito */}
         <button
           onClick={handleFavoriteClick}
-          className="absolute top-2 right-2 p-2 rounded-full bg-white bg-opacity-80 shadow-sm hover:bg-opacity-100 transition-all"
+          className="absolute top-2 right-2 p-2 rounded-full bg-popover shadow-sm hover:bg-popover/90 transition-all border border-border"
           aria-label={
             isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"
           }
@@ -177,4 +177,4 @@ const ProductCard: React.FC<ProductCardProps> = ({
   );
 };
 
-export default ProductCard; 
+export default ProductCard;

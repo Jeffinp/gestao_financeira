@@ -106,7 +106,7 @@ const ImagemZoom: React.FC<ImagemZoomProps> = ({ src }) => {
 
   return (
     <div
-      className="relative overflow-hidden bg-gray-100 rounded-lg h-[500px] w-full cursor-zoom-in"
+      className="relative overflow-hidden bg-card h-[500px] w-full cursor-zoom-in"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       onMouseMove={handleMouseMove}
@@ -129,7 +129,7 @@ const ImagemZoom: React.FC<ImagemZoomProps> = ({ src }) => {
           </div>
 
           {/* Área de zoom */}
-          <div className="absolute top-2 right-2 bg-white p-2 rounded-lg shadow-lg w-48 h-48 overflow-hidden">
+          <div className="absolute top-2 right-2 bg-popover text-popover-foreground border border-border p-2 rounded-lg shadow-lg w-48 h-48 overflow-hidden">
             <div
               className="w-full h-full"
               style={{
@@ -545,7 +545,7 @@ export default function ProdutoDetalhe() {
           </div>
 
           {/* Informações adicionais */}
-          <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+          <div className="bg-card text-card-foreground rounded-lg p-4 space-y-3">
             <div className="flex items-center gap-3">
               <Truck className="w-5 h-5 text-[hsl(var(--shop-primary))]" />
               <div>
@@ -659,7 +659,7 @@ export default function ProdutoDetalhe() {
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="group relative overflow-hidden rounded-lg bg-white shadow-md transition-all duration-300 hover:shadow-lg"
+              className="group relative overflow-hidden rounded-lg bg-card text-card-foreground shadow-md transition-all duration-300 hover:shadow-lg"
             >
               <div className="aspect-w-1 aspect-h-1 bg-gray-200">
                 <div className="h-64 w-full animate-pulse bg-gray-200"></div>
@@ -674,7 +674,7 @@ export default function ProdutoDetalhe() {
               </div>
 
               {/* Overlay de carregamento simulado */}
-              <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-0 transition-all duration-300 group-hover:bg-opacity-10">
+              <div className="absolute inset-0 flex items-center justify-center bg-popover bg-opacity-0 transition-all duration-300 group-hover:bg-opacity-10">
                 <div className="transform opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 translate-y-4">
                   <div className="rounded-md px-4 py-2 bg-[hsl(var(--shop-primary))] text-white font-medium invisible group-hover:visible">
                     Ver produto

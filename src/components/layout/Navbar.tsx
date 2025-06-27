@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from './ThemeToggle';
 import ThemeSelector from './ThemeSelector';
+import { useTheme } from '../../context/ThemeContext';
 
 const navItems = [
     { name: 'Dashboard', path: '/', icon: Home },
@@ -16,6 +17,8 @@ const navItems = [
 ];
 
 export default function Navbar() {
+    const { resolvedTheme } = useTheme();
+    const isDark = resolvedTheme === 'dark';
     const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrollPosition, setScrollPosition] = useState(0);
@@ -55,11 +58,19 @@ export default function Navbar() {
     }, [isMenuOpen]);
 
     return (
-        <nav className={`fixed top-0 left-0 right-0 z-50 bg-background/95 dark:bg-card/95 backdrop-blur-sm border-b border-border/20 dark:border-border/10 ${scrollPosition > 10 ? 'shadow-md dark:shadow-lg dark:shadow-black/20' : 'shadow-sm dark:shadow-md dark:shadow-black/10'} transition-all duration-300`}>
+        <nav className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b ${
+            isDark 
+                ? 'bg-gray-900/95 border-gray-700/50' 
+                : 'bg-white/95 border-[#fed282]/50'
+            } ${scrollPosition > 10 ? 'shadow-lg' : 'shadow-md'} ${
+            isDark ? 'shadow-black/20' : 'shadow-[#062140]/10'
+            } transition-all duration-300`}>
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
                 <div className="flex items-center gap-2">
                     <Link to="/" className="flex items-center gap-2">
-                        <span className="font-bold text-shop-primary dark:text-shop-primary text-xl">MeuCofre</span>
+                        <span className={`font-bold text-xl ${
+                            isDark ? 'text-blue-500' : 'text-[#062140]'
+                        }`}>MeuCofre</span>
                     </Link>
                 </div>
 
@@ -75,15 +86,24 @@ export default function Navbar() {
                                 <li key={item.path}>
                                     <Link
                                         to={item.path}
-                                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${isActive
-                                            ? 'bg-shop-primary text-primary-foreground shadow-sm'
-                                            : 'text-foreground dark:text-foreground hover:bg-secondary dark:hover:bg-secondary/30 hover:text-secondary-foreground dark:hover:text-secondary-foreground'
-                                            }`}
+                                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${
+                                            isActive
+                                                ? isDark
+                                                    ? 'bg-blue-600 text-white shadow-sm'
+                                                    : 'bg-[#062140] text-white shadow-sm'
+                                                : isDark
+                                                    ? 'text-gray-300 hover:text-white hover:bg-gray-800'
+                                                    : 'text-gray-700 hover:text-[#062140] hover:bg-gray-100'
+                                        }`}
                                     >
                                         {Icon && <Icon className="w-4 h-4" />}
                                         {item.name}
                                         {item.name === 'Loja' && (
-                                            <span className="ml-1 bg-shop-highlight dark:bg-shop-highlight text-white text-xs font-bold px-1.5 py-0.5 rounded-full">Novo</span>
+                                            <span className={`ml-1 text-xs font-bold px-1.5 py-0.5 rounded-full ${
+                                                isDark 
+                                                    ? 'bg-amber-500 text-white' 
+                                                    : 'bg-[#fed282] text-[#062140]'
+                                            }`}>Novo</span>
                                         )}
                                     </Link>
                                 </li>
@@ -105,7 +125,11 @@ export default function Navbar() {
 
                     {/* Botão do menu mobile */}
                     <button
-                        className="md:hidden p-2 rounded-lg text-foreground dark:text-foreground hover:bg-secondary dark:hover:bg-secondary/30 transition-colors"
+                        className={`md:hidden p-2 rounded-lg transition-colors ${
+                            isDark 
+                                ? 'text-white hover:bg-gray-800' 
+                                : 'text-gray-700 hover:bg-gray-100'
+                        }`}
                         onClick={toggleMenu}
                         aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
                     >
@@ -133,16 +157,30 @@ export default function Navbar() {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-                            className="fixed top-0 right-0 h-screen w-3/4 max-w-sm bg-background dark:bg-card border-l border-border/20 dark:border-border/10 shadow-xl dark:shadow-black/30 z-50 md:hidden"
+                            className={`fixed top-0 right-0 h-screen w-3/4 max-w-sm border-l shadow-xl z-50 md:hidden ${
+                                isDark 
+                                    ? 'bg-gray-900 border-gray-700' 
+                                    : 'bg-white border-[#fed282]/50'
+                                }`}
                         >
                             <div className="flex flex-col h-full">
-                                <div className="flex justify-between items-center p-4 border-b border-border/20 dark:border-border/10">
+                                <div className={`flex justify-between items-center p-4 border-b ${
+                                    isDark 
+                                        ? 'border-gray-700' 
+                                        : 'border-[#fed282]/50'
+                                    }`}>
                                     <Link to="/" className="flex items-center gap-2" onClick={handleNavItemClick}>
-                                        <span className="font-bold text-shop-primary dark:text-shop-primary text-xl">MeuCofre</span>
+                                        <span className={`font-bold text-xl ${
+                                            isDark ? 'text-blue-500' : 'text-[#062140]'
+                                        }`}>MeuCofre</span>
                                     </Link>
                                     <button
                                         onClick={toggleMenu}
-                                        className="p-2 rounded-lg text-foreground dark:text-foreground hover:bg-secondary dark:hover:bg-secondary/30 transition-colors"
+                                        className={`p-2 rounded-lg transition-colors ${
+                                            isDark 
+                                                ? 'text-white hover:bg-gray-800' 
+                                                : 'text-gray-700 hover:bg-gray-100'
+                                        }`}
                                         aria-label="Fechar menu"
                                     >
                                         <X className="h-6 w-6" />
@@ -161,15 +199,24 @@ export default function Navbar() {
                                                     <Link
                                                         to={item.path}
                                                         onClick={handleNavItemClick}
-                                                        className={`px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 flex items-center gap-3 w-full ${isActive
-                                                            ? 'bg-shop-primary text-primary-foreground shadow-sm'
-                                                            : 'text-foreground dark:text-foreground hover:bg-secondary dark:hover:bg-secondary/30 hover:text-secondary-foreground dark:hover:text-secondary-foreground'
-                                                            }`}
+                                                        className={`px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 flex items-center gap-3 w-full ${
+                                                            isActive
+                                                                ? isDark
+                                                                    ? 'bg-blue-600 text-white shadow-sm'
+                                                                    : 'bg-[#062140] text-white shadow-sm'
+                                                                : isDark
+                                                                    ? 'text-gray-300 hover:text-white hover:bg-gray-800'
+                                                                    : 'text-gray-700 hover:text-[#062140] hover:bg-gray-100'
+                                                        }`}
                                                     >
                                                         {Icon && <Icon className="w-5 h-5" />}
                                                         {item.name}
                                                         {item.name === 'Loja' && (
-                                                            <span className="ml-1 bg-shop-highlight dark:bg-shop-highlight text-white text-xs font-bold px-1.5 py-0.5 rounded-full">Novo</span>
+                                                            <span className={`ml-1 text-xs font-bold px-1.5 py-0.5 rounded-full ${
+                                                                isDark 
+                                                                    ? 'bg-amber-500 text-white' 
+                                                                    : 'bg-[#fed282] text-[#062140]'
+                                                            }`}>Novo</span>
                                                         )}
                                                     </Link>
                                                 </li>
@@ -178,9 +225,15 @@ export default function Navbar() {
                                     </ul>
                                 </div>
 
-                                <div className="p-4 border-t border-border/20 dark:border-border/10">
+                                <div className={`p-4 border-t ${
+                                    isDark 
+                                        ? 'border-gray-700' 
+                                        : 'border-[#fed282]/50'
+                                    }`}>
                                     <div className="flex items-center justify-between">
-                                        <span className="text-sm text-muted-foreground dark:text-muted-foreground">Tema</span>
+                                        <span className={`text-sm ${
+                                            isDark ? 'text-gray-400' : 'text-gray-600'
+                                        }`}>Tema</span>
                                         <ThemeSelector />
                                     </div>
                                 </div>

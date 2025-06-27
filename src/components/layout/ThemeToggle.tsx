@@ -3,8 +3,12 @@ import { Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
-export default function ThemeToggle({ className = "" }: { className?: string }) {
-  const { theme, toggleTheme } = useTheme();
+export default function ThemeToggle({
+  className = "",
+}: {
+  className?: string;
+}) {
+  const { resolvedTheme, toggleTheme } = useTheme();
   const [isHovered, setIsHovered] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
 
@@ -21,70 +25,40 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
 
   return (
     <div className="relative">
-      <button
+      <motion.button
+        whileTap={{ scale: 0.95 }}
+        className={`rounded-full w-9 h-9 flex items-center justify-center bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${className}`}
         onClick={toggleTheme}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className={`p-2.5 rounded-full relative bg-secondary/80 hover:bg-secondary text-secondary-foreground transition-colors duration-300 overflow-hidden ${className}`}
-        aria-label={
-          theme === "light" ? "Ativar modo escuro" : "Ativar modo claro"
-        }
+        aria-label={resolvedTheme === "dark" ? "Ativar modo claro" : "Ativar modo escuro"}
       >
-        {/* Efeito de brilho ao passar o mouse */}
-        <span
-          className={`absolute inset-0 transition-opacity duration-300 ${
-            isHovered ? "opacity-100" : "opacity-0"
-          } ${
-            theme === "dark"
-              ? "bg-gradient-to-br from-indigo-500/20 to-purple-500/20"
-              : "bg-gradient-to-br from-amber-200/20 to-yellow-300/20"
-          }`}
-        />
-
-        {/* Ícones com animação de transição */}
         <AnimatePresence mode="wait" initial={false}>
-          {theme === "light" ? (
-            <motion.div
-              key="moon"
-              initial={{ scale: 0.5, rotate: -90, opacity: 0 }}
-              animate={{ scale: 1, rotate: 0, opacity: 1 }}
-              exit={{ scale: 0.5, rotate: 90, opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="relative"
-            >
-              <Moon className="h-5 w-5" />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="sun"
-              initial={{ scale: 0.5, rotate: 90, opacity: 0 }}
-              animate={{ scale: 1, rotate: 0, opacity: 1 }}
-              exit={{ scale: 0.5, rotate: -90, opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="relative"
-            >
-              <Sun className="h-5 w-5" />
-            </motion.div>
-          )}
+          <motion.div
+            key={resolvedTheme}
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 20, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            {resolvedTheme === "dark" ? (
+              <Sun className="h-5 w-5 text-amber-400" />
+            ) : (
+              <Moon className="h-5 w-5 text-indigo-600" />
+            )}
+          </motion.div>
         </AnimatePresence>
-        
-        {/* Ripple effect on click */}
-        <span className="absolute inset-0 rounded-full overflow-hidden">
-          <span className="absolute inset-0 transform scale-0 rounded-full bg-current opacity-10 animate-ripple"></span>
-        </span>
-      </button>
+      </motion.button>
 
-      {/* Tooltip */}
       <AnimatePresence>
         {showTooltip && (
           <motion.div
-            initial={{ opacity: 0, y: 5 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 5 }}
-            className="absolute right-0 mt-2 px-3 py-1.5 bg-popover text-popover-foreground text-sm rounded-lg shadow-lg whitespace-nowrap z-50"
+            exit={{ opacity: 0, y: 10 }}
+            className="absolute right-0 top-11 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-xs rounded-md py-1 px-2 shadow-lg border border-gray-200 dark:border-gray-700"
           >
-            {theme === "light" ? "Mudar para modo escuro" : "Mudar para modo claro"}
-            <span className="absolute -top-1 right-3 w-2 h-2 bg-popover rotate-45 transform" />
+            {resolvedTheme === "dark" ? "Ativar modo claro" : "Ativar modo escuro"}
           </motion.div>
         )}
       </AnimatePresence>

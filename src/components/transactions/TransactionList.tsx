@@ -10,6 +10,7 @@ interface TransactionListProps {
   isLoading?: boolean;
   emptyMessage?: string;
   className?: string;
+  isDark?: boolean;
 }
 
 const TransactionList: React.FC<TransactionListProps> = ({
@@ -19,6 +20,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
   isLoading = false,
   emptyMessage = "Nenhuma transação registrada.",
   className = "",
+  isDark = false,
 }) => {
   return (
     <div className={`bg-card hover-lift rounded-xl shadow-card border border-border/50 overflow-hidden ${className}`}>
