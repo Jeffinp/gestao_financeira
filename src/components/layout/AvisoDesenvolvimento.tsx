@@ -134,10 +134,10 @@ export default function AvisoDesenvolvimento() {
               <div className="mt-6 flex gap-3">
                 <button
                   onClick={fecharAviso}
-                  className={`flex-1 font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 ${
+                  className={`flex-1 font-medium py-3 px-5 rounded-lg shadow-md transition-colors duration-300 transform hover:scale-105 ${
                     isDark 
-                      ? 'bg-white text-white' 
-                      : 'bg-[#062140] hover:bg-[#051426] text-white'
+                      ? 'bg-gray-800 text-white border border-gray-600' 
+                      : 'bg-[#062140] hover:bg-[#051426] text-white border border-[#fed282]'
                   }`}
                 >
                   Entendi, continuar
